@@ -151,6 +151,7 @@ MonoBehaviour:
   spherePrefab: {fileID: 6663117310752639456, guid: 3b0b0819e07c7074fa3d896504135663, type: 3}
   cubePrefab: {fileID: 5948831238448222080, guid: 36ef9ae264511d84aacc0dbef5293bae, type: 3}
   capsulePrefab: {fileID: 410142015583862395, guid: 65fbb2b530924e64887b4b93b4794c62, type: 3}
+  linkLabelPrefab: {fileID: 346660430618695843, guid: c80195c922463b3419eaae14e564d5a9, type: 3}
   lineMaterial: {fileID: 2100000, guid: 0fcf4715c091eda4f97e84803e479e04, type: 2}
 --- !u!4 &93119858
 Transform:
@@ -402,7 +403,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

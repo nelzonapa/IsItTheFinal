@@ -20,7 +20,9 @@ namespace ImmersiveGraph.Data
         public Vector3Data position;
         public string parent_id;
 
-        // CORRECCIÓN: El backend usa "meta" y campos directos como "description"
+        public string relation_label; // la relación
+
+        //El backend usa "meta" y campos directos como "description"
         public string description;
         public NodeMetaData meta;
     }
