@@ -168,25 +168,25 @@ MonoBehaviour:
   m_Name: Android
   m_EditorClassIdentifier: Unity.XR.OpenXR::UnityEngine.XR.OpenXR.OpenXRSettings
   features:
-  - {fileID: 1505759764607339011}
-  - {fileID: 3792803626344785058}
-  - {fileID: -7503940771485976393}
-  - {fileID: -4833964554685694903}
-  - {fileID: 5012088037596089925}
-  - {fileID: -9075198012313123934}
-  - {fileID: -814740929476904152}
-  - {fileID: -4094297248009911140}
-  - {fileID: 3268176482877193041}
-  - {fileID: -8116110005131108646}
-  - {fileID: -2587699436664002949}
   - {fileID: 4936963719740421759}
-  - {fileID: -8634579015940669040}
-  - {fileID: -3996580229462400783}
-  - {fileID: -9162221586590707097}
-  - {fileID: -8580541364015524160}
-  - {fileID: 1080930934078757717}
-  - {fileID: 9141037257554903425}
   - {fileID: 1087988950779477398}
+  - {fileID: 5012088037596089925}
+  - {fileID: -2587699436664002949}
+  - {fileID: 3268176482877193041}
+  - {fileID: 1080930934078757717}
+  - {fileID: -8634579015940669040}
+  - {fileID: -9162221586590707097}
+  - {fileID: -3996580229462400783}
+  - {fileID: -4833964554685694903}
+  - {fileID: 9141037257554903425}
+  - {fileID: -8116110005131108646}
+  - {fileID: -4094297248009911140}
+  - {fileID: -7503940771485976393}
+  - {fileID: 3792803626344785058}
+  - {fileID: -814740929476904152}
+  - {fileID: -9075198012313123934}
+  - {fileID: 1505759764607339011}
+  - {fileID: -8580541364015524160}
   customLoaderName: 
   m_renderMode: 1
   m_latencyOptimization: 0
@@ -199,7 +199,7 @@ MonoBehaviour:
   m_symmetricProjection: 0
   m_optimizeMultiviewRenderRegions: 0
   m_multiviewRenderRegionsOptimizationMode: 0
-  m_hasMigratedMultiviewRenderRegionSetting: 0
+  m_hasMigratedMultiviewRenderRegionSetting: 1
   m_foveatedRenderingApi: 0
   m_useOpenXRPredictedTime: 0
 --- !u!114 &-4833964554685694903
@@ -249,7 +249,7 @@ MonoBehaviour:
   lateLatchingDebug: 0
   optimizeMultiviewRenderRegions: 0
   m_multiviewRenderRegionsOptimizationMode: 0
-  m_hasMigratedMultiviewRenderRegions: 0
+  m_hasMigratedMultiviewRenderRegions: 1
   spacewarpMotionVectorTextureFormat: 0
 --- !u!114 &-4448704592348645270
 MonoBehaviour:
@@ -523,7 +523,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feeef8d85de8db242bdda70cc7ff5acd, type: 3}
   m_Name: OculusTouchControllerProfile Android
   m_EditorClassIdentifier: Unity.XR.OpenXR::UnityEngine.XR.OpenXR.Features.Interactions.OculusTouchControllerProfile
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Oculus Touch Controller Profile
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.oculustouch
@@ -881,25 +881,25 @@ MonoBehaviour:
   m_Name: Standalone
   m_EditorClassIdentifier: Unity.XR.OpenXR::UnityEngine.XR.OpenXR.OpenXRSettings
   features:
-  - {fileID: -2193796415894628270}
-  - {fileID: 562872553110560252}
   - {fileID: -2222726204710785751}
-  - {fileID: 2669106061530347666}
-  - {fileID: 7034901579501182351}
-  - {fileID: 5405753939125641186}
-  - {fileID: -7296008329506061371}
-  - {fileID: -2350751945331066830}
   - {fileID: 7822220189608412668}
+  - {fileID: -7296008329506061371}
+  - {fileID: -4448704592348645270}
   - {fileID: -1750183407666226577}
-  - {fileID: -379912022280626967}
+  - {fileID: 1282952275741617117}
+  - {fileID: -3079652189209818928}
   - {fileID: 4562831102082434940}
   - {fileID: -2430797184012729614}
-  - {fileID: 1282952275741617117}
-  - {fileID: 8760527413703533644}
-  - {fileID: -3079652189209818928}
-  - {fileID: -4448704592348645270}
   - {fileID: 838019291644749666}
+  - {fileID: -2350751945331066830}
+  - {fileID: 5405753939125641186}
+  - {fileID: -379912022280626967}
+  - {fileID: 562872553110560252}
+  - {fileID: 7034901579501182351}
+  - {fileID: 2669106061530347666}
+  - {fileID: -2193796415894628270}
   - {fileID: -2655025041690472029}
+  - {fileID: 8760527413703533644}
   customLoaderName: 
   m_renderMode: 1
   m_latencyOptimization: 0
@@ -912,7 +912,7 @@ MonoBehaviour:
   m_symmetricProjection: 0
   m_optimizeMultiviewRenderRegions: 0
   m_multiviewRenderRegionsOptimizationMode: 0
-  m_hasMigratedMultiviewRenderRegionSetting: 0
+  m_hasMigratedMultiviewRenderRegionSetting: 1
   m_foveatedRenderingApi: 0
   m_useOpenXRPredictedTime: 0
 --- !u!114 &7034901579501182351
@@ -927,7 +927,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feeef8d85de8db242bdda70cc7ff5acd, type: 3}
   m_Name: OculusTouchControllerProfile Standalone
   m_EditorClassIdentifier: Unity.XR.OpenXR::UnityEngine.XR.OpenXR.Features.Interactions.OculusTouchControllerProfile
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Oculus Touch Controller Profile
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.oculustouch
