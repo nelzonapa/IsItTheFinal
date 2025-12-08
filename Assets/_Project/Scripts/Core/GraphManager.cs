@@ -66,9 +66,9 @@ namespace ImmersiveGraph.Core
 
             // 3. CONSTRUIR
             BuildNodes();
-            BuildConnections(); // He renombrado esto para que sea más claro
-
+            // Esperar un frame para asegurar que las posiciones locales se asienten antes de dibujar líneas
             yield return null;
+            BuildConnections();
         }
 
         void BuildNodes()
@@ -79,17 +79,22 @@ namespace ImmersiveGraph.Core
             {
                 if (!visualConfigMap.TryGetValue(node.type, out VisualSetting setting)) continue;
 
-                // --- LOGICA DE PREFAB ---
                 GameObject prefabToUse = spherePrefab;
                 if (setting.shape.Equals("Cube", System.StringComparison.OrdinalIgnoreCase)) prefabToUse = cubePrefab;
                 else if (setting.shape.Equals("Capsule", System.StringComparison.OrdinalIgnoreCase)) prefabToUse = capsulePrefab;
 
-                // Instanciar como hijo de este GraphManager (para que herede la escala pequeña)
-                Vector3 pos = node.position.ToVector3();
-                GameObject newNode = Instantiate(prefabToUse, pos, Quaternion.identity, this.transform);
+                // --- CORRECCIÓN 1: Instanciar relativo al padre ---
+                // Instanciamos el nodo como hijo de ESTE objeto (GraphManager)
+                GameObject newNode = Instantiate(prefabToUse, this.transform);
+
+                // Asignamos la posición LOCAL usando los datos del JSON.
+                // Así, si mueves la mesa, los nodos se mueven con ella.
+                newNode.transform.localPosition = node.position.ToVector3();
+                newNode.transform.localRotation = Quaternion.identity;
+
                 newNode.name = node.id;
 
-                // Aplicar escala del nodo (relativa al padre)
+                // Aplicar escala
                 newNode.transform.localScale = Vector3.one * setting.scale;
 
                 // --- COLOR Y VISUALES ---
@@ -115,12 +120,9 @@ namespace ImmersiveGraph.Core
                     newNode.AddComponent<NodeLOD>();
                 }
 
-                // Guardar en mapa
                 if (!nodeMap.ContainsKey(node.id)) nodeMap.Add(node.id, newNode);
 
-                // --- NUEVO: FILTRO DE VISTA GENERAL (OVERVIEW) ---
-                // Solo mostramos ROOT y MACRO_TOPIC al inicio.
-                // Ocultamos el resto (SetActive false).
+                // --- FILTRO DE VISTA GENERAL ---
                 if (node.type != "ROOT" && node.type != "MACRO_TOPIC")
                 {
                     newNode.SetActive(false);
@@ -133,6 +135,12 @@ namespace ImmersiveGraph.Core
             GameObject linesObj = new GameObject("GraphConnections");
             linesObj.transform.parent = this.transform;
 
+            // --- CORRECCIÓN 2: Resetear transformaciones del contenedor de líneas ---
+            // Esto asegura que las coordenadas locales coincidan con las de los nodos hermanos
+            linesObj.transform.localPosition = Vector3.zero;
+            linesObj.transform.localRotation = Quaternion.identity;
+            linesObj.transform.localScale = Vector3.one;
+
             MeshFilter mf = linesObj.AddComponent<MeshFilter>();
             MeshRenderer mr = linesObj.AddComponent<MeshRenderer>();
             mr.material = lineMaterial;
@@ -140,46 +148,59 @@ namespace ImmersiveGraph.Core
             List<Vector3> vertices = new List<Vector3>();
             List<int> indices = new List<int>();
 
-            // Contenedor para organizar las etiquetas en la jerarquía
             GameObject labelsContainer = new GameObject("RelationLabels");
             labelsContainer.transform.parent = this.transform;
+            labelsContainer.transform.localPosition = Vector3.zero;
+            labelsContainer.transform.localRotation = Quaternion.identity;
+            labelsContainer.transform.localScale = Vector3.one; // Importante para que el texto no se deforme
 
             foreach (var node in graphData.nodes)
             {
-                // Verificar si tiene padre válido
                 if (!string.IsNullOrEmpty(node.parent_id) && nodeMap.ContainsKey(node.parent_id) && nodeMap.ContainsKey(node.id))
                 {
-                    Vector3 startPos = nodeMap[node.id].transform.position; // Hijo (Entity)
-                    Vector3 endPos = nodeMap[node.parent_id].transform.position; // Padre (Document)
+                    GameObject childObj = nodeMap[node.id];
+                    GameObject parentObj = nodeMap[node.parent_id];
 
-                    // 1. DIBUJAR LÍNEA (Geometry)
+                    if (!childObj.activeSelf || !parentObj.activeSelf) continue;
+
+                    // --- CORRECCIÓN 3: USAR LOCAL POSITION ---
+                    // Usamos localPosition porque ambos (nodos y líneas) son hijos del mismo padre (GraphSystem)
+                    Vector3 startPos = childObj.transform.localPosition;
+                    Vector3 endPos = parentObj.transform.localPosition;
+
                     int startIndex = vertices.Count;
                     vertices.Add(startPos);
                     vertices.Add(endPos);
                     indices.Add(startIndex);
                     indices.Add(startIndex + 1);
 
-                    // 2. DIBUJAR ETIQUETA (Solo si existe relation_label)
+                    // ETIQUETAS
                     if (!string.IsNullOrEmpty(node.relation_label) && linkLabelPrefab != null)
                     {
-                        // Calculamos el punto medio
                         Vector3 midPoint = (startPos + endPos) / 2f;
 
-                        GameObject labelObj = Instantiate(linkLabelPrefab, midPoint, Quaternion.identity, labelsContainer.transform);
+                        // Instanciamos y luego asignamos localPosition para que esté correcto
+                        GameObject labelObj = Instantiate(linkLabelPrefab, labelsContainer.transform);
+                        labelObj.transform.localPosition = midPoint;
+                        labelObj.transform.localRotation = Quaternion.identity;
 
                         TextMeshPro tmp = labelObj.GetComponentInChildren<TextMeshPro>();
                         if (tmp != null) tmp.text = node.relation_label;
 
-                        // Opcional: Ajustar LOD para que desaparezcan antes que los nodos grandes
                         NodeLOD lod = labelObj.GetComponent<NodeLOD>();
-                        if (lod != null) lod.cullingDistance = 10.0f; // Distancia más corta para textos pequeños
+                        if (lod != null) lod.cullingDistance = 10.0f;
                     }
                 }
             }
 
             Mesh mesh = new Mesh();
+            // Truco para que el frustum culling no oculte la malla antes de tiempo si es muy grande
+            mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
             mesh.vertices = vertices.ToArray();
             mesh.SetIndices(indices.ToArray(), MeshTopology.Lines, 0);
+
+            // Recalcular límites es importante cuando manipulamos vértices manualmente
+            mesh.RecalculateBounds();
             mf.mesh = mesh;
         }
     }
