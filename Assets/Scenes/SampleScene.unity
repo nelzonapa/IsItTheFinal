@@ -148,11 +148,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0422aa0cef3bb9e4b8b4d3302c6f0dcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Core.GraphManager
+  containerVolume: {fileID: 1144399871}
   spherePrefab: {fileID: 6663117310752639456, guid: 3b0b0819e07c7074fa3d896504135663, type: 3}
   cubePrefab: {fileID: 5948831238448222080, guid: 36ef9ae264511d84aacc0dbef5293bae, type: 3}
   capsulePrefab: {fileID: 410142015583862395, guid: 65fbb2b530924e64887b4b93b4794c62, type: 3}
   linkLabelPrefab: {fileID: 346660430618695843, guid: c80195c922463b3419eaae14e564d5a9, type: 3}
   lineMaterial: {fileID: 2100000, guid: 0fcf4715c091eda4f97e84803e479e04, type: 2}
+  nodeSizeAdjuster: 3
 --- !u!4 &93119858
 Transform:
   m_ObjectHideFlags: 0
@@ -161,9 +163,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 93119856}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
-  m_LocalScale: {x: 0.05, y: 0.050000004, z: 0.050000004}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1317935322}
@@ -674,6 +676,11 @@ PrefabInstance:
       addedObject: {fileID: 93119858}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+--- !u!65 &1144399871 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 8759895591307329085, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+  m_PrefabInstance: {fileID: 1144399870}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1317935322 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2893154904286887996, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}

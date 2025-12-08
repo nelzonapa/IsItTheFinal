@@ -5,11 +5,15 @@ using UnityEngine;
 using ImmersiveGraph.Data;
 using ImmersiveGraph.Visualization;
 using TMPro;
+using System.Linq;
 
 namespace ImmersiveGraph.Core
 {
     public class GraphManager : MonoBehaviour
     {
+        [Header("Referencias de Escenario")]
+        public BoxCollider containerVolume;
+
         [Header("Prefabs de Nodos")]
         public GameObject spherePrefab;
         public GameObject cubePrefab;
@@ -21,12 +25,17 @@ namespace ImmersiveGraph.Core
         [Header("Configuración Visual")]
         public Material lineMaterial;
 
+        [Header("Ajustes de Escala")]
+        [Tooltip("Multiplicador manual para el tamaño de las bolitas (nodos). Úsalo si se ven muy chicas o grandes.")]
+        public float nodeSizeAdjuster = 1.0f;
+
         // Diccionarios
         private Dictionary<string, GameObject> nodeMap = new Dictionary<string, GameObject>();
         private Dictionary<string, VisualSetting> visualConfigMap = new Dictionary<string, VisualSetting>();
 
         private AppConfigContainer appConfig;
         private GraphDataContainer graphData;
+        private Vector3 graphCenterOffset;
 
         void Start()
         {
@@ -41,9 +50,7 @@ namespace ImmersiveGraph.Core
             string configPath = Path.Combine(Application.streamingAssetsPath, "unity_app_config.json");
             if (File.Exists(configPath))
             {
-                string jsonContent = File.ReadAllText(configPath);
-                appConfig = JsonUtility.FromJson<AppConfigContainer>(jsonContent);
-
+                appConfig = JsonUtility.FromJson<AppConfigContainer>(File.ReadAllText(configPath));
                 if (appConfig.visual_settings != null)
                 {
                     if (appConfig.visual_settings.ROOT != null) visualConfigMap.Add("ROOT", appConfig.visual_settings.ROOT);
@@ -59,16 +66,49 @@ namespace ImmersiveGraph.Core
             string dataPath = Path.Combine(Application.streamingAssetsPath, "unity_graph_data.json");
             if (File.Exists(dataPath))
             {
-                string dataContent = File.ReadAllText(dataPath);
-                graphData = JsonUtility.FromJson<GraphDataContainer>(dataContent);
+                graphData = JsonUtility.FromJson<GraphDataContainer>(File.ReadAllText(dataPath));
             }
             else { Debug.LogError("Falta unity_graph_data.json"); yield break; }
 
+            // CALCULAR LA ESCALA GLOBAL
+            CalculateAndApplyScale();
+
             // 3. CONSTRUIR
             BuildNodes();
-            // Esperar un frame para asegurar que las posiciones locales se asienten antes de dibujar líneas
             yield return null;
             BuildConnections();
+        }
+
+        void CalculateAndApplyScale()
+        {
+            if (containerVolume == null || graphData.nodes.Count == 0) return;
+
+            // Encontrar límites
+            float minX = graphData.nodes.Min(n => n.position.x);
+            float maxX = graphData.nodes.Max(n => n.position.x);
+            float minY = graphData.nodes.Min(n => n.position.y);
+            float maxY = graphData.nodes.Max(n => n.position.y);
+            float minZ = graphData.nodes.Min(n => n.position.z);
+            float maxZ = graphData.nodes.Max(n => n.position.z);
+
+            Vector3 graphSize = new Vector3(maxX - minX, maxY - minY, maxZ - minZ);
+            if (graphSize.x == 0) graphSize.x = 1; if (graphSize.y == 0) graphSize.y = 1; if (graphSize.z == 0) graphSize.z = 1;
+
+            Vector3 containerSize = containerVolume.size;
+
+            // Escalar para que quepa en la caja
+            float scaleX = containerSize.x / graphSize.x;
+            float scaleY = containerSize.y / graphSize.y;
+            float scaleZ = containerSize.z / graphSize.z;
+
+            // Factor 0.8 para dejar margen
+            float finalScale = Mathf.Min(scaleX, Mathf.Min(scaleY, scaleZ)) * 0.8f;
+
+            transform.localScale = Vector3.one * finalScale;
+            transform.localPosition = Vector3.zero;
+
+            // Calcular offset para centrar
+            graphCenterOffset = new Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
         }
 
         void BuildNodes()
@@ -83,21 +123,19 @@ namespace ImmersiveGraph.Core
                 if (setting.shape.Equals("Cube", System.StringComparison.OrdinalIgnoreCase)) prefabToUse = cubePrefab;
                 else if (setting.shape.Equals("Capsule", System.StringComparison.OrdinalIgnoreCase)) prefabToUse = capsulePrefab;
 
-                // --- CORRECCIÓN 1: Instanciar relativo al padre ---
-                // Instanciamos el nodo como hijo de ESTE objeto (GraphManager)
                 GameObject newNode = Instantiate(prefabToUse, this.transform);
 
-                // Asignamos la posición LOCAL usando los datos del JSON.
-                // Así, si mueves la mesa, los nodos se mueven con ella.
-                newNode.transform.localPosition = node.position.ToVector3();
+                // Posición corregida con Offset
+                newNode.transform.localPosition = node.position.ToVector3() - graphCenterOffset;
                 newNode.transform.localRotation = Quaternion.identity;
-
                 newNode.name = node.id;
 
-                // Aplicar escala
-                newNode.transform.localScale = Vector3.one * setting.scale;
+                // --- CORRECCIÓN DE TAMAÑO ---
+                // Ya no dividimos por la escala del padre.
+                // Multiplicamos por el ajustador manual para control total.
+                newNode.transform.localScale = Vector3.one * setting.scale * nodeSizeAdjuster;
 
-                // --- COLOR Y VISUALES ---
+                // Color
                 Renderer rend = newNode.GetComponent<Renderer>();
                 if (rend != null && ColorUtility.TryParseHtmlString(setting.color, out Color baseColor))
                 {
@@ -122,11 +160,8 @@ namespace ImmersiveGraph.Core
 
                 if (!nodeMap.ContainsKey(node.id)) nodeMap.Add(node.id, newNode);
 
-                // --- FILTRO DE VISTA GENERAL ---
-                if (node.type != "ROOT" && node.type != "MACRO_TOPIC")
-                {
-                    newNode.SetActive(false);
-                }
+                // Filtro Vista General
+                if (node.type != "ROOT" && node.type != "MACRO_TOPIC") newNode.SetActive(false);
             }
         }
 
@@ -134,9 +169,6 @@ namespace ImmersiveGraph.Core
         {
             GameObject linesObj = new GameObject("GraphConnections");
             linesObj.transform.parent = this.transform;
-
-            // --- CORRECCIÓN 2: Resetear transformaciones del contenedor de líneas ---
-            // Esto asegura que las coordenadas locales coincidan con las de los nodos hermanos
             linesObj.transform.localPosition = Vector3.zero;
             linesObj.transform.localRotation = Quaternion.identity;
             linesObj.transform.localScale = Vector3.one;
@@ -152,7 +184,7 @@ namespace ImmersiveGraph.Core
             labelsContainer.transform.parent = this.transform;
             labelsContainer.transform.localPosition = Vector3.zero;
             labelsContainer.transform.localRotation = Quaternion.identity;
-            labelsContainer.transform.localScale = Vector3.one; // Importante para que el texto no se deforme
+            labelsContainer.transform.localScale = Vector3.one;
 
             foreach (var node in graphData.nodes)
             {
@@ -163,8 +195,6 @@ namespace ImmersiveGraph.Core
 
                     if (!childObj.activeSelf || !parentObj.activeSelf) continue;
 
-                    // --- CORRECCIÓN 3: USAR LOCAL POSITION ---
-                    // Usamos localPosition porque ambos (nodos y líneas) son hijos del mismo padre (GraphSystem)
                     Vector3 startPos = childObj.transform.localPosition;
                     Vector3 endPos = parentObj.transform.localPosition;
 
@@ -174,15 +204,14 @@ namespace ImmersiveGraph.Core
                     indices.Add(startIndex);
                     indices.Add(startIndex + 1);
 
-                    // ETIQUETAS
                     if (!string.IsNullOrEmpty(node.relation_label) && linkLabelPrefab != null)
                     {
                         Vector3 midPoint = (startPos + endPos) / 2f;
-
-                        // Instanciamos y luego asignamos localPosition para que esté correcto
                         GameObject labelObj = Instantiate(linkLabelPrefab, labelsContainer.transform);
                         labelObj.transform.localPosition = midPoint;
-                        labelObj.transform.localRotation = Quaternion.identity;
+
+                        // Escala ajustada también para los textos
+                        labelObj.transform.localScale = Vector3.one * nodeSizeAdjuster;
 
                         TextMeshPro tmp = labelObj.GetComponentInChildren<TextMeshPro>();
                         if (tmp != null) tmp.text = node.relation_label;
@@ -194,12 +223,9 @@ namespace ImmersiveGraph.Core
             }
 
             Mesh mesh = new Mesh();
-            // Truco para que el frustum culling no oculte la malla antes de tiempo si es muy grande
             mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
             mesh.vertices = vertices.ToArray();
             mesh.SetIndices(indices.ToArray(), MeshTopology.Lines, 0);
-
-            // Recalcular límites es importante cuando manipulamos vértices manualmente
             mesh.RecalculateBounds();
             mf.mesh = mesh;
         }
