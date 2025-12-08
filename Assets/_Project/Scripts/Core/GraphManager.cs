@@ -79,22 +79,25 @@ namespace ImmersiveGraph.Core
             {
                 if (!visualConfigMap.TryGetValue(node.type, out VisualSetting setting)) continue;
 
+                // --- LOGICA DE PREFAB ---
                 GameObject prefabToUse = spherePrefab;
                 if (setting.shape.Equals("Cube", System.StringComparison.OrdinalIgnoreCase)) prefabToUse = cubePrefab;
                 else if (setting.shape.Equals("Capsule", System.StringComparison.OrdinalIgnoreCase)) prefabToUse = capsulePrefab;
 
+                // Instanciar como hijo de este GraphManager (para que herede la escala pequeña)
                 Vector3 pos = node.position.ToVector3();
                 GameObject newNode = Instantiate(prefabToUse, pos, Quaternion.identity, this.transform);
                 newNode.name = node.id;
 
+                // Aplicar escala del nodo (relativa al padre)
                 newNode.transform.localScale = Vector3.one * setting.scale;
 
+                // --- COLOR Y VISUALES ---
                 Renderer rend = newNode.GetComponent<Renderer>();
                 if (rend != null && ColorUtility.TryParseHtmlString(setting.color, out Color baseColor))
                 {
                     rend.GetPropertyBlock(propBlock);
                     propBlock.SetColor("_BaseColor", baseColor);
-
                     if (setting.emission > 0)
                     {
                         Color emissionColor = baseColor * Mathf.LinearToGammaSpace(setting.emission);
@@ -104,6 +107,7 @@ namespace ImmersiveGraph.Core
                     rend.SetPropertyBlock(propBlock);
                 }
 
+                // Texto
                 TextMeshPro textComp = newNode.GetComponentInChildren<TextMeshPro>();
                 if (textComp != null)
                 {
@@ -111,7 +115,16 @@ namespace ImmersiveGraph.Core
                     newNode.AddComponent<NodeLOD>();
                 }
 
+                // Guardar en mapa
                 if (!nodeMap.ContainsKey(node.id)) nodeMap.Add(node.id, newNode);
+
+                // --- NUEVO: FILTRO DE VISTA GENERAL (OVERVIEW) ---
+                // Solo mostramos ROOT y MACRO_TOPIC al inicio.
+                // Ocultamos el resto (SetActive false).
+                if (node.type != "ROOT" && node.type != "MACRO_TOPIC")
+                {
+                    newNode.SetActive(false);
+                }
             }
         }
 
