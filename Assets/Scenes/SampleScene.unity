@@ -739,6 +739,11 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!65 &1830076889 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 7285324867216226582, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+  m_PrefabInstance: {fileID: 6185914100256675571}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1896986727 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2893154904286887996, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
@@ -754,11 +759,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 83171679147829049, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_IsTrigger
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 118317226150065401, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_Colliders.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 118317226150065401, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: 'm_Colliders.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1830076889}
     - target: {fileID: 118317226150065401, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_InteractionLayers.m_Bits
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 985162626136895199, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1861052815609057959, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_Name
@@ -770,19 +787,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4746001825335689297, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_IsTrigger
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6109656996423647723, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_IsTrigger
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7285324867216226582, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_IsTrigger
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8759895591307329085, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_IsTrigger
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9013347094446411954, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_LocalPosition.x
