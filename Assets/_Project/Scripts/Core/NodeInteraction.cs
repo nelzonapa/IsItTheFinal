@@ -1,36 +1,47 @@
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit; // Librería estándar de VR
-using UnityEngine.XR.Interaction.Toolkit.Interactables; // Necesario para Unity 6 / XRI 3
+using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Transformers; // Para manipulación
 
 namespace ImmersiveGraph.Core
 {
-    // Este componente requiere que el nodo tenga un Collider (ya lo tienen) y un XRSimpleInteractable
-    [RequireComponent(typeof(XRSimpleInteractable))]
+    // Cambiamos a GRAB interactable para permitir mover/rotar/escalar
+    //[RequireComponent(typeof(XRGrabInteractable))]
+    //[RequireComponent(typeof(XRGeneralGrabTransformer))]
     public class NodeInteraction : MonoBehaviour
     {
-        private Renderer _renderer;
-        private Material _originalMaterial;
+        [Header("UI Feedback")]
+        public GameObject loadingBarPrefab; // Asigna el prefab NodeLoadingBar aquí desde el Manager
 
-        // Color de resaltado (lo definiremos en el Manager para que sea global)
-        private Color _highlightColor = Color.cyan;
+        private Renderer _renderer;
         private Color _originalColor;
+        private Color _highlightColor = Color.cyan;
 
         private GraphInteractionManager _manager;
         private string _nodeType;
         private string _nodeId;
 
-        public void Initialize(GraphInteractionManager manager, string type, string id)
+        // Lógica de Hold (Mantener presionado)
+        private bool isHeld = false;
+        private float holdTimer = 0f;
+        private float requiredHoldTime = 3.0f; // 3 segundos para abrir nivel
+        private GameObject currentBarInstance;
+        private Image currentFillImage;
+        private XRGrabInteractable _grabInteractable;
+
+        public void Initialize(GraphInteractionManager manager, string type, string id, GameObject barPrefab)
         {
             _manager = manager;
             _nodeType = type;
             _nodeId = id;
+            loadingBarPrefab = barPrefab;
 
             _renderer = GetComponent<Renderer>();
             if (_renderer != null)
             {
-                _originalMaterial = _renderer.material;
-                if (_originalMaterial.HasProperty("_BaseColor"))
-                    _originalColor = _originalMaterial.GetColor("_BaseColor");
+                if (_renderer.material.HasProperty("_BaseColor"))
+                    _originalColor = _renderer.material.GetColor("_BaseColor");
             }
 
             SetupXREvents();
@@ -38,47 +49,118 @@ namespace ImmersiveGraph.Core
 
         void SetupXREvents()
         {
-            var interactable = GetComponent<XRSimpleInteractable>();
+            _grabInteractable = GetComponent<XRGrabInteractable>();
 
-            // --- HOVER (Cuando el rayo apunta al nodo) ---
-            interactable.hoverEntered.AddListener((args) => {
-                // 1. Cambiar color propio
+            // Configuración para mover/rotar/escalar libremente
+            _grabInteractable.trackRotation = true;
+            _grabInteractable.throwOnDetach = false; // Que no salga volando
+
+            // Hover (Resaltado)
+            _grabInteractable.hoverEntered.AddListener((args) => {
                 SetHighlight(true);
-                // 2. Avisar al Manager para resaltar comunidad o enlaces
                 _manager.OnNodeHoverEnter(this.transform, _nodeType, _nodeId);
             });
 
-            interactable.hoverExited.AddListener((args) => {
-                // 1. Restaurar color
+            _grabInteractable.hoverExited.AddListener((args) => {
                 SetHighlight(false);
-                // 2. Avisar al Manager para limpiar
                 _manager.OnNodeHoverExit();
             });
 
-            // --- SELECT (Cuando presionas el gatillo) ---
-            interactable.selectEntered.AddListener((args) => {
-                _manager.OnNodeSelected(_nodeType, _nodeId);
+            // Select (Agarre) - Inicia el Timer
+            _grabInteractable.selectEntered.AddListener((args) => {
+                isHeld = true;
+                holdTimer = 0f;
+                CreateLoadingBar();
+
+                // Notificar selección inmediata (para replicación)
+                _manager.OnNodeGrabbed(_nodeType, _nodeId, this.gameObject);
             });
+
+            // Deselección - Cancela el Timer
+            _grabInteractable.selectExited.AddListener((args) => {
+                isHeld = false;
+                holdTimer = 0f;
+                DestroyLoadingBar();
+            });
+        }
+
+        void Update()
+        {
+            // Lógica de Barra de Llenado
+            if (isHeld && currentFillImage != null)
+            {
+                holdTimer += Time.deltaTime;
+                float progress = holdTimer / requiredHoldTime;
+                currentFillImage.fillAmount = progress;
+
+                if (holdTimer >= requiredHoldTime)
+                {
+                    // ¡Completado!
+                    isHeld = false; // Reset para no disparar múltiple
+                    DestroyLoadingBar();
+                    _manager.OnNodeHoldComplete(_nodeType, _nodeId);
+                }
+            }
+        }
+
+        void CreateLoadingBar()
+        {
+            if (loadingBarPrefab != null && currentBarInstance == null)
+            {
+                // Instanciar DEBAJO del nodo
+                Vector3 pos = transform.position - (Vector3.up * (transform.localScale.y * 1.5f));
+                currentBarInstance = Instantiate(loadingBarPrefab, pos, Quaternion.identity, transform);
+
+                // Buscar la imagen de relleno (asumiendo que es el segundo hijo o buscar por nombre)
+                // Ajusta esto según tu prefab. Aquí busco el primer Image tipo Filled.
+                Image[] images = currentBarInstance.GetComponentsInChildren<Image>();
+                foreach (var img in images)
+                {
+                    if (img.type == Image.Type.Filled)
+                    {
+                        currentFillImage = img;
+                        break;
+                    }
+                }
+
+                // Asegurar que mire a la cámara siempre (Billboard simple)
+                currentBarInstance.AddComponent<BillboardSimple>();
+            }
+        }
+
+        void DestroyLoadingBar()
+        {
+            if (currentBarInstance != null)
+            {
+                Destroy(currentBarInstance);
+                currentBarInstance = null;
+                currentFillImage = null;
+            }
         }
 
         public void SetHighlight(bool active)
         {
             if (_renderer == null) return;
-
             if (active)
             {
-                // Opción A: Cambiar a material emisivo brillante
                 _renderer.material.color = _highlightColor;
                 _renderer.material.EnableKeyword("_EMISSION");
-                _renderer.material.SetColor("_EmissionColor", _highlightColor * 2f); // Brillo intenso
+                _renderer.material.SetColor("_EmissionColor", _highlightColor * 1.5f);
             }
             else
             {
-                // Restaurar
                 _renderer.material.color = _originalColor;
-                // Si el original tenía emisión, restaurarla, si no, apagarla (simplificado aquí)
                 _renderer.material.SetColor("_EmissionColor", Color.black);
             }
+        }
+    }
+
+    // Pequeño helper para la barra
+    public class BillboardSimple : MonoBehaviour
+    {
+        void Update()
+        {
+            if (Camera.main != null) transform.LookAt(transform.position + Camera.main.transform.rotation * Vector3.forward, Camera.main.transform.rotation * Vector3.up);
         }
     }
 }
