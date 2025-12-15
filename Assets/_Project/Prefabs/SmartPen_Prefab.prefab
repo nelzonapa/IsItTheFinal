@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4615359301539362732}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: TipPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2400035800723717910}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.05850047, y: 1.1685331, z: 0}
+  m_LocalPosition: {x: 0.05850047, y: 1.515, z: 0}
   m_LocalScale: {x: 1.5, y: 0.19999996, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -46,9 +46,9 @@ GameObject:
   - component: {fileID: 5369520780963909860}
   - component: {fileID: 136169651924363002}
   - component: {fileID: 6681731112473728456}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: SmartPen_Prefab
-  m_TagString: ClonableItem
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -192,7 +192,7 @@ MonoBehaviour:
   m_InteractionManager: {fileID: 0}
   m_Colliders: []
   m_InteractionLayers:
-    m_Bits: 1
+    m_Bits: 2
   m_DistanceCalculationMode: 1
   m_SelectMode: 0
   m_FocusMode: 1
@@ -323,7 +323,7 @@ MonoBehaviour:
   lineWidth: 0.03
   drawingLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
 --- !u!1 &4358520661917017648
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,7 +336,7 @@ GameObject:
   - component: {fileID: 194105863056215553}
   - component: {fileID: 7541443661366874845}
   - component: {fileID: 5731177018254577044}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
