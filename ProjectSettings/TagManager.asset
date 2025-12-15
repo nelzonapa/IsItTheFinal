@@ -5,11 +5,12 @@ TagManager:
   serializedVersion: 3
   tags:
   - PlayerHand
+  - ClonableItem
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Writeable
   - Water
   - UI
   - 

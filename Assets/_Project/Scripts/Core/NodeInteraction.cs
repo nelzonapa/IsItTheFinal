@@ -25,7 +25,7 @@ namespace ImmersiveGraph.Core
         // Lógica de Hold (Mantener presionado)
         private bool isHeld = false;
         private float holdTimer = 0f;
-        private float requiredHoldTime = 3.0f; // 3 segundos para abrir nivel
+        private float requiredHoldTime = 5.0f; // 3 segundos para abrir nivel
         private GameObject currentBarInstance;
         private Image currentFillImage;
         private XRGrabInteractable _grabInteractable;

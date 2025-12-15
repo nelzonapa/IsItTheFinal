@@ -9,7 +9,7 @@ namespace ImmersiveGraph.Core
         public GraphManager graphBuilder;
         public Transform xrOrigin;
         public Transform zone2Container;
-        public Transform zone3ObjectZone; // <-- NUEVO: Referencia a Zona 3 para replicar
+        public Transform zone3ObjectZone; 
 
         [Header("Visual Feedback")]
         public GameObject communityHighlightPrefab;

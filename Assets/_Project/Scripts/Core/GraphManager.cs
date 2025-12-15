@@ -22,7 +22,7 @@ namespace ImmersiveGraph.Core
         public GameObject cubePrefab;
         public GameObject capsulePrefab;
         public GameObject linkLabelPrefab;
-        public GameObject loadingBarPrefab; // <-- NUEVO: Arrastrar prefab aquí
+        public GameObject loadingBarPrefab;
         public Material lineMaterial;
 
         [Header("Ajustes")]

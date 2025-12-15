@@ -135,7 +135,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &93119857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -757,6 +757,10 @@ PrefabInstance:
     - target: {fileID: 1861052815609057959, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_Name
       value: SmartDesk
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128538896921313799, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.194
       objectReference: {fileID: 0}
     - target: {fileID: 9013347094446411954, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_LocalPosition.x
