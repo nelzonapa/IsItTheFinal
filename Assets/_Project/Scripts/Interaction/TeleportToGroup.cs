@@ -1,54 +1,49 @@
 using Fusion;
-using Unity.XR.CoreUtils; // Para mover el XROrigin
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactables; // Para el botón
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace ImmersiveGraph.Network
 {
-    // Requiere un componente interactuable (como un botón o cubo simple)
     [RequireComponent(typeof(XRSimpleInteractable))]
-    public class TeleportToGroup : NetworkBehaviour
+    public class TeleportToGroup : MonoBehaviour
     {
         private XROrigin _xrOrigin;
+        private NetworkRunner _runner;
 
         void Start()
         {
-            // Buscar el XR Origin automáticamente
             _xrOrigin = FindFirstObjectByType<XROrigin>();
-
-            // Configurar el evento de selección
             var interactable = GetComponent<XRSimpleInteractable>();
             interactable.selectEntered.AddListener(OnButtonPressed);
         }
 
         public void OnButtonPressed(SelectEnterEventArgs args)
         {
-            if (GroupTableManager.Instance == null || Runner == null) return;
+            if (_runner == null) _runner = FindFirstObjectByType<NetworkRunner>();
 
-            Debug.Log("Teletransportando al espacio grupal...");
+            if (GroupTableManager.Instance == null || _runner == null)
+            {
+                Debug.LogError("Error: Falta Manager o Conexión.");
+                return;
+            }
 
-            // 1. Obtener mi zona asignada (Spawn Point)
-            // Usamos la misma lógica que las bandejas: Mi ID define mi lugar
-            Transform myReceptionZone = GroupTableManager.Instance.GetReceptionZoneForPlayer(Runner.LocalPlayer);
+            Debug.Log("Teletransportando al punto de spawn asignado...");
 
-            // 2. Calcular posición frente a la mesa
-            // La zona de recepción está EN la mesa. Nosotros queremos estar PARADOS frente a ella.
-            // Movemos la posición 1 metro hacia atrás respecto al centro de la mesa (0,0,0)
-            Vector3 tableCenter = Vector3.zero;
-            Vector3 directionFromCenter = (myReceptionZone.position - tableCenter).normalized;
+            // 1. Pedir el punto exacto al Manager
+            Transform targetSpawn = GroupTableManager.Instance.GetSpawnPointForPlayer(_runner.LocalPlayer);
 
-            // Posición final: A 2 metros del centro, en la dirección de mi bandeja
-            Vector3 standPosition = directionFromCenter * 2.0f;
-            standPosition.y = 0.0f; // Al suelo
-
-            // 3. Mover el Rig
             if (_xrOrigin != null)
             {
-                _xrOrigin.transform.position = standPosition;
+                // 2. Moverse a la posición del SpawnPoint
+                // TRUCO: Sumamos 0.05 en Y para asegurar que no quedes enterrado en el suelo
+                _xrOrigin.transform.position = targetSpawn.position + new Vector3(0, 0.05f, 0);
 
-                // 4. Rotar para mirar al centro de la mesa
-                _xrOrigin.transform.LookAt(new Vector3(0, _xrOrigin.Camera.transform.position.y, 0));
+                // 3. Copiar la rotación (para que mires hacia donde mira el SpawnPoint)
+                // Solo rotamos en Y para no inclinar la cámara si el punto está chueco
+                Vector3 targetRotation = targetSpawn.rotation.eulerAngles;
+                _xrOrigin.transform.rotation = Quaternion.Euler(0, targetRotation.y, 0);
             }
         }
     }

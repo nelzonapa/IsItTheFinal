@@ -1,6 +1,5 @@
 using UnityEngine;
 using Fusion;
-using System.Collections.Generic;
 
 namespace ImmersiveGraph.Network
 {
@@ -8,31 +7,36 @@ namespace ImmersiveGraph.Network
     {
         public static GroupTableManager Instance;
 
-        [Header("Zonas de Recepción (Bandejas)")]
-        [Tooltip("Arrastra aquí los 4 objetos ReceptionZone en orden")]
+        [Header("Zonas de Recepción (Bandejas en la mesa)")]
         public Transform[] receptionZones;
+
+        [Header("Puntos de Aparición (Donde se para el jugador)")]
+        [Tooltip("Arrastra aquí SpawnPoint_1, SpawnPoint_2, etc.")]
+        public Transform[] userSpawnPoints;
 
         [Header("Zona Central")]
         public Transform timelineZone;
 
         private void Awake()
         {
-            // Singleton simple para poder llamarlo desde cualquier lado
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
         }
 
-        // Función para saber dónde debe aparecer el objeto de un jugador
         public Transform GetReceptionZoneForPlayer(PlayerRef player)
         {
-            // Lógica simple: Usamos el ID del jugador y el módulo de la cantidad de zonas
-            // Jugador 1 -> Zona 1, Jugador 5 -> Zona 1 (si hay 4 zonas)
-            int zoneIndex = player.PlayerId % receptionZones.Length;
-
-            // Protección por si las zonas no están asignadas
             if (receptionZones.Length == 0) return transform;
+            return receptionZones[player.PlayerId % receptionZones.Length];
+        }
 
-            return receptionZones[zoneIndex];
+        // --- NUEVA FUNCIÓN ---
+        public Transform GetSpawnPointForPlayer(PlayerRef player)
+        {
+            if (userSpawnPoints.Length == 0) return transform;
+
+            // Usamos la misma lógica: ID % Cantidad
+            // Esto asegura que si te toca la Bandeja 1, te toque el SpawnPoint 1
+            return userSpawnPoints[player.PlayerId % userSpawnPoints.Length];
         }
     }
 }

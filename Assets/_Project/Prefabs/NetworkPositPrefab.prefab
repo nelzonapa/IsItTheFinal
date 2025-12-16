@@ -186,13 +186,12 @@ GameObject:
   - component: {fileID: 9015785584740941040}
   - component: {fileID: 4638652398042513506}
   - component: {fileID: 885175722108325476}
-  - component: {fileID: 2316778838062093081}
   - component: {fileID: 2407272305732182126}
   - component: {fileID: 4360060857661413929}
   - component: {fileID: 8130584581019575883}
   m_Layer: 0
   m_Name: NetworkPositPrefab
-  m_TagString: ClonableItem
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -291,19 +290,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2316778838062093081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4536787217673639573}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bebdf02f37a4af4aaec87a194192351, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.NoteSpawner
-  notePrefab: {fileID: 4536787217673639573}
 --- !u!54 &2407272305732182126
 Rigidbody:
   m_ObjectHideFlags: 0
