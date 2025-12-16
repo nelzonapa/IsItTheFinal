@@ -28,7 +28,8 @@ namespace ImmersiveGraph.Network
             {
                 Debug.Log("¡Entré a la sala! Creando mi avatar...");
                 // Spawn del jugador
-                runner.Spawn(playerPrefab, new Vector3(0, 1, 0), Quaternion.identity, player);
+                Vector3 deskPosition = new Vector3(100, 0, 0); // La misma pos donde pusiste el SmartDesk
+                runner.Spawn(playerPrefab, deskPosition, Quaternion.identity, player);
             }
         }
 
