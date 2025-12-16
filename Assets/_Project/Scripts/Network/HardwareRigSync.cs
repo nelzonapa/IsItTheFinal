@@ -1,9 +1,9 @@
-using UnityEngine;
-using Fusion; // Necesario para Photon
+Ôªøusing UnityEngine;
+using Fusion;
+using Unity.XR.CoreUtils; // Necesario para encontrar el XROrigin
 
 namespace ImmersiveGraph.Network
 {
-    // Este script va en el PREFAB del NetworkPlayer
     public class HardwareRigSync : NetworkBehaviour
     {
         [Header("Partes del Avatar (Red)")]
@@ -18,53 +18,67 @@ namespace ImmersiveGraph.Network
 
         public override void Spawned()
         {
-            // Esta funciÛn se ejecuta cuando el objeto nace en la red.
-
-            // Si yo soy el dueÒo de este objeto (IsStateAuthority), debo buscar mi VR Rig local.
-            // Si no soy el dueÒo (es el avatar de otro jugador), no hago nada (solo lo veo moverse).
+            // Solo si soy el due√±o de este avatar, busco mi hardware real
             if (Object.HasStateAuthority)
             {
-                // Buscar el XR Origin en la escena autom·ticamente
-                // Asumimos que usas el nombre est·ndar de Unity XR
-                var rig = FindFirstObjectByType<Unity.XR.CoreUtils.XROrigin>();
+                // 1. Buscar el XR Origin (la base de tu VR)
+                var rig = FindFirstObjectByType<XROrigin>();
                 if (rig == null)
                 {
-                    Debug.LogError("°No encuentro el XR Origin! øEst·s en la escena correcta?");
+                    Debug.LogError("ERROR CR√çTICO: No encuentro el 'XR Origin' en la escena.");
                     return;
                 }
 
+                // 2. La c√°mara siempre es f√°cil de encontrar
                 _localHead = rig.Camera.transform;
 
-                // Buscar manos (Truco: buscamos por nombre o componentes)
-                // Ajusta estos nombres si tus manos se llaman diferente en el XR Origin
-                var hands = rig.GetComponentsInChildren<UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor>();
-                foreach (var hand in hands)
+                // 3. Buscar las manos por NOMBRE dentro de los hijos del XR Origin
+                // Esto busca recursivamente, as√≠ que las encontrar√° aunque est√©n dentro de "Camera Offset"
+                Transform[] allChildren = rig.GetComponentsInChildren<Transform>(true);
+
+                foreach (var child in allChildren)
                 {
-                    if (hand.name.Contains("Left")) _localLeftHand = hand.transform;
-                    if (hand.name.Contains("Right")) _localRightHand = hand.transform;
+                    if (child.name.Contains("Left Controller"))
+                    {
+                        _localLeftHand = child;
+                        Debug.Log(" Mano Izquierda encontrada: " + child.name);
+                    }
+                    else if (child.name.Contains("Right Controller"))
+                    {
+                        _localRightHand = child;
+                        Debug.Log(" Mano Derecha encontrada: " + child.name);
+                    }
                 }
 
-                // Ocultar mi propia cabeza para no ver una esfera azul dentro de mis ojos
-                headTransform.GetComponent<Renderer>().enabled = false;
+                if (_localLeftHand == null) Debug.LogWarning(" No encontr√© un objeto llamado 'Left Controller'");
+                if (_localRightHand == null) Debug.LogWarning(" No encontr√© un objeto llamado 'Right Controller'");
+
+                // 4. Ocultar la cabeza del avatar propio para no verla desde dentro
+                if (headTransform != null)
+                {
+                    Renderer headRend = headTransform.GetComponent<Renderer>();
+                    if (headRend != null) headRend.enabled = false;
+                }
             }
         }
 
-        // FixedUpdateNetwork es como el Update, pero sincronizado
         public override void FixedUpdateNetwork()
         {
-            // Solo si soy el dueÒo, copio la posiciÛn de mi VR real al Avatar de red
-            if (Object.HasStateAuthority && _localHead != null)
+            // Solo sincronizamos si somos el due√±o y encontramos las referencias
+            if (Object.HasStateAuthority)
             {
-                // Sincronizar Cabeza
-                headTransform.position = _localHead.position;
-                headTransform.rotation = _localHead.rotation;
+                if (_localHead != null)
+                {
+                    headTransform.position = _localHead.position;
+                    headTransform.rotation = _localHead.rotation;
+                }
 
-                // Sincronizar Manos
                 if (_localLeftHand != null)
                 {
                     leftHandTransform.position = _localLeftHand.position;
                     leftHandTransform.rotation = _localLeftHand.rotation;
                 }
+
                 if (_localRightHand != null)
                 {
                     rightHandTransform.position = _localRightHand.position;
