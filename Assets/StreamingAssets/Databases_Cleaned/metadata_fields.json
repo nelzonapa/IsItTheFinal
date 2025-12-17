@@ -1,0 +1,84 @@
+{
+    "campos_definiciones": [
+        {
+            "Campo": "Quantity",
+            "Descripcion": "Number of animals"
+        },
+        {
+            "Campo": "Purpose",
+            "Descripcion": "Reason for import"
+        },
+        {
+            "Campo": "Document_Title",
+            "Descripcion": "Sin descripción disponible"
+        },
+        {
+            "Campo": "Special_Conditions",
+            "Descripcion": "If exists, what special circumstances exist"
+        },
+        {
+            "Campo": "Description",
+            "Descripcion": "General description of import shipment"
+        },
+        {
+            "Campo": "Source_Code",
+            "Descripcion": "Code of originating agency"
+        },
+        {
+            "Campo": "Certificate_Number",
+            "Descripcion": "Sin descripción disponible"
+        },
+        {
+            "Campo": "Valid_Until",
+            "Descripcion": "Permit good until date"
+        },
+        {
+            "Campo": "Consignee_Country",
+            "Descripcion": "Country of receiving person/entity"
+        },
+        {
+            "Campo": "Management_Authority",
+            "Descripcion": "Permit authority"
+        },
+        {
+            "Campo": "Common_Name",
+            "Descripcion": "Species common name"
+        },
+        {
+            "Campo": "Permittee_Country",
+            "Descripcion": "Country of permit originator"
+        },
+        {
+            "Campo": "Consignee_Address",
+            "Descripcion": "Address of receiving person/entity"
+        },
+        {
+            "Campo": "Origin",
+            "Descripcion": "Origin of shipment"
+        },
+        {
+            "Campo": "Permittee_Name",
+            "Descripcion": "Name of permit originator"
+        },
+        {
+            "Campo": "Scientific_Name",
+            "Descripcion": "Scientific name of species"
+        },
+        {
+            "Campo": "Permittee_Address",
+            "Descripcion": "Address of permit originator"
+        },
+        {
+            "Campo": "Consignee_Name",
+            "Descripcion": "Name of receiving person/entity"
+        },
+        {
+            "Campo": "Issue_Date",
+            "Descripcion": "Permit issue date"
+        },
+        {
+            "Campo": "Security_Stamp",
+            "Descripcion": "Sin descripción disponible"
+        }
+    ]
+}

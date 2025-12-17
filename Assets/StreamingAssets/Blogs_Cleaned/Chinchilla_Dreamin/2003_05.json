@@ -1,0 +1,30 @@
+{
+    "metadatos_archivo": {
+        "blog": "Chinchilla Dreamin'",
+        "archivo_origen": "Chinchilla Dreamin'.htm",
+        "autor": "chinshopes (aka Cesar Gil)",
+        "periodo": "2003_05"
+    },
+    "entradas": [
+        {
+            "fecha_completa": "Sunday, May 25, 2003",
+            "titulo": "Chinsurrection",
+            "texto": "",
+            "imagenes": [
+                "./images/20030525.jpg"
+            ]
+        },
+        {
+            "fecha_completa": "Sunday, May 25, 2003",
+            "titulo": "Pet fad",
+            "texto": "Chinchilla have become the latest \"fad pet\" especially in Los Angeles. Please, please, people be careful with these innocent, dear things! See the whole article below at Susan Daffron's Pet Tails Fad Pets by Susan Daffron Times and styles change. But wanting to look cool or following the latest fashion is the wrong reason to get any kind of animal. Shelters still occasionally get calls from people who bought a pot bellied pig during the craze of the late 80s and early 90s. Their cute little piglet has now turned into a 100-150 pound pig and is acting like one as well. Most shelters (the Panhandle Animal Shelter included) won't take exotic animals, so at that point many people find their own less humane ways of \"getting rid\" of the problem. These pet fads aren't limited to types of animals, such as iguanas and pot bellied pigs either. Certain breeds of companion animals come into and go out of style as well. After Disney released 101 Dalmatians, shelters were inundated with lots of cute spotted dogs...",
+            "imagenes": []
+        },
+        {
+            "fecha_completa": "Sunday, May 25, 2003",
+            "titulo": "Disclaimer",
+            "texto": "This is created for test and evaluation purposes only.",
+            "imagenes": []
+        }
+    ]
+}

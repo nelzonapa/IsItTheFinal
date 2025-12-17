@@ -1,0 +1,24 @@
+{
+    "metadatos_archivo": {
+        "blog": "Chinchilla Dreamin'",
+        "archivo_origen": "Chinchilla Dreamin'.htm",
+        "autor": "chinshopes (aka Cesar Gil)",
+        "periodo": "2003_12"
+    },
+    "entradas": [
+        {
+            "fecha_completa": "Friday, December 12, 2003",
+            "titulo": "Chinsurrection",
+            "texto": "",
+            "imagenes": [
+                "./images/20031212.jpg"
+            ]
+        },
+        {
+            "fecha_completa": "Tuesday, December 2, 2003",
+            "titulo": "Wear something other than a healthy animal",
+            "texto": "Anti-Fur Season Begins Annual fall anti fur actions began in Toronto today with a small Boycott the Bay Demo at Queen and Yonge. The public was receptive to the action, though a few hostile people appeared. Basic Facts On the Fur Industry - About 1.1 million animals--raccoons, coyotes, bobcats, lynxes, foxes, beavers, otters, and others-are killed each year for their fur by trappers in Canada. Another 1.1 million animals are raised and killed in extremely cruel conditions on fur \"farms.\" - Trapping weakens wildlife populations by killing healthy animals. - Canada's native people, as well as its wild animals, are victims of the fur industry. - Every year, thousands of dogs, cats, raptors, and other so-called \"trash\" animals (including endangered species like the bald eagle) are crippled or killed by traps.",
+            "imagenes": []
+        }
+    ]
+}

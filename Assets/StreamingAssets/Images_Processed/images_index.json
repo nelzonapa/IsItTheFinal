@@ -1,0 +1,116 @@
+{
+    "fuente": "VAST 2007 - Images Folder",
+    "total_imagenes": 10,
+    "galeria": [
+        {
+            "id_imagen": "hunt8.jpg",
+            "ruta_relativa": "./originals/hunt8.jpg",
+            "metadatos_tecnicos": {
+                "ancho": 1088,
+                "alto": 800,
+                "formato": "JPEG",
+                "modo_color": "RGB"
+            },
+            "descripcion_ia": null
+        },
+        {
+            "id_imagen": "hunt3.JPG",
+            "ruta_relativa": "./originals/hunt3.JPG",
+            "metadatos_tecnicos": {
+                "ancho": 2048,
+                "alto": 1348,
+                "formato": "JPEG",
+                "modo_color": "RGB"
+            },
+            "descripcion_ia": null
+        },
+        {
+            "id_imagen": "hunt7.JPG",
+            "ruta_relativa": "./originals/hunt7.JPG",
+            "metadatos_tecnicos": {
+                "ancho": 2048,
+                "alto": 1351,
+                "formato": "JPEG",
+                "modo_color": "RGB"
+            },
+            "descripcion_ia": null
+        },
+        {
+            "id_imagen": "hunt4.JPG",
+            "ruta_relativa": "./originals/hunt4.JPG",
+            "metadatos_tecnicos": {
+                "ancho": 2048,
+                "alto": 1536,
+                "formato": "JPEG",
+                "modo_color": "RGB"
+            },
+            "descripcion_ia": null
+        },
+        {
+            "id_imagen": "hunt1.JPG",
+            "ruta_relativa": "./originals/hunt1.JPG",
+            "metadatos_tecnicos": {
+                "ancho": 2057,
+                "alto": 1347,
+                "formato": "JPEG",
+                "modo_color": "RGB"
+            },
+            "descripcion_ia": null
+        },
+        {
+            "id_imagen": "hunt2.JPG",
+            "ruta_relativa": "./originals/hunt2.JPG",
+            "metadatos_tecnicos": {
+                "ancho": 2048,
+                "alto": 1346,
+                "formato": "JPEG",
+                "modo_color": "RGB"
+            },
+            "descripcion_ia": null
+        },
+        {
+            "id_imagen": "hunt0.JPG",
+            "ruta_relativa": "./originals/hunt0.JPG",
+            "metadatos_tecnicos": {
+                "ancho": 1059,
+                "alto": 768,
+                "formato": "JPEG",
+                "modo_color": "RGB"
+            },
+            "descripcion_ia": null
+        },
+        {
+            "id_imagen": "hunt5.JPG",
+            "ruta_relativa": "./originals/hunt5.JPG",
+            "metadatos_tecnicos": {
+                "ancho": 2048,
+                "alto": 1343,
+                "formato": "JPEG",
+                "modo_color": "RGB"
+            },
+            "descripcion_ia": null
+        },
+        {
+            "id_imagen": "Meeting.jpg",
+            "ruta_relativa": "./originals/Meeting.jpg",
+            "metadatos_tecnicos": {
+                "ancho": 1600,
+                "alto": 1200,
+                "formato": "JPEG",
+                "modo_color": "RGB"
+            },
+            "descripcion_ia": null
+        },
+        {
+            "id_imagen": "hunt6.JPG",
+            "ruta_relativa": "./originals/hunt6.JPG",
+            "metadatos_tecnicos": {
+                "ancho": 1585,
+                "alto": 1353,
+                "formato": "JPEG",
+                "modo_color": "RGB"
+            },
+            "descripcion_ia": null
+        }
+    ]
+}

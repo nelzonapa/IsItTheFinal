@@ -1,0 +1,30 @@
+{
+    "metadatos_archivo": {
+        "blog": "Chinchilla Dreamin'",
+        "archivo_origen": "Chinchilla Dreamin'.htm",
+        "autor": "chinshopes (aka Cesar Gil)",
+        "periodo": "2004_07"
+    },
+    "entradas": [
+        {
+            "fecha_completa": "Wednesday, July 7, 2004",
+            "titulo": "Last Post",
+            "texto": "... A place with no cages, where all the chinchillas frolic happily on a superior replica of the Andes mountains. It's always pleasantly cool with a soft breeze that circulates the scent of delectables served at the Roadstop Raisin Lounges that dot the landscape: clear, cold water, a variety of fragrant hays, dried fruit, herbs and unsweetened Wheat 'N Bran mini Shredded Wheat biscuits , every tantalizing treat imaginable. And eat all you want, in Heaven you won't get the runs! Naturally, all the clouds are sprinkled with Blue Sparkle Dust for unlimited celestial dustbathing. From the ChinCare website of course...",
+            "imagenes": []
+        },
+        {
+            "fecha_completa": "Wednesday, July 7, 2004",
+            "titulo": "Chinsurrection, accomplished",
+            "texto": "",
+            "imagenes": [
+                "./images/20040707.jpg"
+            ]
+        },
+        {
+            "fecha_completa": "Sunday, July 4, 2004",
+            "titulo": "For Those of You That Care",
+            "texto": "This web site might help -- Chincare discussing memorials for your pets.",
+            "imagenes": []
+        }
+    ]
+}

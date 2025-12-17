@@ -1,0 +1,24 @@
+{
+    "metadatos_archivo": {
+        "blog": "Chinchilla Dreamin'",
+        "archivo_origen": "Chinchilla Dreamin'.htm",
+        "autor": "chinshopes (aka Cesar Gil)",
+        "periodo": "2003_11"
+    },
+    "entradas": [
+        {
+            "fecha_completa": "Saturday, November 8, 2003",
+            "titulo": "Chinsurrection",
+            "texto": "",
+            "imagenes": [
+                "./images/20031117.jpg"
+            ]
+        },
+        {
+            "fecha_completa": "Friday, November 7, 2003",
+            "titulo": "The Great Deception",
+            "texto": "Chins were almost killed off by fur trappers in South America. Fortunately, they were brought back from the edge of extinction by laws in those countries that have tried to protect them. The Great Hoax, however, persists that MF Chapman single handedly saved the chinchilla by importing some into the US. Chapman was a tool of the FUR INDUSTRY! See Chincare for the real scoop. It's just incredible how badly people treat these poor animals. Everyone from rich little kids who have no clue how to care for their new living little fad pet, to the fur industry who put dead animal skins on the backs of rich movie stars and socialites, to all the pet shops who leave poor things to die in their back rooms, and now, the trappers are back in South America. Don't ask how I know, I just do.",
+            "imagenes": []
+        }
+    ]
+}

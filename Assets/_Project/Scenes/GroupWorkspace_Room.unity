@@ -1255,9 +1255,11 @@ MonoBehaviour:
   - {fileID: 846257593}
   - {fileID: 440981748}
   userSpawnPoints:
+  - {fileID: 1649562203}
+  - {fileID: 1464016905}
+  individualDeskSpawns:
   - {fileID: 355704860}
   - {fileID: 1453628343}
-  individualDeskSpawns: []
   timelineZone: {fileID: 2101692433}
 --- !u!1 &1636501764
 GameObject:

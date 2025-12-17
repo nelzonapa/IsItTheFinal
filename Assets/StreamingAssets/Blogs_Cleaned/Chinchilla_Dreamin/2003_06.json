@@ -1,0 +1,24 @@
+{
+    "metadatos_archivo": {
+        "blog": "Chinchilla Dreamin'",
+        "archivo_origen": "Chinchilla Dreamin'.htm",
+        "autor": "chinshopes (aka Cesar Gil)",
+        "periodo": "2003_06"
+    },
+    "entradas": [
+        {
+            "fecha_completa": "Thursday, June 5, 2003",
+            "titulo": "Chinsurrection",
+            "texto": "",
+            "imagenes": [
+                "./images/20030605.jpg"
+            ]
+        },
+        {
+            "fecha_completa": "Thursday, June 5, 2003",
+            "titulo": "What's a Chin?  Plu-eeeeeze people!",
+            "texto": "This is from Lyn Duedall's most excellent chin website at \"With so many chinchillas living in pet stores, zoos and people's homes, it seems somewhat ironic that people still ask what is it? One may describe this animal as looking similar to a chubby squirrel with big ears or having a rabbit's body with large mouse-like ears and a squirrel's tail. However, the fact remains that they are a rodent! (see photos) Chinchilla means \"little chinta\" a name given by the Indian tribes in their area. The chinchilla is from South America, more specifically in the countries of Argentina, Bolivia, Peru, and Chile in the high altitudes of the Andes Mountains. Their scientific name is Chinchilla lanigera, which means long-tailed chinchilla. Their class is Mammalia (Mammals), their order Rodentia (Rodents), and their family is called the Chinchillidae (Chinchillas and Visachas). \"",
+            "imagenes": []
+        }
+    ]
+}

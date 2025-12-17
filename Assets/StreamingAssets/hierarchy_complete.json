@@ -1,0 +1,968 @@
+{
+    "id": "ROOT",
+    "type": "root",
+    "title": "Operación VAST 2007",
+    "summary": "La investigación revela un amplio rango de permisos y trámites de importación de animales y especies silvestres en África y Europa. La actividad se extiende desde la clonación de animales hasta la comercialización de productos derivados de ellos, con un alto nivel de actividad en permisos de importación y safari.",
+    "details": {
+        "focos": [
+            "Actividad comercial de animales",
+            "Trámites de importación",
+            "Permisos de safari"
+        ],
+        "conclusion": "La situación presenta un alto nivel de actividad en permisos de importación y safari, junto con la comercialización de productos derivados de animales, lo que representa un riesgo significativo para la conservación y ética animal."
+    },
+    "children": [
+        {
+            "id": "COMUNIDAD_0",
+            "type": "community",
+            "title": "Animales y su Comunidad en Contexto Global",
+            "summary": "Este grupo de archivos aborda diversos temas relacionados con animales, desde la clonación de animales hasta la comercialización de productos derivados de ellos. También incluye aspectos legales y sociales, como la clausura de parques para animales y la implementación de leyes anti-crimen. La actividad general muestra un interés creciente en la conservación y la ética animal, aunque también se evidencia una tendencia hacia la explotación comercial de estos seres.",
+            "details": {
+                "entidades": [
+                    "Chinchillas",
+                    "Orangutanes",
+                    "Gatos",
+                    "Ratas",
+                    "Activistas animalistas",
+                    "Clonación",
+                    "Comercio de animales",
+                    "Parques para animales",
+                    "Leyes anti-crimen"
+                ],
+                "fechas": "2003-2023",
+                "amenaza": "Medio"
+            },
+            "children": [
+                {
+                    "id": "blog_2004_07.json_0",
+                    "type": "file",
+                    "title": "Chinchilla Parque",
+                    "summary": "Un parque virtual sin jaulas donde chinchillas disfrutan de variedad de alimentos y bebidas. No menciona riesgos criminales.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Last Post. ... A place with no cages, where all the chinchillas frolic happily on a superior replica of the Andes mountains. It's always pleasantly cool with a soft breeze that circulates the scent of delectables served at the Roadstop Raisin Lounges that dot the landscape: clear, cold water, a variety of fragrant hays, dried fruit, herbs and unsweetened Wheat 'N Bran mini Shredded Wheat biscuits , every tantalizing treat imaginable. And eat all you want, in Heaven you won't get the runs! Naturally, all the clouds are sprinkled with Blue Sparkle Dust for unlimited celestial dustbathing. From the ChinCare website of course...",
+                        "images": [],
+                        "source": "Blogs",
+                        "date": "Desconocida"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "news_Week-of-Mon-20040301-4.txt_23.xml",
+                    "type": "file",
+                    "title": "Takoma Park Co-op Vende Carnes",
+                    "summary": "El co-op de alimentos de Takoma Park comenzó a vender carne después de años de ser vegetariano. La decisión generó reacciones mixtas en la comunidad vegetariana.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "After members of Takoma Park's food co-op voted nearly 3 to 1 last March to keep the word \"vegetarian\" out of the organization's mission statement, the member-owned grocery store took a dramatic step in February to better compete with other retailers. Starting last month, meat products started appearing on the shelves and in the refrigerated and frozen food cases of the Takoma Park Silver Spring Co-op's store in Takoma Junction. It wasn't an easy decision for the store's management, especially since the store was completely vegetarian -- albeit unofficially -- for the previous 22 years. \"It was a tremendously difficult decision,\" said Bob Atwood, the co-op's general manager, but a decision reached after consulting with members and explaining the economics of the situation. Convenience aside, the move to meat has received mixed reactions from members of the area's vegetarian community. Former co-op member Paul Shapiro of Takoma Park said he has heard complaints from members of Compassion Over Killing, the animal rights and vegetarian advocacy group he founded. Shapiro said he is concerned the co-op never formally polled its members on the specific question of selling meat at the Takoma Park store, although Atwood said the membership vote last year was, in essence, a referendum on selling meat. Shapiro, who withdrew his co-op membership over the question of selling animal products, also questioned some of the meat products sold in the store, saying that he called several of the companies whose products were labeled free-range, and that some of the companies didn't actually offer free-range products. There are some people for whom 'factory farming' [where animals are confined versus roaming freely] is the issue, while others say it's unethical to unnecessarily kill animals. We now have what was an all-vegetarian co-op selling some, but not all, 'factory farm' products.\"",
+                        "images": [],
+                        "source": "News",
+                        "date": "2023-02-01"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "news_Week-of-Mon-20040308.txt_67.xml",
+                    "type": "file",
+                    "title": "Indiana No-Call Law",
+                    "summary": "Indiana ha implementado una lista negra de llamadas no deseadas que afecta a casi 60% de las líneas telefónicas residenciales. Las empresas de fondos de campaña aún pueden llamar a estas líneas, aunque se les exige registrar sus campañas.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "Professional fund-raisers apparently still love Indiana, despite a tough state do-not-call list that now includes nearly 60 percent of Indiana's residential phone lines.\n\nIndiana's no-call law covers business solicitations and calls from charities that use professional telemarketers, but exempts charities that use their own volunteers and/or employees.\n\nOne of the toughest do-not-call laws in the United States, the list administered by the Indiana attorney general went into effect Jan. 1, 2002.\n\nSince then, the attorney general's office has logged more than 6,000 complaints about violations of the law from consumers. It has reached voluntary compliance agreements with 139 companies accused of violating the rule. Of those, 124 also paid fines that, so far, total $351,000.\n\nProfessional fund-raisers also are required to register their Indiana telemarketing campaigns with the state. Two years ago, when Attorney General Steve Carter first published the list on his Web site, www.in.gov/attorneygeneral/consumer/charityfundraisers.htm, it contained 350 active campaigns.\n\nThe newest list, effective Jan. 1, contains 331 active campaigns — very nearly the same number. (See chart, Pages 8-9B)\n\n\"Right now, it just narrows down who they can call,\" said Summer Burgin, a spokeswoman for Carter's office.\n\nProfessional telemarketers still have a million Hoosier residential lines they legitimately can call, as well as business phone numbers, which are not part of the no-call program.\n\nAnd those calls can be quite lucrative for the telemarketing firms. Fifty of the current Indiana campaigns guarantee just 1 percent to the charity, with the professional fund-raiser claiming the remainder.\n\nThat's actually better than the 2002 list, on which 100 campaigns promised just 1 percent to the charity.\n\nAlthough state law says the donations split should represent a good faith estimate of the final breakdown, \"some choose to go to the end of the spectrum,\" Burgin said. That's because some professional fund-raisers who register campaigns with the state don't want to be held to a higher number should costs exceed their expectations.\n\nOne current campaign, conducted by professional telemarketer Telefund Inc. on behalf of People for the Ethical Treatment of Animals, an animal rights organization, lists a negative 8 percent share to the nonprofit.\n\nIn other words, Telefund keeps 100 percent of what it raises and PETA pays them an additional 8 percent on top of that.",
+                        "images": [],
+                        "source": "News",
+                        "date": "Desconocida"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "news_Week-of-Mon-20030929.txt_34.xml",
+                    "type": "file",
+                    "title": "Clonación de Ratas Exitosa",
+                    "summary": "Investigadores lograron clonar ratas por primera vez usando técnicas avanzadas. El método bloquea temporalmente el cambio celular en óvulos y mejora la sobrevivencia de embriones.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Animal models for human disease play an important role in understanding the causes and mechanisms of genetic disorders and are invaluable in developing new treatments and therapeutics. These animals are produced by several techniques, including transgene insertion and targeted gene knockout in embryos to generate new lines, but the subsequent crossbreeding and necessary genotyping make these time-consuming strategies. The generation of embryonic stem cell lines from genetically engineered embryos combined with somatic cell nuclear transfer (SCNT) is routinely used to produce animal clones with a known genotype from which further stocks can be bred and has been used with success in the production of sheep and mice. However, the production of cloned rats has been unsuccessful due to technical difficulties associated with spontaneous oocyte activation that occurs within an hour of egg collection.\n\nIn the September 25 Science, Qi Zhou and colleagues in a collaboration among Institut National de la Recherche Agronomique, the Chinese Academy of Sciences, and the biotech company genOway report the first successful production of cloned rats using a technique that reversibly blocks meiotic metaphase-anaphase transition in the oocyte and allows the successful uptake of transferred somatic cell nuclei (Science, DOI:10.1126/science.1088313, September 25, 2003). It is a real scientific collaboration between an academic group headed by J. P. Renard and a biotech company team, both providing expertise and technologies. The team reported earlier attempts to develop a rapid, single-step, nuclear transfer technique, but found that within 30 minutes of collection, 70% of oocytes showed evidence of maturation. And while 201 out of 221 apparently successfully cloned embryos divided into two-cell embryos, no fetal development was observed in any of them.",
+                        "images": [],
+                        "source": "News",
+                        "date": "2003-09-25"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "news_Week-of-Mon-20031124-3.txt_6.xml",
+                    "type": "file",
+                    "title": "Chimpancés y Evolución Humana",
+                    "summary": "Los chimpancés pueden ayudar a entender cómo evolucionó el comportamiento social humano. Suelen defender territorios y viven en comunidades basadas en la lealtad masculina. Esto es similar a las sociedades hunter-gatherer.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Fossil bones record the history of the human form, but they say little about behavior. A richer source of the way human social behavior evolved may be chimpanzees, with whom people shared a common ancestor as recently as 5 or 6 million years ago. From knowledge of chimp behavior, biologists can plausibly infer the social behavior of the shared human-chimp ancestor, and from that they can reconstruct the evolutionary history of human social behavior.\n\nSuch reconstructions are subject to much uncertainty and debate, especially when they imply a genetic basis of human behaviors like living in communities based on male kinship or conducting lethal campaigns against neighbors. But the goal is to shed light on the full sweep of human social behavior, tracing its evolution from an apelike community with separate male and female hierarchies 5 million years ago to the family-based societies of today.\n\nA principal assumption is that chimps, unlike people, have changed little and so their social behavior is a good guide to that of the common ancestor. One support for this idea is that the earliest fossils on the human side after the split are very chimplike. Another is that the chimps of western and eastern Africa are hard to tell apart, despite 1. 5 million years of separate evolution.\n\nAfter 40 years of arduous study, biologists have put together a coherent, though not yet complete, picture of chimpanzee societies. From observations at several sites in Africa, there is an \"emerging consensus regarding chimpanzee social structure, territory characteristics and intergroup interactions,\" two primatologists, Michael Wilson of the University of Minnesota and Richard Wrangham of Harvard, write in The Annual Review of Anthropology.\n\nChimps are not easy to observe. It can take five years for them to get used to watchers. They must be followed, through hilly country, for 15 hours at a stretch. They can be dangerous. Humphrey, a male chimp at the Gombe National Park in Tanzania, nearly killed Wrangham by hurling a large rock at his head. \"He was just showing off,\" Wrangham says indulgently. A female chimpanzee at Mahale, also in Tanzania, attacked and severely wounded two researchers she considered to be allies of males that had killed her infant.\n\nA major surprise has been that chimps turn out to live in territories whose borders are aggressively defended by roving parties of males. Jane Goodall, who pioneered long-term studies of chimps at Gombe, at first believed she was watching a single peaceful community. But as researchers started to follow animals throughout the day and watch their interaction with others, they found that groups of male chimps went out on border patrols, ready to attack and kill the males of neighboring communities.\n\nThe males in each community are related to one another because they spend their lives where they were born, whereas the females usually migrate to neighboring communities soon after reaching puberty, a practice that avoids inbreeding. This patrilocal system, of a community based on male kin bonding, is unusual, but familiar to anthropologists because it is practiced by most hunter-gatherer societies.\n\nThe males' operational strategy seems to be to defend a territory as large as possible so as to improve the community's food supply, which is principally fruit, and thereby their reproductive success. Anne Pusey of the University of Minnesota has found that the larger the territory, the more likely the community will survive.",
+                        "images": [],
+                        "source": "News",
+                        "date": "2023-10-01"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "news_Week-of-Mon-20040119-6.txt_12.xml",
+                    "type": "file",
+                    "title": "Orangutan Orphan's Arrival",
+                    "summary": "A nine-month-old orangutan orphan arrives at a Malaysian rehabilitation center. Orangutans face extinction threats globally, while great apes like gorillas and chimps are endangered. Conservation efforts aim to save these species to protect Southeast Asia's rainforests.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "In great ape terms, nine-month-old orangutan orphan CT could consider herself lucky. The furry orange ball's arrival at Malaysia's main orangutan center last month, after a plantation owner tipped off staff about her fate, makes her future prospects quite bright. Her kin and other great ape species are not so fortunate. Sepilok has a strong record of rehabilitating its charges to the wild. It sits in Sabah state, the part of orangutan territory probably least likely to be destroyed. But orangutans elsewhere in Borneo and in Sumatra face a grave risk of extinction while their close African cousins gorillas, chimpanzees and bonobos are in danger everywhere. Orangutans' main problems are forest fires, illegal logging, and poaching of their babies to supply an illicit pet trade. Habitat loss threatens the other great apes across central and western Africa, which also face being killed for their meat. Adopted as \"flagship species\" by conservationists, along with animals such as rhinos and giant pandas, great apes have assumed the role of high-level envoys in extinction diplomacy. For orangutans, that means symbolising efforts to protect Southeast Asia's rainforests and other habitats, according to Geoffrey Davison, WWF Malaysia's Borneo Program Director. If orangutans are conserved, then other wildlife will be saved alongside them. Such issues feature high on the agenda for a meeting from February 9 to 20 in Kuala Lumpur where government officials from around the world will discuss how to slow global species loss. Beefing up protected areas is one of the priorities of the United Nations Convention on Biological Diversity, the broad aim of which is to achieve a significant drop in the rate of species extinctions by 2010.",
+                        "images": [],
+                        "source": "News",
+                        "date": "2023-02-09"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "news_Week-of-Mon-20040419-2.txt_69.xml",
+                    "type": "file",
+                    "title": "Clonación de Gatos",
+                    "summary": "Genetic Savings and Clone cobra $50, 000 por clonar gatos. A pesar de miles de gatos muertos en la calle, algunos compran la idea de reemplazarlos.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "Many discriminating cat lovers know exactly which cat they want, are willing to pay for it and won’t settle for anything less,” reads the website for Genetic Savings and Clone, now charging pet owners $50, 000 to clone their cat.\n\nWhat the Savings and Clone calls “discriminating cat fanciers,” most Americans would call suckers or fools. (Another word a friend used was “creepy.”) Thousands of cats are killed every day in animal shelters for lack of a home. Yet some people with more money than sense are ready to spend more than the median U.S. household income in a vain attempt to sort of recreate their cat.",
+                        "images": [],
+                        "source": "News",
+                        "date": "Desconocida"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "news_Week-of-Mon-20040517-3.txt_13.xml",
+                    "type": "file",
+                    "title": "Activistas Animalistas en Escuela",
+                    "summary": "Activistas animalistas intentaron enseñar a niños sobre la crueldad de comer pollo, pero su visita fue interrumpida por el final temprano del año escolar.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Three animal-rights activists, including one dressed in a chicken suit, stopped by Capitol Middle School on Thursday to provide the students with a lesson: Don't eat chickens.\n\nBut they mistimed their visit. School let out about noon, two hours earlier than normal. It was also the last day of school for the 2003-2004 school year.\n\nSo the activists from the People for the Ethical Treatment of Animals, or PETA, had to try to persuade a handful of neighborhood children who rode or walked by.\n\nMatt Rice, one of the activists, said the trio had already been to 20 states, handing out literature to students as they left school. They were raising awareness of the \"short, miserable lives of American chickens,\" and the health dangers for the children who eat them.",
+                        "images": [],
+                        "source": "News",
+                        "date": "Desconocida"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "support_Trade.doc.json",
+                    "type": "file",
+                    "title": "Chinchillas y su comercio",
+                    "summary": "Chinchillas se extinguieron en partes de Sudamérica. El comercio de piel ha caído, pero el mercado japonés sigue siendo importante. La caza aún está permitida en Chile.",
+                    "risk_level": "Alto",
+                    "data": {
+                        "full_text": "Trade\nChinchillas\n     Chinchillas, native to the high Andes, have silky, gray fur, which became very popular in the \nfur trade in the late 19th century.  These rodents were once abundant, and early explorers \nreported seeing hundreds in a single day (Nowak 1991).  Somewhat larger than guinea pigs, \nchinchilla females are heavier than males, weighing up to 800 grams (28 ounces), while males \nweigh about 500 grams (17.5 ounces) (Nowak 1999).  They are long-lived, with records of \nindividuals surviving to be 20 years old and reproducing until the age of 15 (Nowak 1999).  Pelt \nhunting intensified, with exports rising to an estimated 2 million pelts between 1895 and 1900 \n(IUCN 1994).  In 1905 alone, 217,836 pelts were imported into the United States from South \nAmerica (Poland 1892).  These shy animals were relentlessly pursued when they became rare, \nand their skins rose to $200 per pelt; fur buyers gave instructions to agents to obtain pelts \"at any \nprice\" (Allen 1942).  Early in the 20th century, populations of both species--the Long-tailed \n(Chinchilla laniger) and the Short-tailed (Chinchilla brevicaudata) Chinchilla, collapsed.  In 1910, \nan agreement was signed by Andean countries where the two chinchilla species occur, to prohibit\ncapture, trade and export (IUCN 1994).  Once found throughout the Andes in Peru, Chile, Bolivia \nand Argentina, chinchillas remain highly endangered.  A wild chinchilla coat sold for $49,000 in \nJapan in 1981, and others have sold for as much as $100,000 (Nowak 1999).  \n  \n     Wild populations of both species are now listed on CITES Appendix I, banning commercial \ntrade.  The Long-tailed Chinchilla is restricted to the Cordillera de la Costa and the Andean \nslopes of Chile; it has an estimated population of 5,500 in Las Chinchillas National Reserve and \nmay occur outside the reserve (IUCN 1994).  The Short-tailed Chinchilla once had the wider \ndistribution of the two, extending from the mountains of Bolivia and Peru through Chile to \nnorthwestern Argentina, but information indicates that it is extinct in Peru and Argentina and is \nclose to extinction in Chile and Bolivia (Thornback and Jenkins 1982; IUCN 1994).  In fact, there \nare no recent records of the species in Lauca National Park in northern Chile, where it had \npreviously been thought to occur, and Short-tailed Chinchillas have never been recorded in the \nadjoining Sajama National Park in Bolivia (Thornback and Jenkins 1982).  Attempts have been \nmade to introduce chinchillas into the wild, but without success to date (Nowak 1999). \n  \n     As early as 1900, chinchillas were taken into captivity to breed for the fur trade.  The \nInternational Fur Trade Federation estimates that 200,000 chinchilla pelts are produced annually, \nwith the United States breeding the largest number; pelts sell for up to $98 (IUCN 1994).  Japan \nis the major market for this fur, followed by South Korea and China (IUCN 1994).  The \ndomesticated animals have been bred into different sizes and colors; they are larger than the wild\nspecies, with pelt colors ranging from gray and brown to various pastel shades (IUCN 1994).  In \n1994, films of genital electrocution taken on chinchilla farms resulted in a Sonoma Valley, \nCalifornia, farm being charged with cruelty to animals.  Prosecutors documented that, according \nto veterinarians, the animals suffer during this process, in which the chinchilla is held upside \ndown by the tail and electrodes are placed in the ear and in the anal canal or penis; a switch is \nthen pulled to electrocute.  According to guidelines established by the American Veterinary \nMedical Association, such euthanasia should be carried out only on unconscious animals. \n  \n     Since ranched pelts are considered superior to wild ones, fur dealers have stated that no \ndemand exists for wild chinchilla fur, and the government of Chile successfully proposed in 1994 \nthat domesticated chinchillas and their fur not be covered by CITES Appendices.  The \n \n IUCN \n \n \nMammal Red Data Book\n \n  stated, however, that \"hunting of chinchillas still continues,\" and the \n \n \nhighly endangered Short-tailed Chinchilla, whose fur is more valuable than that of the other \nspecies, was avidly pursued (Thornback and Jenkins 1982). This species has not been bred in \ncaptivity, and domestic animals represent hybrids between the two species.  The 2000 IUCN Red\nList of Threatened Species lists the Long-tailed Chinchilla as Vulnerable, and the Short-tailed \nChinchilla as Critically Endangered.\n",
+                        "images": [],
+                        "source": "Support",
+                        "date": "Desconocida"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_1",
+            "type": "community",
+            "title": "Trámites de Importación y Permiso de Migración en Malawi",
+            "summary": "Este grupo de documentos aborda trámites relacionados con la importación y permisos de migración en Malawi, incluyendo importaciones de animales y permisos de caza. Los documentos muestran un interés en la gestión de importaciones y permisos de migración, con un foco en el Ministerio de Información y Turismo de Malawi y las autoridades de permiso de caza y importación.",
+            "details": {
+                "entidades": [
+                    "Ministerio de Información y Turismo de Malawi",
+                    "Permisos de Caza",
+                    "Permisos de Migración",
+                    "Zoologías"
+                ],
+                "fechas": "2003-2004",
+                "amenaza": "Medio"
+            },
+            "children": [
+                {
+                    "id": "db_permits_clean.json_1996",
+                    "type": "file",
+                    "title": "Importación de Pájaros",
+                    "summary": "Permito de importación de un pájaro de la especie Black-necked grebe desde Sudáfrica a Malawi. El zoo de Cape Town es el permisionario y Gramlich Zoo es el consignatario.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "Quantity: 3. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 67MW7987278. Valid_Until: 2005-08-29. Consignee_Country: Malawi. Management_Authority: Ministry of Information and Tourism. Common_Name: Black-necked grebe. Permittee_Country: South Africa. Consignee_Address: Blantyre. Origin: South Africa. Permittee_Name: Gramlich Zoo. Scientific_Name: Podiceps nigricollis. Permittee_Address: Cape Town. Consignee_Name: Taonga Kerneels. Issue_Date: 2003-11-24. Security_Stamp: MW 51 970",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-11-24"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1367",
+                    "type": "file",
+                    "title": "Importación de Permisos de Caza",
+                    "summary": "El documento proporciona detalles sobre un permiso de caza de una serpiente en Malawi, incluyendo detalles de origen y destino.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 5. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 67MW9730180. Valid_Until: 2004-09-19. Consignee_Country: Malawi. Management_Authority: Ministry of Information and Tourism. Common_Name: Brown house snake. Permittee_Country: Jordan. Consignee_Address: Liongwe. Permittee_Name: Outdoors Shiratori Reserve. Scientific_Name: Lamprophis fuliginosus. Permittee_Address: Amman. Consignee_Name: Dikeledi Dede. Issue_Date: 2003-08-14. Security_Stamp: MW 11 444",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-08-14"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_216",
+                    "type": "file",
+                    "title": "Importación de Permisos de Migración",
+                    "summary": "El documento proporciona detalles sobre un permiso de importación de un perro mangle en Malawi a Sudáfrica. La autorización fue emitida por el Ministerio de Información y Turismo de Malawi.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 3. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 40MW8816894. Valid_Until: 2004-09-21. Consignee_Country: Malawi. Management_Authority: Ministry of Information and Tourism. Common_Name: Slender mongoose. Permittee_Country: South Africa. Consignee_Address: Liongwe. Permittee_Name: Outback Multari Safari. Scientific_Name: Herpestes sanguineus. Permittee_Address: Johannesburg. Consignee_Name: Mudiwa Adaeze. Issue_Date: 2003-02-02. Security_Stamp: MW 27 835",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-02-02"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_2",
+            "type": "community",
+            "title": "Flamenco Importación Permitida entre Mozambique y Zambía",
+            "summary": "Este grupo documenta la importación permitida de un flamenco desde Zambía a Moçambique, autorizada por el Directorio Nacional de Florestas y Fauna. La actividad se llevó a cabo en 2003, indicando un nivel de amenaza global bajo basándose en la única transacción documentada.",
+            "details": {
+                "entidades": [
+                    "Zambía",
+                    "Moçambique",
+                    "Directorio Nacional de Florestas y Fauna"
+                ],
+                "fechas": "2003",
+                "amenaza": "Bajo"
+            },
+            "children": [
+                {
+                    "id": "db_permits_clean.json_1974",
+                    "type": "file",
+                    "title": "Flamingo Importación Permitida",
+                    "summary": "Permitido la importación de un flamenco desde Zambía a Moçambique. Autorizado por el Directorio Nacional de Florestas y Fauna.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 5. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 39MZ0882105. Valid_Until: 2004-12-01. Consignee_Country: Mozambique. Management_Authority: National Directorate of Forestry and Wildlife. Common_Name: Greater flamingo. Permittee_Country: Namibia. Consignee_Address: Pemba. Origin: Zambia. Permittee_Name: Outdoors DeLano Zoo. Scientific_Name: Phoenicopterus ruber. Permittee_Address: Walvis Bay. Consignee_Name: Butannaziba Abioye. Issue_Date: 2003-11-22. Security_Stamp: MZ 30 791",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-11-22"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_4",
+            "type": "community",
+            "title": "Permisos de Importación de Animales de Uganda",
+            "summary": "Este grupo de documentos contiene permisos de importación de animales procedentes de Zambía a Uganda por parte de diferentes organizaciones y personas. Las autoridades de la Uganda Wildlife Authority son las principales responsables de estos permisos, que van desde monitores savanna hasta conejos orejeros. Los documentos abarcan un período de tiempo de 2003 a 2004, con fechas específicas que indican la vigencia de cada permiso.",
+            "details": {
+                "entidades": [
+                    "Uganda Wildlife Authority",
+                    "Githinji Enu",
+                    "Nsia Masozi",
+                    "Wildlife Broadwell Zoo",
+                    "Tripakis Huntman",
+                    "Eniola Osumare"
+                ],
+                "fechas": "2003-2004",
+                "amenaza": "Medio"
+            },
+            "children": [
+                {
+                    "id": "db_permits_clean.json_614",
+                    "type": "file",
+                    "title": "Permito de Importación de Monitor Savanna",
+                    "summary": "El documento permite la importación de un monitor savanna desde Zambía a Namibia por parte de Wildlife Broadwell Zoo. La autoridad responsable es la Uganda Wildlife Authority.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 3. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 61UG9961859. Valid_Until: 2004-06-10. Consignee_Country: Uganda. Management_Authority: Uganda Wildlife Authority. Common_Name: Savannah monitor. Permittee_Country: Namibia. Consignee_Address: Jinja. Origin: Zambia. Permittee_Name: Chima Chinwendu. Scientific_Name: Varanus exanthematicus. Permittee_Address: Outjo. Consignee_Name: Wildlife Broadwell Zoo. Issue_Date: 2003-04-10. Security_Stamp: UG 92 390",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-04-10"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_292",
+                    "type": "file",
+                    "title": "Aarwolf Importación Permitido",
+                    "summary": "Permitido la importación de aarwolf desde Zambía a Uganda por Githinji Enu. Autorización de la Uganda Wildlife Authority.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 97UG1310465. Valid_Until: 2004-11-29. Consignee_Country: Uganda. Management_Authority: Uganda Wildlife Authority. Common_Name: Aardwolf. Permittee_Country: Tanzania. Consignee_Address: Kampali. Origin: Zambia. Permittee_Name: Githinji Enu. Scientific_Name: Proteles cristatus. Permittee_Address: Tabora. Consignee_Name: Ayodele Alaba. Issue_Date: 2003-02-17. Security_Stamp: UG 20 693",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-02-17"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_980",
+                    "type": "file",
+                    "title": "Permito de Importación de Kudu",
+                    "summary": "El documento permite la importación de kudu desde Zambía a Sudáfrica por Nsia Masozi, autorizada por la Uganda Wildlife Authority. Válido hasta 2005-03-29.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 5. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 09UG2969080. Valid_Until: 2005-03-29. Consignee_Country: Uganda. Management_Authority: Uganda Wildlife Authority. Common_Name: Greater kudu. Permittee_Country: South Africa. Consignee_Address: Kampali. Origin: Zambia. Permittee_Name: Nsia Masozi. Scientific_Name: Tragelaphus strepsiceros. Permittee_Address: Cape Town. Consignee_Name: Tuchel Park. Issue_Date: 2003-06-17. Security_Stamp: UG 49 428",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-06-17"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_949",
+                    "type": "file",
+                    "title": "Permito de Importación de Conejo Orejero",
+                    "summary": "Reserva de Huntman Tripakis otorgó permiso a Eniola Osumare para importar conejo orejero desde Zambia a Uganda. El permiso fue emitido el 14 de junio de 2003 y caducará el 12 de octubre de 2004.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 21UG0262381. Valid_Until: 2004-10-12. Consignee_Country: Uganda. Management_Authority: Uganda Wildlife Authority. Common_Name: Bat-eared fox. Permittee_Country: Zambia. Consignee_Address: Jinja. Origin: Zambia. Permittee_Name: Huntsman Tripakis Reserve. Scientific_Name: Otocyon megalotis. Permittee_Address: Livingstone. Consignee_Name: Eniola Osumare. Issue_Date: 2003-06-14. Security_Stamp: UG 60 571",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-06-14"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_290",
+                    "type": "file",
+                    "title": "Pélice permit",
+                    "summary": "Permiso de importación para aves en Uganda. Autoridad: Uganda Wildlife Authority. Origen: Zambia. Destino: Tanzania. Fecha: 17/02/2003.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 2. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 97UG1310465. Valid_Until: 2004-11-29. Consignee_Country: Uganda. Management_Authority: Uganda Wildlife Authority. Common_Name: Great white pelican. Permittee_Country: Tanzania. Consignee_Address: Kampali. Origin: Zambia. Permittee_Name: Githinji Enu. Scientific_Name: Pelecannus onocrotalus. Permittee_Address: Tabora. Consignee_Name: Ayodele Alaba. Issue_Date: 2003-02-17. Security_Stamp: UG 20 693",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-02-17"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_5",
+            "type": "community",
+            "title": "Permisos de Importación de Animales y Turismo en Namibia",
+            "summary": "Este grupo de documentos contiene permisos de importación de animales procedentes de Namibia a Namibia y de otros países como Zambia. Los permisos incluyen detalles sobre el titular, la persona consignataria y las condiciones especiales. Las autoridades involucradas son el Ministerio de Medio Ambiente y Turismo, y las organizaciones mencionan el Ministerio de Medio Ambiente y Turismo y el Ministerio de Turismo. Los lugares involucrados son Namibia y Zambia.",
+            "details": {
+                "entidades": [
+                    "Ministerio de Medio Ambiente y Turismo",
+                    "Ministerio de Turismo",
+                    "Zambia",
+                    "Namibia"
+                ],
+                "fechas": "2003-2004",
+                "amenaza": "Medio"
+            },
+            "children": [
+                {
+                    "id": "db_permits_clean.json_636",
+                    "type": "file",
+                    "title": "Import Permit for Black Rhino",
+                    "summary": "Permit issued for import of black rhino from Namibia to Namibia. Includes security stamp and validity until 2005-02-14.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 83NA1015855. Valid_Until: 2005-02-14. Consignee_Country: Namibia. Management_Authority: Ministry of Environment and Tourism. Common_Name: Black rhinoceros. Permittee_Country: Namibia. Consignee_Address: Walvis Bay. Origin: Namibia. Permittee_Name: Huntsman Reserve. Scientific_Name: Diceros bicronis. Permittee_Address: Outjo. Consignee_Name: Nkruma Agwang. Issue_Date: 2003-04-14. Security_Stamp: NA 55 774",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-04-14"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_824",
+                    "type": "file",
+                    "title": "Cormorant Import Permit",
+                    "summary": "Permiso de importación de Cormorant Long-tailed desde Zambia a Namibia. Condiciones especiales desconocidas. Expedido por Rivett Zoo en Livingstone.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "Quantity: 5. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 89NA6022824. Valid_Until: 2004-09-12. Consignee_Country: Namibia. Management_Authority: Ministry of Environment and Tourism. Common_Name: Long-tailed cormorant. Permittee_Country: Zambia. Consignee_Address: Walvis Bay. Origin: Zambia. Permittee_Name: Rivett Zoo. Scientific_Name: Phalacrocorax africanus. Permittee_Address: Livingstone. Consignee_Name: Rutendo Boitumelo. Issue_Date: 2003-05-15. Security_Stamp: NA 67 485",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-05-15"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1858",
+                    "type": "file",
+                    "title": "Permito de Importación de Marmota Desmaya",
+                    "summary": "Documento de importación permitido para marmota desmaya desde Zambía a Namibia. Autorizado por el Ministerio de Medio Ambiente y Turismo.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 19NA1882745. Valid_Until: 2005-08-01. Consignee_Country: Namibia. Management_Authority: Ministry of Environment and Tourism. Common_Name: Dwarf mongoose. Permittee_Country: Zambia. Consignee_Address: Windhoek. Origin: Zambia. Permittee_Name: Imoo Amadi. Scientific_Name: Helogale undulata. Permittee_Address: Livingstone. Consignee_Name: Fumnanya Hlelile. Issue_Date: 2003-11-03. Security_Stamp: NA 20 344",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-11-03"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1435",
+                    "type": "file",
+                    "title": "Giraffa Importación Permitida",
+                    "summary": "El certificado permite la importación de una jirafa maderera desde Zambía a Namibia. El permisionario es Uramoto Park en Malawi.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 85NA7522273. Valid_Until: 2005-02-07. Consignee_Country: Namibia. Management_Authority: Ministry of Environment and Tourism. Common_Name: Masai giraffe. Permittee_Country: Malawi. Consignee_Address: Windhoek. Origin: Zambia. Permittee_Name: Uramoto Park. Scientific_Name: Giraffa camelopardalis. Permittee_Address: Liongwe. Consignee_Name: Tendai Rufaro. Issue_Date: 2003-08-20. Security_Stamp: NA 06 448",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-08-20"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_662",
+                    "type": "file",
+                    "title": "Import Permit",
+                    "summary": "Permiso de importación emitido por Zambía a Namibia. Contiene información sobre el titular, la persona consignataria y condiciones especiales.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "Quantity: 6. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 65NA1694953. Valid_Until: 2004-09-18. Consignee_Country: Namibia. Management_Authority: Ministry of Environment and Tourism. Common_Name: Common. Permittee_Country: Zambia. Consignee_Address: Windhoek. Origin: Zambia. Permittee_Name: Nsia Masozi. Scientific_Name: plains. Permittee_Address: Kitwe. Consignee_Name: Tendai Rufaro. Issue_Date: 2003-04-16. Security_Stamp: NA 77 711",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-04-16"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1700",
+                    "type": "file",
+                    "title": "Carnet de Permiso Flap Necked Chameleon",
+                    "summary": "El carné permite la importación de un chameleón de Zambia a Namibia. La autorización fue emitida por el Ministerio de Medio Ambiente y Turismo.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 2. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 25NA8507036. Valid_Until: 2005-06-13. Consignee_Country: Namibia. Management_Authority: Ministry of Environment and Tourism. Common_Name: Flap necked chameleon. Permittee_Country: Canada. Consignee_Address: Walvis Bay. Origin: Zambia. Permittee_Name: Grieser Zoo. Scientific_Name: Chamaeleo delepis. Permittee_Address: Toronto. Consignee_Name: Kerneels Ige. Issue_Date: 2003-10-07. Security_Stamp: NA 45 104",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-10-07"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_6",
+            "type": "community",
+            "title": "Trámites de Importación de Animales y Semillas en Botswana",
+            "summary": "Este grupo de documentos contiene trámites de importación de animales y semillas relacionados con Botswana. Los documentos muestran permisos de importación de zebra grevy, semillas de squirrels no tripuduos y peces bush pigs desde Tanzania. La actividad se extiende desde 2003 hasta 2004, implicando diferentes entidades y lugares, pero no presenta una amenaza global significativa.",
+            "details": {
+                "entidades": [
+                    "Zoo danés",
+                    "Hucklebeck",
+                    "Serowe",
+                    "Botswana",
+                    "Uganda",
+                    "Tanzania"
+                ],
+                "fechas": "2003-2004",
+                "amenaza": "Bajo"
+            },
+            "children": [
+                {
+                    "id": "db_permits_clean.json_1359",
+                    "type": "file",
+                    "title": "Zebra Import Permit",
+                    "summary": "Permiso de importación de zebra Grevy en Uganda a Uganda. Permite el transporte de 33BW9927629 zebra Grevy desde Uganda a Botswana.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "Quantity: 2. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 33BW9927629. Valid_Until: 2005-03-05. Consignee_Country: Botswana. Management_Authority: Department of Wildlife and National Parks. Common_Name: Grevy's zebra. Permittee_Country: Uganda. Consignee_Address: Orapa. Origin: Uganda. Permittee_Name: Outback Safari. Scientific_Name: Equus grevyi. Permittee_Address: Jinja. Consignee_Name: Chika Onyeka. Issue_Date: 2003-08-14. Security_Stamp: BW 45 215",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-08-14"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1718",
+                    "type": "file",
+                    "title": "Sementes de Squirrel en Danemark",
+                    "summary": "Zoo danés importa semillas de squirrels no tripuduos de Botsuana. Permite vigente hasta 2005-06-20.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 5. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 00BW4085579. Valid_Until: 2005-06-20. Consignee_Country: Botswana. Management_Authority: Department of Wildlife and National Parks. Common_Name: Unstriped ground squirrel. Permittee_Country: Denmark. Consignee_Address: Serowe. Origin: Denmark. Permittee_Name: Golichowski Zoo. Scientific_Name: Xerus rutilus. Permittee_Address: Copenhagen. Consignee_Name: Wildlife Huckenbeck Zoo. Issue_Date: 2003-10-08. Security_Stamp: BW 83 468",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-10-08"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1803",
+                    "type": "file",
+                    "title": "Permito de Importación de Peces",
+                    "summary": "El certificado permite la importación de 29 bush pigs desde Tanzania a Botswana. El zoo de Hucklebeck en Serowe es el destinatario.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 70BW0729878. Valid_Until: 2005-05-08. Consignee_Country: Botswana. Management_Authority: Department of Wildlife and National Parks. Common_Name: Bush pig. Permittee_Country: Tanzania. Consignee_Address: Serowe. Origin: Tanzania. Permittee_Name: Chika Kwame. Scientific_Name: Potamochoerus porcus. Permittee_Address: Dar Es Salaam. Consignee_Name: Wildlife Huckenbeck Zoo. Issue_Date: 2003-10-25. Security_Stamp: BW 29 761",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-10-25"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_7",
+            "type": "community",
+            "title": "Comunidad de Permisos de Safari y Importaciones de Tanzania",
+            "summary": "Este grupo de documentos abarca permisos de safari y importaciones de animales procedentes de Tanzania, incluyendo importaciones de especies como el gran pico blanco y la serpiente forestal. Los permisos son emitidos por autoridades tanzanas y se utilizan para importar animales a otros países. Documentos se remontan a 2003 y se extienden hasta 2005.",
+            "details": {
+                "entidades": [
+                    "Tanzania",
+                    "Namibia",
+                    "Mozambique",
+                    "Botswana",
+                    "Republica Demografica Del Congo",
+                    "Fauna de Tanzania"
+                ],
+                "fechas": "2003-2005",
+                "amenaza": "Medio"
+            },
+            "children": [
+                {
+                    "id": "db_permits_clean.json_1065",
+                    "type": "file",
+                    "title": "Pelecanio Importación Permitida",
+                    "summary": "El gran pico blanco fue importado a Namibia por el Namibian Safari Company desde Zambía. La importación se realizó bajo permiso de la Autoridad de Fauna de Tanzania.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 5. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 54TZ0154037. Valid_Until: 2004-10-27. Consignee_Country: Tanzania. Management_Authority: Tanzania Wildlife Department. Common_Name: Great white pelican. Permittee_Country: Namibia. Consignee_Address: Dar Es Salaam. Origin: Zambia. Permittee_Name: Chima Chinwendu. Scientific_Name: Pelecannus onocrotalus. Permittee_Address: Outjo. Consignee_Name: Sestoft Reserve. Issue_Date: 2003-07-04. Security_Stamp: TZ 92 404",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-07-04"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1480",
+                    "type": "file",
+                    "title": "Importación de Permisos de Safari",
+                    "summary": "Permito de importación de safaris emitido a Mozambique desde Tanzania. Contiene detalles sobre el permiso y las autoridades involucradas.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 19TZ4925789. Valid_Until: 2005-03-30. Consignee_Country: Tanzania. Management_Authority: Tanzania Wildlife Department. Common_Name: Common. Permittee_Country: Mozambique. Consignee_Address: Arusha. Permittee_Name: Alaba Olanrewaju. Scientific_Name: plains. Permittee_Address: Inhambane. Consignee_Name: Sithembile Apunda. Issue_Date: 2003-08-28. Security_Stamp: TZ 29 046",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-08-28"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1005",
+                    "type": "file",
+                    "title": "Clemencia de chameleón",
+                    "summary": "Permiso de importación para un chameleón en Botswana. Emisión en Tanzania. Condiciones desconocidas.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "Quantity: 5. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 32TZ4686709. Valid_Until: 2005-01-23. Consignee_Country: Tanzania. Management_Authority: Tanzania Wildlife Department. Common_Name: Flap necked chameleon. Permittee_Country: Botswana. Consignee_Address: Arusha. Origin: Zambia. Permittee_Name: Wild Gabrielli Reserve. Scientific_Name: Chamaeleo delepis. Permittee_Address: Gaborone. Consignee_Name: Kibwe Babirye. Issue_Date: 2003-06-23. Security_Stamp: TZ 26 662",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-06-23"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1350",
+                    "type": "file",
+                    "title": "Permito de Importación",
+                    "summary": "El permiso permite la importación de una serpiente forestal en Tanzania desde la República Democrática del Congo. El documento es válido hasta 2005-01-08 y fue emitido el 2003-08-12.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "Quantity: 6. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 13TZ7878461. Valid_Until: 2005-01-08. Consignee_Country: Tanzania. Management_Authority: Tanzania Wildlife Department. Common_Name: Forest cobra. Permittee_Country: Democratic Republic of Congo. Consignee_Address: Tabora. Permittee_Name: Outdoors Safari. Scientific_Name: Naja melanolenca. Permittee_Address: Likasi. Consignee_Name: Ife Gotto. Issue_Date: 2003-08-12. Security_Stamp: TZ 38 868",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-08-12"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_8",
+            "type": "community",
+            "title": "Permisos de Importación de Animales Faunísticos en Zambia",
+            "summary": "Este grupo de documentos contiene permisos de importación de animales faunísticos desde diferentes países hacia Zambia. Los permisos incluyen eland, cormorán y oryx, y están firmados por la Autoridad de Fauna de Zambia. Las fechas de validez van desde 2003-03-11 hasta 2003-11-22, lo que sugiere un período de actividad reguladora en la importación de especies animales.",
+            "details": {
+                "entidades": [
+                    "Rutendo Awotwi",
+                    "Chima Chinwendu",
+                    "Autoridad de Fauna de Zambia",
+                    "Zambia",
+                    "Uganda",
+                    "Mozambique",
+                    "Namibia"
+                ],
+                "fechas": "2003-2004",
+                "amenaza": "Medio"
+            },
+            "children": [
+                {
+                    "id": "db_permits_clean.json_1176",
+                    "type": "file",
+                    "title": "Permito de Importación Eland",
+                    "summary": "El documento permite la importación de elands desde Uganda a Zambia por Rutendo Awotwi. La autoridad responsable es la Autoridad de Fauna de Zambia.",
+                    "risk_level": "Alto",
+                    "data": {
+                        "full_text": "Quantity: 5. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 56ZM5149703. Valid_Until: 2005-01-08. Consignee_Country: Zambia. Management_Authority: Zambia Wildlife Authority. Common_Name: Eland. Permittee_Country: Uganda. Consignee_Address: Livingstone. Origin: Uganda. Permittee_Name: Rutendo Awotwi. Scientific_Name: Taurotragus oryx. Permittee_Address: Jinja. Consignee_Name: Uzochi Agot. Issue_Date: 2003-07-16. Security_Stamp: ZM 65 306",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-07-16"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_885",
+                    "type": "file",
+                    "title": "Permiso de Importación de Cormorán",
+                    "summary": "Permiso emitido por la Autoridad de Fauna Zambiana para importar un Cormorán de Mozambique. Válido hasta 2004-11-22.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 5. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 67ZM6086895. Valid_Until: 2004-11-22. Consignee_Country: Zambia. Management_Authority: Zambia Wildlife Authority. Common_Name: Long-tailed cormorant. Permittee_Country: Mozambique. Consignee_Address: Ndola. Origin: Zambia. Permittee_Name: Mosi Tatenda. Scientific_Name: Phalacrocorax africanus. Permittee_Address: Nampula. Consignee_Name: Imoo Thandiwe. Issue_Date: 2003-05-28. Security_Stamp: ZM 49 827",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-05-28"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_441",
+                    "type": "file",
+                    "title": "Permito de Importación de Oryx",
+                    "summary": "El documento permite la importación de Oryx gazella beisa desde Namibia a Zambia por parte de Chima Chinwendu. La autoridad responsable es la Autoridad de Fauna de Zambia.",
+                    "risk_level": "Alto",
+                    "data": {
+                        "full_text": "Quantity: 2. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 92ZM0282904. Valid_Until: 2004-05-27. Consignee_Country: Zambia. Management_Authority: Zambia Wildlife Authority. Common_Name: Beisa oryx. Permittee_Country: Namibia. Consignee_Address: Ndola. Permittee_Name: Chima Chinwendu. Scientific_Name: Oryx gazella beisa. Permittee_Address: Outjo. Consignee_Name: Wildlife Blinzer Animal Park. Issue_Date: 2003-03-11. Security_Stamp: ZM 73 933",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-03-11"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_9",
+            "type": "community",
+            "title": "Trámites de Importación de Animales en la Región",
+            "summary": "Este grupo de documentos trata sobre trámites de importación de animales, específicamente Uganda kob, okapi y cabra menor, desde Zambía a la República Democrática del Congo. Los permisos de importación fueron emitidos por el Instituto Congoleño de Conservación de la Naturaleza, y se produjeron en fechas comprendidas entre 2003-10-07 y 2003-02-04, evidenciando un flujo regular de trámites de importación de especies en la región.",
+            "details": {
+                "entidades": [
+                    "Instituto Congoleño de Conservación de la Naturaleza",
+                    "Zambia",
+                    "República Democrática del Congo"
+                ],
+                "fechas": "2003-10-07 - 2003-02-04",
+                "amenaza": "Bajo"
+            },
+            "children": [
+                {
+                    "id": "db_permits_clean.json_228",
+                    "type": "file",
+                    "title": "Permito de Importación",
+                    "summary": "El permito de importación permite la exportación de Uganda kob desde Zambia a la República Democrática del Congo. El documento fue emitido por el Instituto Congoleño de Conservación de la Naturaleza.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 3. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 11CD6172247. Valid_Until: 2004-04-13. Consignee_Country: Democratic Republic of the Congo. Management_Authority: Congolese Institute for Nature Conservation. Common_Name: Uganda kob. Permittee_Country: Zambia. Consignee_Address: Likasi. Origin: Zambia. Permittee_Name: Imoo Amadi. Scientific_Name: Kobus kob. Permittee_Address: Livingstone. Consignee_Name: Gyenizse Zoo. Issue_Date: 2003-02-04. Security_Stamp: CD 25 742",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-02-04"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1251",
+                    "type": "file",
+                    "title": "Importación de Permisos de Caza",
+                    "summary": "El documento proporciona detalles sobre un permiso de caza de okapi importado desde Zambía a la República Democrática del Congo. La expedición fue autorizada por el Instituto Congoleño de Conservación de la Naturaleza.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 96CD3242783. Valid_Until: 2005-01-10. Consignee_Country: Democratic Republic of the Congo. Management_Authority: Congolese Institute for Nature Conservation. Common_Name: Okapi. Permittee_Country: Malawi. Consignee_Address: Likasi. Origin: Zambia. Permittee_Name: Wild Togai Reserve. Scientific_Name: Okapia johnstoni. Permittee_Address: Zomba. Consignee_Name: Gyenizse Zoo. Issue_Date: 2003-07-25. Security_Stamp: CD 63 843",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-07-25"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1708",
+                    "type": "file",
+                    "title": "Permito de Importación de Cabra Menor",
+                    "summary": "El documento permite la importación de cabra menor desde Zambía a la República Democrática del Congo. La autorización fue emitida por el Instituto Congoleso de Conservación de la Naturaleza.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 3. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 61CD7629034. Valid_Until: 2005-03-27. Consignee_Country: Democratic Republic of the Congo. Management_Authority: Congolese Institute for Nature Conservation. Common_Name: Lesser kudu. Permittee_Country: Singapore. Consignee_Address: Likasi. Origin: Zambia. Permittee_Name: Wild Animal Park. Scientific_Name: Tragelaphus imberbis. Permittee_Address: Singapore. Consignee_Name: Wildlife Tassinari Park. Issue_Date: 2003-10-07. Security_Stamp: CD 63 338",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-10-07"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_10",
+            "type": "community",
+            "title": "Permito de Importación de Aves entre Tanzania y Suvecinos",
+            "summary": "Este grupo documenta un permiso de importación de aves emitido por el departamento de vida silvestre de Tanzania, permitiendo la entrada de aves procedentes de Zambía a la República Democrática del Congo. El documento fue emitido en 2003, indicando un proceso regulatorio interregional relacionado con la conservación de especies avícolas.",
+            "details": {
+                "entidades": [
+                    "departamento de vida silvestre de Tanzania",
+                    "Zambia",
+                    "República Democrática del Congo"
+                ],
+                "fechas": "2003",
+                "amenaza": "Bajo"
+            },
+            "children": [
+                {
+                    "id": "db_permits_clean.json_348",
+                    "type": "file",
+                    "title": "Permito de Importación",
+                    "summary": "El permiso permite la importación de aves desde Zambía a la República Democrática del Congo. La expedición fue emitida por el departamento de vida silvestre de Tanzania.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "Quantity: 5. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 91TZ6579335. Valid_Until: 2004-04-28. Consignee_Country: Tanzania. Management_Authority: Tanzania Wildlife Department. Common_Name: Yellow-billed egret. Permittee_Country: Democratic Republic of Congo. Consignee_Address: Arusha. Origin: Zambia. Permittee_Name: Wild Paetzold Safari. Scientific_Name: Mesophoyx intermedia. Permittee_Address: Lusambo. Consignee_Name: Wildlife Tomii Safari. Issue_Date: 2003-02-26. Security_Stamp: TZ 53 817",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-02-26"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_11",
+            "type": "community",
+            "title": "Permisos de Importación de Animales Africano-Sudafricanos",
+            "summary": "Este grupo de documentos contiene permisos de importación de animales africanos y sudafricanos, incluyendo aves y reptiles, emitidos por el Ministerio de Medio Ambiente y Turismo. Los permisos se extienden desde 2003 hasta 2004, y se refieren a la importación de especies desde Sudáfrica a otros países africanos o viceversa. Estos documentos muestran un flujo de comercio de especies silvestres dentro de la región africana.",
+            "details": {
+                "entidades": [
+                    "Ministerio de Medio Ambiente y Turismo",
+                    "Sudáfrica",
+                    "Botswana",
+                    "Namibia"
+                ],
+                "fechas": "2003-2004",
+                "amenaza": "Bajo"
+            },
+            "children": [
+                {
+                    "id": "db_permits_clean.json_1197",
+                    "type": "file",
+                    "title": "Ostrich Import Permis",
+                    "summary": "Permit permite la importación de un ave común a Sudáfrica desde Botswana. Contiene detalles sobre el titular y la autoridad.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 31ZA4971391. Valid_Until: 2004-11-04. Consignee_Country: South Africa. Management_Authority: Department of Environmental Affairs and Tourism. Common_Name: Common ostrich. Permittee_Country: Botswana. Consignee_Address: Ladysmith. Permittee_Name: Ajambo Sipho. Scientific_Name: Struthio camelus. Permittee_Address: Serowe. Consignee_Name: Olumide Chitemo. Issue_Date: 2003-07-17. Security_Stamp: ZA 76 496",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-07-17"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1426",
+                    "type": "file",
+                    "title": "Permiso de Importación",
+                    "summary": "El permiso permite la importación de Nile crocodiles desde Sudáfrica a Botswana. La expedición fue emitida por el Ministerio de Medio Ambiente y Turismo.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 02ZA8663697. Valid_Until: 2005-05-11. Consignee_Country: South Africa. Management_Authority: Department of Environmental Affairs and Tourism. Common_Name: Nile crocodile. Permittee_Country: Botswana. Consignee_Address: Cape Town. Permittee_Name: Huntsman Marathe Safari. Scientific_Name: Crocodilus niloticus. Permittee_Address: Francistown. Consignee_Name: Hlatshwayo Boipelo. Issue_Date: 2003-08-20. Security_Stamp: ZA 34 819",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-08-20"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1865",
+                    "type": "file",
+                    "title": "Geckos Importación Permiso",
+                    "summary": "Permiso de importación de geckos de Namibia a Namibia. Autorizado por el Ministerio de Medio Ambiente y Turismo.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 17ZA4207615. Valid_Until: 2005-05-12. Consignee_Country: South Africa. Management_Authority: Department of Environmental Affairs and Tourism. Common_Name: Common house gecko. Permittee_Country: Namibia. Consignee_Address: Ladysmith. Origin: Namibia. Permittee_Name: Bratvold Zoo. Scientific_Name: Hemidactylus mabouia. Permittee_Address: Morea. Consignee_Name: Outback Fortenbacher Reserve. Issue_Date: 2003-11-03. Security_Stamp: ZA 32 705",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-11-03"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_44",
+                    "type": "file",
+                    "title": "Permito de Importación",
+                    "summary": "El zoo de Namibia recibió un permiso de importación de un ave africana desde Namibia a Sudáfrica. El zoo debe presentar el permiso antes del 11 de julio de 2004.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 35ZA1941006. Valid_Until: 2004-07-11. Consignee_Country: South Africa. Management_Authority: Department of Environmental Affairs and Tourism. Common_Name: African hare. Permittee_Country: Namibia. Consignee_Address: Ladysmith. Origin: Namibia. Permittee_Name: Bratvold Zoo. Scientific_Name: Lepus capensis. Permittee_Address: Morea. Consignee_Name: Tau Uzoma. Issue_Date: 2003-01-04. Security_Stamp: ZA 66 686",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-01-04"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_12",
+            "type": "community",
+            "title": "Flamencos Gigantes Importados a Mozambique",
+            "summary": "Este grupo de documentos contiene permisos de importación de fauna de diferentes especies, principalmente flamencos gigantes y meloncillos, desde países africanos hacia Mozambique. Los documentos muestran un flujo de comercio de especies silvestres entre África y Mozambique, con la Dirección Nacional de Fauna y Flora y el Ministerio Nacional de Silvicultura y Fauna como principales emisores.",
+            "details": {
+                "entidades": [
+                    "Dirección Nacional de Fauna y Flora",
+                    "Ministerio Nacional de Silvicultura y Fauna",
+                    "Zambia",
+                    "Sudáfrica",
+                    "Mozambique",
+                    "Alemania"
+                ],
+                "fechas": "2003-2004",
+                "amenaza": "Medio"
+            },
+            "children": [
+                {
+                    "id": "db_permits_clean.json_389",
+                    "type": "file",
+                    "title": "Flamingo Importación Permitida",
+                    "summary": "Un permiso de importación de flamencos gigantes a Mozambique desde Sudáfrica, firmado por la Dirección Nacional de Fauna y Flora.",
+                    "risk_level": "Medio",
+                    "data": {
+                        "full_text": "Quantity: 4. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 33MZ2287278. Valid_Until: 2005-01-13. Consignee_Country: Mozambique. Management_Authority: National Directorate of Forestry and Wildlife. Common_Name: Greater flamingo. Permittee_Country: South Africa. Consignee_Address: Beira. Permittee_Name: Adisa Chimola. Scientific_Name: Phoenicopterus ruber. Permittee_Address: Cape Town. Consignee_Name: Kojo Samanya. Issue_Date: 2003-03-06. Security_Stamp: MZ 72 458",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-03-06"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1144",
+                    "type": "file",
+                    "title": "Permito de Importación de Meloncillo",
+                    "summary": "Permito de importación de meloncillo desde Zambía a Sudáfrica. Se permite la exportación de meloncillos de zanahoria. El permito tiene vigencia hasta 2005-01-06 y fue emitido el 2003-07-12.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Quantity: 6. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 95MZ2851420. Valid_Until: 2005-01-06. Consignee_Country: Mozambique. Management_Authority: National Directorate of Forestry and Wildlife. Common_Name: Honey badger. Permittee_Country: South Africa. Consignee_Address: Maputo. Origin: Zambia. Permittee_Name: Outback Animal Park. Scientific_Name: Mellivora capensis. Permittee_Address: Ladysmith. Consignee_Name: Uzoma Unathi. Issue_Date: 2003-07-12. Security_Stamp: MZ 10 050",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-07-12"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_permits_clean.json_1390",
+                    "type": "file",
+                    "title": "Savannah Monitor Import Permit",
+                    "summary": "Permiso de importación de monitor savanna. Emite el Ministerio Nacional de Silvicultura y Fauna. Permite la exportación desde Zambézia a Alemania. Válido hasta 2005-04-01.",
+                    "risk_level": "Alto",
+                    "data": {
+                        "full_text": "Quantity: 3. Purpose: C. Document_Title: Import Permit. Special_Conditions: nan. Description: nan. Source_Code: nan. Certificate_Number: 36MZ9921837. Valid_Until: 2005-04-01. Consignee_Country: Mozambique. Management_Authority: National Directorate of Forestry and Wildlife. Common_Name: Savannah monitor. Permittee_Country: Germany. Consignee_Address: Beira. Origin: Zambia. Permittee_Name: Outdoors Poujol Reserve. Scientific_Name: Varanus exanthematicus. Permittee_Address: Zurich. Consignee_Name: Oluwaseyi Samanya. Issue_Date: 2003-08-18. Security_Stamp: MZ 85 414",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "2003-08-18"
+                    },
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_14",
+            "type": "community",
+            "title": "Comunidad Aquática de Florida",
+            "summary": "Esta comunidad está compuesta por varias empresas de acuicultura y comercio de especies acuáticas en Florida. Las empresas ofrecen una variedad de peces y invertebrados marinos, desde anguilas hasta tiburones, y también venden plantas acuáticas. La mayoría de las empresas están localizadas en Key West, Big Pine Key, St Cloud y Riverview, con operaciones que se remontan a al menos 2003. No se identificaron riesgos de actividades ilegales.",
+            "details": {
+                "entidades": [
+                    "Underwater Specialties Inc",
+                    "Aquatic Collector",
+                    "Klimpel's Aquaculture",
+                    "Mike's Cichlids",
+                    "Benjie Bay",
+                    "Key West",
+                    "Big Pine Key",
+                    "St Cloud",
+                    "Riverview"
+                ],
+                "fechas": "2003-2004",
+                "amenaza": "Bajo"
+            },
+            "children": [
+                {
+                    "id": "db_importers_clean.json_171",
+                    "type": "file",
+                    "title": "Underwater Specialties Inc President",
+                    "summary": "PRESIDENT de UNDERWATER SPECIALTIES INC en KEY WEST, FLORIDA, vende peces y invertebrados marinos vivos.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Business Name: UNDERWATER SPECIALTIES INC. First Name: MIKE. Last Name: LEVERONE. Title: PRESIDENT. Address 1: PO BOX 2806. City: KEY WEST. State: FL. Zip: 33045. Phone 1: 305-294-6050. Type: LIVE. Description: TROPICAL MARINE FISH,TROPICAL MARINE INVERTEBRATES. Additional: LOBSTER,SNAPPER,MACKEREL",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "Desconocida"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_importers_clean.json_16",
+                    "type": "file",
+                    "title": "Aquatic Collector Owner",
+                    "summary": "Dueño de la empresa AQUATIC COLLECTOR. Proporciona peces vivos y conchas. Localizado en Big Pine Key, FL.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Business Name: AQUATIC COLLECTOR SPEC OF THE. First Name: FRED. Last Name: WILSON. Title: OWNER. Address 1: RR 3 BOX 189R. City: BIG PINE KEY. State: FL. Zip: 33043. Phone 1: 305-872-0528. Phone 2: 305-872-0528. Type: LIVE AQUARIUM FISH. Description: SHELLFISH,ORNAMENTAL FIS",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "Desconocida"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_importers_clean.json_84",
+                    "type": "file",
+                    "title": "Klimpel's Aquaculture",
+                    "summary": "Dueño de MAKO TROPICALS, Ken Klimpel, opera en St Cloud, FL. Ofrece peces como anguilas, tiburones y otros. Teléfonos disponibles.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Business Name: MAKO TROPICALS. First Name: KEN. Last Name: KLIMPEL. Title: OWNER. Address 1: 1220 12 OAKS RD. City: ST CLOUD. State: FL. Zip: 34771. Phone 1: 407-892-8873. Phone 2: 407-892-6648. Type: LIVE. Description: ANGELFISH,COREY CATFISH,GOLD SEVRUM,GUPPIES,OSCARS,PACU,PELCOS. Additional: RAINBOW SHARK,REDTAIL SHARK,SWORDTAIL",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "Desconocida"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_importers_clean.json_92",
+                    "type": "file",
+                    "title": "Cichlid Aquatic Business",
+                    "summary": "Mike's Cichlids is a US-based aquatic business specializing in cichlid and rare tropical fish. Potential risk of illegal activities not indicated.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Country:   US. Business Name: Mike's Cichlids. Description:   Cichlids and rare tropical fish",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "Desconocida"
+                    },
+                    "children": []
+                },
+                {
+                    "id": "db_importers_clean.json_25",
+                    "type": "file",
+                    "title": "Aquatic Plant Business",
+                    "summary": "Benjie Bay owns BAY AQUATICS, a business selling aquatic plants in Riverview, FL. Phone: 813-677-4204.",
+                    "risk_level": "Bajo",
+                    "data": {
+                        "full_text": "Business Name: BAY AQUATICS. First Name: BENJIE. Title: OWNER. Address 1: 12537 SYKES RD. City: RIVERVIEW. State: FL. Zip: 33569. Phone 1: 813-677-4204. Type: LIVE. Description: AQUATIC PLANTS,LOTUS,WATER LILIES",
+                        "images": [],
+                        "source": "Databases",
+                        "date": "Desconocida"
+                    },
+                    "children": []
+                }
+            ]
+        }
+    ]
+}

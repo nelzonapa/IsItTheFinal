@@ -1,0 +1,24 @@
+{
+    "metadatos_archivo": {
+        "blog": "Chinchilla Dreamin'",
+        "archivo_origen": "Chinchilla Dreamin'.htm",
+        "autor": "chinshopes (aka Cesar Gil)",
+        "periodo": "2003_10"
+    },
+    "entradas": [
+        {
+            "fecha_completa": "Wednesday, October 15, 2003",
+            "titulo": "Chinsurrection",
+            "texto": "",
+            "imagenes": [
+                "./images/20031015.jpg"
+            ]
+        },
+        {
+            "fecha_completa": "Saturday, October 4, 2003",
+            "titulo": "Could I scream or what?",
+            "texto": "Largest Animal Seizure in RSPCA Historyby Sherry Morse England’s Royal Society for the Prevention of Cruelty to Animals (RSPCA) has rescued 269 animals in what it described as the largest seizure in its 181 year history. The animals, which included a rabbit, a chinchilla, seven cats, 16 parrots and 244 dogs, were removed from a three bedroom house in Carnforth, Lancashire in Northern England on September 10. The animals were living everywhere in the house including the loft and the basement. ... It took 26 people two days to remove all the animals from the house, which one source described as being in an \"absolutely, and utterly, disgusting\" condition. ... The rescued birds included African grays, macaws, and Amazon parrots. See the Buzzle editorial. and Gray's are freakin' expensive, too...",
+            "imagenes": []
+        }
+    ]
+}

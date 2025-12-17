@@ -1,0 +1,16 @@
+{
+    "metadatos": {
+        "nombre_archivo": "dimethlymercury.pdf",
+        "tipo_procesamiento": "Nativo PDF",
+        "ruta_original_drive": "/content/drive/MyDrive/VAST 7/Support/MSDS/dimethlymercury.pdf"
+    },
+    "contenido_multimodal": [
+        {
+            "numero_pagina": 1,
+            "texto_limpio": "Sulfur Mustard \nPhosgene Oxime \nNitrogen Mustard\nSulfur Mustard\nSYMPTOMS INCLUDE\n• Itching\n• Erythema\n• Yellowish blisters\n• Flu-like symptoms\n• Delayed eye irritation\nINDICATIVE LAB TESTS\n• Thiodiglycol present \nin urine\nHydrogen Cyanide \nHydrogen Sulfide \nCarbon Monoxide \nCyanogen Chloride\nHydrogen Cyanide\nSYMPTOMS INCLUDE\n• Vertigo\n• Tachycardia\n• Tachypnea\n• Cyanosis\n• Flu-like symptoms\n• Nonspecific neurological\nsymptoms\nINDICATIVE LAB TESTS\n• Increased anion gap\n• Metabolic acidosis\n• Narrow pO2 difference\nbetween arterial and\nvenous samples\nSarin \nVX \nTabun \nSoman\nSarin\nSYMPTOMS INCLUDE\n• Diarrhea, diaphoresis\n• Urination\n• Miosis\n• Bradycardia, bronchospasm,\nbronchorrhea\n• Emesis\n• Lacrimation\n• Salivation\nINDICATIVE LAB TESTS\n• Decreased cholinesterase\n• Increased anion gap\n• Metabolic acidosis\nPhosgene \nDiphosgene \nChlorine\nPhosgene\nSYMPTOMS INCLUDE\n• Upper respiratory tract\nirritation\n• Rhinitis\n• Coughing\n• Choking\n• Delayed pulmonary edema\nINDICATIVE LAB TESTS\n• Decreased pO2\n• Decreased pCO2\nDimethylmercury\nLead • Copper\nMercury • Arsenic\nCadmium\nDimethylmercury\nSYMPTOMS INCLUDE\n• Cough\n• Metallic taste\n• CNS effects\n• Shortness of breath  \n• Flu-like symptoms\n• Visual disturbances\nINDICATIVE LAB TESTS\n• Proteinuria\n• Blood mercury\n• Urine mercury\nPRODUCED BY THE MINNESOTA DEPARTMENT OF HEALTH 2004\nRecognize the symptoms of chemical agent exposure\nContact the Nebraska Health and Human Services System 24/7 Reporting Line\n402-471-1983\nContact the Nebraska Public Health Laboratory for specimen \ncollection, packaging and shipping information at 402-559-6070\nAFTER REGULAR HOURS PAGE 402-888-5588\nNOVEMBER 2005\n9830-1037.ChemTerror_SM_NE  12/14/05 10:46 PM  Page 1\n",
+            "imagenes_adjuntas": [
+                "./extracted_images/dimethlymercury_p1_0.jpeg"
+            ]
+        }
+    ]
+}

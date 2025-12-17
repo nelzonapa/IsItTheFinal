@@ -1,0 +1,18 @@
+{
+    "metadatos_archivo": {
+        "blog": "Chinchilla Dreamin'",
+        "archivo_origen": "Chinchilla Dreamin'.htm",
+        "autor": "chinshopes (aka Cesar Gil)",
+        "periodo": "2004_02"
+    },
+    "entradas": [
+        {
+            "fecha_completa": "Saturday, February 7, 2004",
+            "titulo": "Chinsurrection",
+            "texto": "",
+            "imagenes": [
+                "./images/20040201.jpg"
+            ]
+        }
+    ]
+}

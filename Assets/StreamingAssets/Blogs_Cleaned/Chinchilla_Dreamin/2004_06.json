@@ -1,0 +1,38 @@
+{
+    "metadatos_archivo": {
+        "blog": "Chinchilla Dreamin'",
+        "archivo_origen": "Chinchilla Dreamin'.htm",
+        "autor": "chinshopes (aka Cesar Gil)",
+        "periodo": "2004_06"
+    },
+    "entradas": [
+        {
+            "fecha_completa": "Wednesday, June 30, 2004",
+            "titulo": "You knew this",
+            "texto": "",
+            "imagenes": []
+        },
+        {
+            "fecha_completa": "Wednesday, June 30, 2004",
+            "titulo": "Chinsurrection",
+            "texto": "",
+            "imagenes": [
+                "./images/20040630.jpg"
+            ]
+        },
+        {
+            "fecha_completa": "Monday, June 14, 2004",
+            "titulo": "Free Jeffrey Luers by David Rovics",
+            "texto": "I grew up in the land of houses in rows I had asthma, that's how it goes When you're in LA and there are cars everywhere See the sky and smell the air I left home, looked around Trying to find some solid ground I found life in the northern wood And I knew that this was good I saw the dozers, the death machines Tearing apart everything green I built a platform, sat in a tree Said if you're taking her down, then you're taking down me I saw the highways, I saw the mall I saw the eagle, heard the clarion call Voices of reason were talking to me So I burned down a couple of SUV's 23 years, 23 years Among the words and the deeds in the war for the west A chapter was written and I was the test To shut us all up and drive us apart All who have life and love in our hearts The judge did the math then he did some more He was a man out to settle a score An illegal sentence in a stolen land With life or death in the palm of his hand 23 years, 23 years And now here I am, so long behind bars For trying to breath in a nation of cars Sanity jailed and madness in power Our time it is short and now is the hour So may you hide in the darkness and stay safe in the night Find whatever you need to stay in the fight There's a planet at stake and that's all that I see And my thoughts will be with you until I am free 23 years, 23 years",
+            "imagenes": []
+        },
+        {
+            "fecha_completa": "Wednesday, June 2, 2004",
+            "titulo": "Chinsurrection",
+            "texto": "",
+            "imagenes": [
+                "./images/20040602.jpg"
+            ]
+        }
+    ]
+}
