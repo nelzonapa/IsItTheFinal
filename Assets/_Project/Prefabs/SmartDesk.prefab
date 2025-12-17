@@ -1374,6 +1374,7 @@ GameObject:
   - component: {fileID: 8759895591307329085}
   - component: {fileID: 8134263450916050270}
   - component: {fileID: 4390552089730368357}
+  - component: {fileID: 3727908263082871224}
   m_Layer: 0
   m_Name: Zone2_Data
   m_TagString: Untagged
@@ -1562,6 +1563,28 @@ MonoBehaviour:
   m_StartingInteractionStrengthFilters: []
   m_AutoFindParentInteractableInHierarchy: 0
   m_ParentInteractableObject: {fileID: 0}
+--- !u!114 &3727908263082871224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7811330940087541257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce65fd876122bee4eaec4c644074bcc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Visual.H3GraphSpawner
+  jsonFileName: hierarchy_complete.json
+  rootPrefab: {fileID: 4340233853336565958, guid: a6eb265f994fc2e428e52d294d2e9528, type: 3}
+  communityPrefab: {fileID: 4340233853336565958, guid: 131ad21c6029d2548b59065db8d67796, type: 3}
+  filePrefab: {fileID: 4340233853336565958, guid: 6548196bcea887b48aefd735914a91ed, type: 3}
+  nodeUIPrefab: {fileID: 152192296721054117, guid: 15505e98cc1d3d242b872ad45cf7b8ba, type: 3}
+  communityOrbitRadius: 5
+  fileOrbitRadius: 5
+  lineMaterial: {fileID: 2100000, guid: 0fcf4715c091eda4f97e84803e479e04, type: 2}
+  lineWidth: 0.005
+  uiOffset: {x: 0, y: -2, z: 0}
 --- !u!1 &7913309574898258690
 GameObject:
   m_ObjectHideFlags: 0
