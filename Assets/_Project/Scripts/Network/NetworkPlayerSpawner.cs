@@ -28,8 +28,31 @@ namespace ImmersiveGraph.Network
             {
                 Debug.Log("¡Entré a la sala! Creando mi avatar...");
                 // Spawn del jugador
-                Vector3 deskPosition = new Vector3(100, 0, 0); // La misma pos donde pusiste el SmartDesk
-                runner.Spawn(playerPrefab, deskPosition, Quaternion.identity, player);
+                //Vector3 deskPosition = new Vector3(100, 0, 0); // La misma pos donde pusiste el SmartDesk
+                //runner.Spawn(playerPrefab, deskPosition, Quaternion.identity, player);
+
+                Debug.Log($"Jugador {player.PlayerId} conectado. Buscando su oficina...");
+
+                Vector3 spawnPosition = new Vector3(0, 1, 0); // Default por si falla
+
+                // Preguntar al Manager cuál es mi escritorio
+                if (GroupTableManager.Instance != null)
+                {
+                    Transform myDesk = GroupTableManager.Instance.GetIndividualDeskForPlayer(player);
+                    if (myDesk != null)
+                    {
+                        spawnPosition = myDesk.position;
+                    }
+                }
+                else
+                {
+                    // Si no hay Manager, usamos el 100 como backup manual
+                    spawnPosition = new Vector3(100, 1, 0);
+                }
+
+                // SPAWN
+                runner.Spawn(playerPrefab, spawnPosition, Quaternion.identity, player);
+
             }
         }
 
