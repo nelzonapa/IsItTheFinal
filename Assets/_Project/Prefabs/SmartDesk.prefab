@@ -1580,6 +1580,9 @@ MonoBehaviour:
   communityPrefab: {fileID: 4340233853336565958, guid: 131ad21c6029d2548b59065db8d67796, type: 3}
   filePrefab: {fileID: 4340233853336565958, guid: 6548196bcea887b48aefd735914a91ed, type: 3}
   nodeUIPrefab: {fileID: 152192296721054117, guid: 15505e98cc1d3d242b872ad45cf7b8ba, type: 3}
+  rootSize: {x: 1.5, y: 1.5, z: 1.5}
+  communitySize: {x: 1.5, y: 1.5, z: 1.5}
+  fileSize: {x: 1.5, y: 1.5, z: 1.5}
   communityOrbitRadius: 5
   fileOrbitRadius: 5
   lineMaterial: {fileID: 2100000, guid: 0fcf4715c091eda4f97e84803e479e04, type: 2}

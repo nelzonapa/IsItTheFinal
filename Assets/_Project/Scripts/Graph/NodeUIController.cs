@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
-using Unity.XR.CoreUtils; // Para buscar la cámara XR
+using Unity.XR.CoreUtils;
+using UnityEngine.UI;
 
 namespace ImmersiveGraph.Visual
 {
@@ -9,6 +10,7 @@ namespace ImmersiveGraph.Visual
         [Header("Referencias UI")]
         public TextMeshProUGUI titleText;
         public TextMeshProUGUI summaryText;
+        public Image loadingBar;
 
         private Transform _targetCamera;
 
@@ -35,11 +37,20 @@ namespace ImmersiveGraph.Visual
                 summaryText.text = summary;
             }
 
+            if (loadingBar != null) loadingBar.fillAmount = 0;
+
             // TRUCO PRO: A veces Unity UI tarda un frame en recalcular el tamaño.
             // Forzamos la actualización del layout para que no salga deforme el primer frame.
             UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
         }
 
+        public void UpdateLoader(float percentage)
+        {
+            if (loadingBar != null)
+            {
+                loadingBar.fillAmount = percentage;
+            }
+        }
         void Update()
         {
             if (_targetCamera != null)

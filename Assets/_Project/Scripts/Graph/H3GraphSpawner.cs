@@ -2,6 +2,7 @@ using UnityEngine;
 using System.IO;
 using ImmersiveGraph.Data;
 using ImmersiveGraph.Interaction;
+using ImmersiveGraph.Visual;
 using System.Collections.Generic;
 
 namespace ImmersiveGraph.Visual
@@ -33,7 +34,6 @@ namespace ImmersiveGraph.Visual
             string filePath = Path.Combine(Application.streamingAssetsPath, jsonFileName);
             if (File.Exists(filePath))
             {
-                // Usamos un try-catch por si el JSON está mal formado
                 try
                 {
                     NodeData rootNode = JsonUtility.FromJson<NodeData>(File.ReadAllText(filePath));
@@ -41,7 +41,7 @@ namespace ImmersiveGraph.Visual
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogError("Error al leer JSON: " + e.Message);
+                    Debug.LogError("Error JSON: " + e.Message);
                 }
             }
         }
@@ -50,8 +50,8 @@ namespace ImmersiveGraph.Visual
         {
             foreach (Transform child in transform) Destroy(child.gameObject);
 
-            // 1. ROOT
-            GameObject rootObj = CreateNodeObject(rootPrefab, transform, new Vector3(0, 0.2f, 0), rootData, "root");
+            // 1. ROOT (Le pasamos color blanco por defecto)
+            GameObject rootObj = CreateNodeObject(rootPrefab, transform, new Vector3(0, 0.2f, 0), rootData, "root", null, null, Color.white);
 
             if (rootData.children == null) return;
 
@@ -62,12 +62,14 @@ namespace ImmersiveGraph.Visual
             for (int i = 0; i < commCount; i++)
             {
                 NodeData commData = rootData.children[i];
-                GameObject commObj = CreateNodeObject(communityPrefab, rootObj.transform, commPositions[i], commData, "community");
 
-                DrawConnection(rootObj.transform.position, commObj.transform.position, commObj.transform);
-
+                // Calcular el color de este grupo
                 Color groupColor = Color.HSVToRGB((float)i / commCount, 0.7f, 0.9f);
-                commObj.GetComponent<Renderer>().material.color = groupColor;
+
+                GameObject lineToComm = CreateLine(rootObj.transform.position, rootObj.transform);
+
+                // PASAMOS EL COLOR AQUÍ
+                GameObject commObj = CreateNodeObject(communityPrefab, rootObj.transform, commPositions[i], commData, "community", rootObj.transform, lineToComm.GetComponent<LineRenderer>(), groupColor);
 
                 GraphNode commLogic = commObj.GetComponent<GraphNode>();
 
@@ -80,50 +82,51 @@ namespace ImmersiveGraph.Visual
                     for (int j = 0; j < fileCount; j++)
                     {
                         NodeData fileData = commData.children[j];
-                        GameObject fileObj = CreateNodeObject(filePrefab, commObj.transform, filePositions[j], fileData, "file");
 
-                        fileObj.GetComponent<Renderer>().material.color = groupColor;
+                        GameObject lineToFile = CreateLine(commObj.transform.position, commObj.transform);
 
-                        GameObject line = DrawConnection(commObj.transform.position, fileObj.transform.position, fileObj.transform);
+                        // PASAMOS EL MISMO COLOR DE GRUPO AQUÍ
+                        GameObject fileObj = CreateNodeObject(filePrefab, commObj.transform, filePositions[j], fileData, "file", commObj.transform, lineToFile.GetComponent<LineRenderer>(), groupColor);
 
-                        // Añadir a la lista del padre
                         if (commLogic != null)
                         {
                             commLogic.childNodes.Add(fileObj);
-                            commLogic.connectionLines.Add(line);
+                            commLogic.childConnectionLines.Add(lineToFile);
                         }
                     }
                 }
 
-                // --- IMPORTANTE: Inicializar la comunidad AHORA que ya tiene los hijos ---
-                if (commLogic != null)
-                {
-                    commLogic.InitializeNode();
-                }
+                if (commLogic != null) commLogic.InitializeNode(rootObj.transform, lineToComm.GetComponent<LineRenderer>());
             }
         }
 
-        GameObject CreateNodeObject(GameObject prefab, Transform parent, Vector3 localPos, NodeData data, string type)
+        // --- FUNCIÓN MODIFICADA: Ahora recibe 'Color nodeColor' ---
+        GameObject CreateNodeObject(GameObject prefab, Transform parent, Vector3 localPos, NodeData data, string type, Transform parentNode, LineRenderer incomingLine, Color nodeColor)
         {
             GameObject obj = Instantiate(prefab, parent);
             obj.transform.localPosition = localPos;
+            obj.transform.localScale = prefab.transform.localScale;
             obj.name = $"{type.ToUpper()}_{data.title}";
 
+            // 1. APLICAR COLOR INMEDIATAMENTE (Antes de agregar scripts)
+            var renderer = obj.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = nodeColor;
+            }
+
+            // 2. AGREGAR LÓGICA (Ahora InitializeNode leerá el color correcto)
             GraphNode logic = obj.AddComponent<GraphNode>();
             logic.nodeType = type;
             logic.myData = data;
 
-            // B. Instanciar UI Flotante con CORRECCIÓN DE ESCALA
+            logic.InitializeNode(parentNode, incomingLine);
+
+            // UI
             if (nodeUIPrefab != null)
             {
                 GameObject uiObj = Instantiate(nodeUIPrefab, obj.transform);
                 uiObj.transform.localPosition = uiOffset;
-
-                // CORRECCIÓN DE ESCALA:
-                // Ignoramos la escala del padre y ponemos una fija pequeña para que se vea bien.
-                // 0.003 es un valor estándar para Canvas WorldSpace legibles a 1 metro.
-                // Como es hijo de una esfera (que quizás mide 0.1), hay que compensar.
-                // Probamos con 0.02f local (que multiplicado por 0.1 del padre da 0.002 mundial).
                 uiObj.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
 
                 NodeUIController uiCtrl = uiObj.GetComponent<NodeUIController>();
@@ -131,34 +134,13 @@ namespace ImmersiveGraph.Visual
                 {
                     string summary = string.IsNullOrEmpty(data.summary) ? "Sin descripción" : data.summary;
                     uiCtrl.SetupUI(data.title, summary);
+                    logic.uiController = uiCtrl;
                 }
             }
-
             return obj;
         }
 
-        Vector3[] CalculateFibonacciSphere(int samples, float radius)
-        {
-            if (samples <= 0) return new Vector3[0];
-            if (samples == 1) return new Vector3[] { Vector3.up * radius };
-
-            Vector3[] points = new Vector3[samples];
-            float phi = Mathf.PI * (3f - Mathf.Sqrt(5f));
-
-            for (int i = 0; i < samples; i++)
-            {
-                float div = (float)(samples - 1);
-                float y = 1 - (i / div) * 2;
-                float radiusAtY = Mathf.Sqrt(1 - y * y);
-                float theta = phi * i;
-                float x = Mathf.Cos(theta) * radiusAtY;
-                float z = Mathf.Sin(theta) * radiusAtY;
-                points[i] = new Vector3(x * radius, y * radius, z * radius);
-            }
-            return points;
-        }
-
-        GameObject DrawConnection(Vector3 start, Vector3 end, Transform parent)
+        GameObject CreateLine(Vector3 start, Transform parent)
         {
             GameObject lineObj = new GameObject("Link");
             lineObj.transform.SetParent(parent);
@@ -171,9 +153,29 @@ namespace ImmersiveGraph.Visual
             lr.endWidth = lineWidth;
             lr.positionCount = 2;
             lr.SetPosition(0, start);
-            lr.SetPosition(1, end);
+            lr.SetPosition(1, start);
             lr.useWorldSpace = true;
             return lineObj;
+        }
+
+        Vector3[] CalculateFibonacciSphere(int samples, float radius)
+        {
+            if (samples <= 0) return new Vector3[0];
+            if (samples == 1) return new Vector3[] { Vector3.up * radius };
+
+            Vector3[] points = new Vector3[samples];
+            float phi = Mathf.PI * (3f - Mathf.Sqrt(5f));
+            for (int i = 0; i < samples; i++)
+            {
+                float div = (float)(samples - 1);
+                float y = 1 - (i / div) * 2;
+                float radiusAtY = Mathf.Sqrt(1 - y * y);
+                float theta = phi * i;
+                float x = Mathf.Cos(theta) * radiusAtY;
+                float z = Mathf.Sin(theta) * radiusAtY;
+                points[i] = new Vector3(x * radius, y * radius, z * radius);
+            }
+            return points;
         }
     }
 }
