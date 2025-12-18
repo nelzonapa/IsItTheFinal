@@ -1580,13 +1580,12 @@ MonoBehaviour:
   communityPrefab: {fileID: 4340233853336565958, guid: 131ad21c6029d2548b59065db8d67796, type: 3}
   filePrefab: {fileID: 4340233853336565958, guid: 6548196bcea887b48aefd735914a91ed, type: 3}
   nodeUIPrefab: {fileID: 152192296721054117, guid: 15505e98cc1d3d242b872ad45cf7b8ba, type: 3}
-  rootSize: {x: 1.5, y: 1.5, z: 1.5}
-  communitySize: {x: 1.5, y: 1.5, z: 1.5}
-  fileSize: {x: 1.5, y: 1.5, z: 1.5}
+  loadingBarPrefab: {fileID: 3595480536926159497, guid: 3087918ec9e8aa74d81876d091452f98, type: 3}
   communityOrbitRadius: 5
   fileOrbitRadius: 5
   lineMaterial: {fileID: 2100000, guid: 0fcf4715c091eda4f97e84803e479e04, type: 2}
   lineWidth: 0.005
+  loaderOffset: {x: 0, y: -0.25, z: 0}
   uiOffset: {x: 0, y: -3, z: 0}
 --- !u!1 &7913309574898258690
 GameObject:

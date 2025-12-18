@@ -816,6 +816,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SmartDesk
       objectReference: {fileID: 0}
+    - target: {fileID: 3727908263082871224, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: loaderOffset.y
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 9013347094446411954, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 100

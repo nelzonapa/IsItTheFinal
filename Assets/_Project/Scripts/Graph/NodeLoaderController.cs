@@ -1,14 +1,13 @@
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
 using Unity.XR.CoreUtils;
 
 namespace ImmersiveGraph.Visual
 {
-    public class NodeUIController : MonoBehaviour
+    public class NodeLoaderController : MonoBehaviour
     {
-        [Header("Referencias UI")]
-        public TextMeshProUGUI titleText;
-        public TextMeshProUGUI summaryText;
+        [Header("Referencias")]
+        public Image fillImage; // La imagen horizontal que se llena (Type: Filled)
 
         private Transform _targetCamera;
 
@@ -17,19 +16,22 @@ namespace ImmersiveGraph.Visual
             var xrOrigin = FindFirstObjectByType<XROrigin>();
             if (xrOrigin != null) _targetCamera = xrOrigin.Camera.transform;
             else _targetCamera = Camera.main.transform;
+
+            // Asegurar que empiece vacía
+            SetProgress(0);
         }
 
-        public void SetupUI(string title, string summary)
+        public void SetProgress(float value)
         {
-            titleText.text = title;
-            if (string.IsNullOrEmpty(summary)) summaryText.text = "Sin información.";
-            else summaryText.text = summary;
-
-            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+            if (fillImage != null)
+            {
+                fillImage.fillAmount = value;
+            }
         }
 
         void Update()
         {
+            // Billboard: Mirar siempre al usuario
             if (_targetCamera != null)
             {
                 transform.rotation = Quaternion.LookRotation(transform.position - _targetCamera.position);

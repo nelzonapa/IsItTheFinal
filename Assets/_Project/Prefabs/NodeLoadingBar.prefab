@@ -35,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 98.5, y: 99.8}
+  m_AnchoredPosition: {x: 0, y: 5.27}
+  m_SizeDelta: {x: 98.5, y: 37.06}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3915768824007385156
 CanvasRenderer:
@@ -88,6 +88,7 @@ GameObject:
   - component: {fileID: 1276437242442566813}
   - component: {fileID: 3409597324946381142}
   - component: {fileID: 7177507176237146869}
+  - component: {fileID: 6551594417962519063}
   m_Layer: 5
   m_Name: NodeLoadingBar
   m_TagString: Untagged
@@ -160,7 +161,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &7177507176237146869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,7 +169,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3595480536926159497}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
   m_Name: 
@@ -178,6 +179,19 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &6551594417962519063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3595480536926159497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6a2eaabdea8a7d42a75c3565452adec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Visual.NodeLoaderController
+  fillImage: {fileID: 8669669231063125776}
 --- !u!1 &7059080233048356904
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,8 +226,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 16, y: 16}
+  m_AnchoredPosition: {x: 50, y: 18.630981}
+  m_SizeDelta: {x: 107.98, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9029847461784917142
 CanvasRenderer:
@@ -248,7 +262,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 0.038
+  m_FillAmount: 0.014
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
