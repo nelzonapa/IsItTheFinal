@@ -150,6 +150,11 @@ namespace ImmersiveGraph.Interaction
             {
                 SendToZone3();
             }
+
+            else if (nodeType == "root")
+            {
+                SendToZone3();
+            }
         }
 
         void SendToZone3()

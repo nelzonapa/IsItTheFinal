@@ -3,19 +3,19 @@ using System.Collections.Generic;
 
 namespace ImmersiveGraph.Data
 {
-    // Clases auxiliares para los detalles anidados
+    // 1. Clase Unificada para "details"
+    // Como JsonUtility no soporta polimorfismo bien, metemos todos los campos posibles aquí.
+    // Unity rellenará los que encuentre y dejará null los que no.
     [Serializable]
-    public class RootDetails
+    public class GenericDetails
     {
+        // Campos de ROOT
         public string[] focos;
         public string conclusion;
-    }
 
-    [Serializable]
-    public class CommunityDetails
-    {
+        // Campos de COMMUNITY
         public string[] entidades;
-        public string[] fechas;
+        public string fechas;    // <--- CORREGIDO: En tu JSON es un String, no un Array
         public string amenaza;
     }
 
@@ -23,33 +23,26 @@ namespace ImmersiveGraph.Data
     public class FileDataContent
     {
         public string full_text;
-        public string[] images; // Rutas a las imágenes
+        public string[] images;
+        public string source;    // Agregado por si acaso
+        public string date;      // Agregado por si acaso
     }
 
-    // La Clase Nodo Maestra (Sirve para Root, Community y File)
     [Serializable]
     public class NodeData
     {
-        public string type;       // "root", "community", "file"
+        public string id;       // Agregado (veo que en tu JSON hay ID)
+        public string type;
         public string title;
         public string summary;
+        public string risk_level;
 
-        // Propiedades específicas de FILE
-        public string risk_level; // "Alto", "Medio", "Bajo"
+        // --- CORRECCIÓN CLAVE ---
+        // La variable SE TIENE QUE LLAMAR "details" para que coincida con el JSON.
+        public GenericDetails details;
+
         public FileDataContent data;
 
-        // Propiedades específicas de ROOT y COMMUNITY
-        // Como 'details' cambia de estructura según el tipo, 
-        // usaremos un truco: JsonUtility a veces falla con polimorfismo.
-        // Para asegurar que funcione, definimos ambas clases contenedoras.
-        public RootDetails root_details;       // (En el JSON vendrá como "details" si es root)
-        public CommunityDetails comm_details;  // (En el JSON vendrá como "details" si es community)
-
-        // NOTA TÉCNICA: Si el JSON usa la misma clave "details" para objetos diferentes,
-        // JsonUtility nativo de Unity podría dar problemas. 
-        // Si eso pasa, usaremos una clase "GenericDetails" o cambiaremos a Newtonsoft.json.
-        // Por ahora, probemos la estructura estándar asumiendo mapeo directo.
-
-        public List<NodeData> children; // Recursividad
+        public List<NodeData> children;
     }
 }

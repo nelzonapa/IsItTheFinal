@@ -3,19 +3,17 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.IO;
-using UnityEngine.Networking; // Para cargar imágenes
+using UnityEngine.Networking;
 using ImmersiveGraph.Data;
 
 namespace ImmersiveGraph.Core
 {
     public class Zone3Manager : MonoBehaviour
     {
-        //public static Zone3Manager Instance; #destruia mi panel
-
         [Header("UI Común (Cabecera)")]
         public TextMeshProUGUI titleText;
         public TextMeshProUGUI summaryText;
-        public TextMeshProUGUI typeLabel; // Para decir "CASO", "COMUNIDAD" o "EVIDENCIA"
+        public TextMeshProUGUI typeLabel;
 
         [Header("Paneles de Contenido")]
         public GameObject rootPanel;
@@ -32,33 +30,27 @@ namespace ImmersiveGraph.Core
         public TextMeshProUGUI commAmenazaText;
 
         [Header("UI Específica: FILE")]
-        public TextMeshProUGUI fileFullText; // Texto largo (debe estar en un ScrollView)
+        public TextMeshProUGUI fileFullText;
         public TextMeshProUGUI fileRiskText;
-        public Image fileImageViewer;        // Donde se mostrará la foto
-        public GameObject imageLoadingSpinner; // Opcional: Icono de carga
+        public Image fileImageViewer;
+        public GameObject imageLoadingSpinner;
 
         private void Awake()
         {
-            // Singleton simple para que el GraphNode lo encuentre rápido
-            //if (Instance == null) Instance = this;
-            //else Destroy(gameObject);
-
-            // Ocultar todo al inicio
             ClearZone();
         }
 
         public void ClearZone()
         {
-            titleText.text = "Seleccione un Nodo";
-            summaryText.text = "Mantenga presionado un nodo del grafo para ver detalles.";
-            typeLabel.text = "...";
+            if (titleText) titleText.text = "Seleccione un Nodo";
+            if (summaryText) summaryText.text = "Mantenga presionado para ver detalles.";
+            if (typeLabel) typeLabel.text = "...";
 
-            rootPanel.SetActive(false);
-            communityPanel.SetActive(false);
-            filePanel.SetActive(false);
+            if (rootPanel) rootPanel.SetActive(false);
+            if (communityPanel) communityPanel.SetActive(false);
+            if (filePanel) filePanel.SetActive(false);
         }
 
-        // --- FUNCIÓN PRINCIPAL LLAMADA DESDE EL GRAFO ---
         public void ShowNodeDetails(NodeData data)
         {
             // 1. Datos Comunes
@@ -66,12 +58,12 @@ namespace ImmersiveGraph.Core
             summaryText.text = data.summary;
             typeLabel.text = data.type.ToUpper();
 
-            // 2. Apagar todos los paneles primero
+            // 2. Apagar todo
             rootPanel.SetActive(false);
             communityPanel.SetActive(false);
             filePanel.SetActive(false);
 
-            // 3. Activar el panel correcto según tipo
+            // 3. Activar según tipo
             switch (data.type)
             {
                 case "root":
@@ -86,19 +78,17 @@ namespace ImmersiveGraph.Core
             }
         }
 
-        // --- LÓGICA DE DETALLE POR TIPO ---
-
         void ShowRootDetails(NodeData data)
         {
             rootPanel.SetActive(true);
 
-            if (data.root_details != null)
+            // Usamos data.details directamente
+            if (data.details != null)
             {
-                // Convertir Array a String con saltos de línea
-                string focosStr = (data.root_details.focos != null) ? string.Join("\n• ", data.root_details.focos) : "Ninguno";
+                string focosStr = (data.details.focos != null) ? string.Join("\n• ", data.details.focos) : "Ninguno";
                 rootFocosText.text = "• " + focosStr;
 
-                rootConclusionText.text = data.root_details.conclusion ?? "Sin conclusión";
+                rootConclusionText.text = data.details.conclusion ?? "Sin conclusión";
             }
         }
 
@@ -106,18 +96,22 @@ namespace ImmersiveGraph.Core
         {
             communityPanel.SetActive(true);
 
-            if (data.comm_details != null)
+            if (data.details != null)
             {
-                string entStr = (data.comm_details.entidades != null) ? string.Join(", ", data.comm_details.entidades) : "-";
+                // Entidades
+                string entStr = (data.details.entidades != null) ? string.Join(", ", data.details.entidades) : "-";
                 commEntidadesText.text = entStr;
 
-                string fechasStr = (data.comm_details.fechas != null) ? string.Join(" | ", data.comm_details.fechas) : "-";
-                commFechasText.text = fechasStr;
+                // Fechas (Ahora es string directo, no array)
+                commFechasText.text = data.details.fechas ?? "-";
 
-                commAmenazaText.text = data.comm_details.amenaza ?? "Desconocida";
+                // Amenaza
+                commAmenazaText.text = data.details.amenaza ?? "Desconocida";
 
-                // Color de amenaza (Opcional)
-                commAmenazaText.color = (commAmenazaText.text == "Alta") ? Color.red : Color.white;
+                // Color condicional
+                if (commAmenazaText.text == "Alta") commAmenazaText.color = Color.red;
+                else if (commAmenazaText.text == "Medio") commAmenazaText.color = Color.yellow;
+                else commAmenazaText.color = Color.white;
             }
         }
 
@@ -127,7 +121,7 @@ namespace ImmersiveGraph.Core
 
             fileRiskText.text = "Riesgo: " + (data.risk_level ?? "N/A");
 
-            // Pintar texto de riesgo
+            // Color Riesgo
             if (data.risk_level == "Alto") fileRiskText.color = Color.red;
             else if (data.risk_level == "Medio") fileRiskText.color = Color.yellow;
             else fileRiskText.color = Color.green;
@@ -136,64 +130,49 @@ namespace ImmersiveGraph.Core
             {
                 fileFullText.text = data.data.full_text;
 
-                // Cargar Imagen
                 if (data.data.images != null && data.data.images.Length > 0)
                 {
-                    // Tomamos la primera imagen
-                    string rawPath = data.data.images[0];
-                    StartCoroutine(LoadImageFromDisk(rawPath));
+                    StartCoroutine(LoadImageFromDisk(data.data.images[0]));
                 }
                 else
                 {
-                    // Poner imagen por defecto o ocultar
                     fileImageViewer.sprite = null;
-                    fileImageViewer.color = new Color(0, 0, 0, 0.5f); // Gris transparente
+                    fileImageViewer.color = new Color(0, 0, 0, 0.5f);
                 }
             }
         }
 
-        // --- CARGADOR DE IMÁGENES ---
         IEnumerator LoadImageFromDisk(string jsonPath)
         {
             if (imageLoadingSpinner != null) imageLoadingSpinner.SetActive(true);
 
-            // 1. Limpiar ruta (El JSON viene como /content/drive/My Drive/...)
-            // Buscamos la parte después del último '/' o ajustamos según tus carpetas.
-            // Asumiré que tus carpetas en StreamingAssets coinciden con el nombre de carpeta final.
-
-            // EJEMPLO: jsonPath = "/content/drive/My Drive/Research/Images_Processed/foto.jpg"
-            // META: Application.streamingAssetsPath + "/Images_Processed/foto.jpg"
-
             string fileName = Path.GetFileName(jsonPath);
-            string folderName = "Images_Processed"; // Por defecto, o lógica para detectar carpeta padre
+            string folderName = "Images_Processed";
 
-            // Lógica para detectar si es News, Blogs, etc.
+            // Detección simple de carpeta
             if (jsonPath.Contains("News")) folderName = "News_Cleaned";
             else if (jsonPath.Contains("Blogs")) folderName = "Blogs_Cleaned";
             else if (jsonPath.Contains("Databases")) folderName = "Databases_Cleaned";
-            // etc...
 
             string localPath = Path.Combine(Application.streamingAssetsPath, folderName, fileName);
-
-            // Necesario para Android/PC local
             string url = "file://" + localPath;
 
             using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(url))
             {
                 yield return uwr.SendWebRequest();
 
-                if (uwr.result != UnityWebRequest.Result.Success)
+                if (uwr.result == UnityWebRequest.Result.Success)
                 {
-                    Debug.LogWarning("Error cargando imagen: " + uwr.error + " | Ruta: " + localPath);
+                    Texture2D texture = DownloadHandlerTexture.GetContent(uwr);
+                    Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                    fileImageViewer.sprite = sprite;
+                    fileImageViewer.color = Color.white;
                 }
                 else
                 {
-                    Texture2D texture = DownloadHandlerTexture.GetContent(uwr);
-
-                    // Crear Sprite y asignarlo
-                    Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-                    fileImageViewer.sprite = sprite;
-                    fileImageViewer.color = Color.white; // Hacerla visible
+                    // Si falla, quizás la imagen no está o la ruta falló. 
+                    // Debug.LogWarning("Imagen no encontrada: " + url);
+                    fileImageViewer.color = new Color(0, 0, 0, 0.5f);
                 }
             }
 
