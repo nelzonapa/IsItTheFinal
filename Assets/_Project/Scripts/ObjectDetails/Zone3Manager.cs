@@ -86,9 +86,9 @@ namespace ImmersiveGraph.Core
             if (data.details != null)
             {
                 string focosStr = (data.details.focos != null) ? string.Join("\n• ", data.details.focos) : "Ninguno";
-                rootFocosText.text = "• " + focosStr;
+                rootFocosText.text = "Focos: \n• " + focosStr;
 
-                rootConclusionText.text = data.details.conclusion ?? "Sin conclusión";
+                rootConclusionText.text = "Conclusión: \n" + data.details.conclusion ?? "Sin conclusión";
             }
         }
 
@@ -100,13 +100,13 @@ namespace ImmersiveGraph.Core
             {
                 // Entidades
                 string entStr = (data.details.entidades != null) ? string.Join(", ", data.details.entidades) : "-";
-                commEntidadesText.text = entStr;
+                commEntidadesText.text = "Entidades: \n" + entStr;
 
                 // Fechas (Ahora es string directo, no array)
-                commFechasText.text = data.details.fechas ?? "-";
+                commFechasText.text = "Fechas: \n" +  data.details.fechas ?? "-";
 
                 // Amenaza
-                commAmenazaText.text = data.details.amenaza ?? "Desconocida";
+                commAmenazaText.text = "Nivel posible de amenaza: \n" + data.details.amenaza ?? "Desconocida";
 
                 // Color condicional
                 if (commAmenazaText.text == "Alta") commAmenazaText.color = Color.red;
@@ -137,7 +137,7 @@ namespace ImmersiveGraph.Core
                 else
                 {
                     fileImageViewer.sprite = null;
-                    fileImageViewer.color = new Color(0, 0, 0, 0.5f);
+                    fileImageViewer.color = Color.red;
                 }
             }
         }
