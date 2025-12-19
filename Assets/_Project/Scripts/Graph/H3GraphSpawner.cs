@@ -1,9 +1,10 @@
-using UnityEngine;
-using System.IO;
+using ImmersiveGraph.Core;
 using ImmersiveGraph.Data;
 using ImmersiveGraph.Interaction;
 using ImmersiveGraph.Visual;
 using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 namespace ImmersiveGraph.Visual
 {
@@ -28,6 +29,9 @@ namespace ImmersiveGraph.Visual
         [Header("Posiciones UI")]
         public Vector3 loaderOffset = new Vector3(0, -0.25f, 0); // Barra (En medio)
         public Vector3 uiOffset = new Vector3(0, -0.6f, 0);      // Texto (Abajo)
+
+        [Header("Referencias de Escena")]
+        public Zone3Manager linkedZone3Manager;
 
         void Start() { LoadGraph(); }
 
@@ -99,6 +103,10 @@ namespace ImmersiveGraph.Visual
             GraphNode logic = obj.AddComponent<GraphNode>();
             logic.nodeType = type;
             logic.myData = data;
+
+            // --- CONEXIÓN VITAL ---
+            logic.localZone3Manager = linkedZone3Manager;
+
             logic.InitializeNode(parentNode, incomingLine);
 
             // 1. INSTANCIAR BARRA DE CARGA (Arriba del texto)

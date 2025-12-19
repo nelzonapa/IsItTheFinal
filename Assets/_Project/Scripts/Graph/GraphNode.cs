@@ -4,6 +4,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using System.Collections.Generic;
 using ImmersiveGraph.Data;
 using ImmersiveGraph.Visual;
+using ImmersiveGraph.Core; //PARA VER Zone3Manager
 
 namespace ImmersiveGraph.Interaction
 {
@@ -20,6 +21,9 @@ namespace ImmersiveGraph.Interaction
         public LineRenderer incomingLine;
         public List<GameObject> childNodes = new List<GameObject>();
         public List<GameObject> childConnectionLines = new List<GameObject>();
+
+        [Header("Referencias Externas")]
+        public Zone3Manager localZone3Manager;
 
         [Header("Referencias UI")]
         public NodeUIController infoUI;       
@@ -151,6 +155,16 @@ namespace ImmersiveGraph.Interaction
         void SendToZone3()
         {
             Debug.Log($"--> ENVIANDO {myData.title} A ZONE 3");
+
+            // USAMOS LA REFERENCIA LOCAL
+            if (localZone3Manager != null)
+            {
+                localZone3Manager.ShowNodeDetails(myData);
+            }
+            else
+            {
+                Debug.LogError($"El nodo {name} no tiene asignado un Zone3Manager local.");
+            }
         }
 
         void SetChildrenVisibility(bool state)
