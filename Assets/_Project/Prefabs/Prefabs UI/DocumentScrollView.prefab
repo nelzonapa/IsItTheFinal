@@ -277,6 +277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.SelectableText
   highlightColor: {r: 1, g: 0, b: 0, a: 1}
+  tokenPrefab: {fileID: 3135422479235381209, guid: 1632e9071d3bc94489c080199a8adf25, type: 3}
 --- !u!1 &4768725822144896351
 GameObject:
   m_ObjectHideFlags: 0
