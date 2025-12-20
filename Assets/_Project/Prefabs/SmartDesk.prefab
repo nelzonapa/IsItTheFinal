@@ -2518,9 +2518,8 @@ GameObject:
   - component: {fileID: 5269809179943296561}
   - component: {fileID: 5617271056637791138}
   - component: {fileID: 7529284366308622933}
-  - component: {fileID: 3122501797434319748}
   - component: {fileID: 1713510425057211677}
-  - component: {fileID: 5009917949897110911}
+  - component: {fileID: 8550082689745800963}
   m_Layer: 0
   m_Name: Zone3_UI_Canvas
   m_TagString: Untagged
@@ -2600,23 +2599,6 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 1
---- !u!114 &3122501797434319748
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6353233621545117233}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!114 &1713510425057211677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2644,7 +2626,7 @@ MonoBehaviour:
   fileRiskText: {fileID: 3281496065460380417}
   fileImageViewer: {fileID: 961480463016315657}
   imageLoadingSpinner: {fileID: 0}
---- !u!114 &5009917949897110911
+--- !u!114 &8550082689745800963
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2656,7 +2638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7951c64acb0fa62458bf30a60089fe2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.XR.Interaction.Toolkit::UnityEngine.XR.Interaction.Toolkit.UI.TrackedDeviceGraphicRaycaster
-  m_IgnoreReversedGraphics: 0
+  m_IgnoreReversedGraphics: 1
   m_CheckFor2DOcclusion: 0
   m_CheckFor3DOcclusion: 0
   m_BlockingMask:

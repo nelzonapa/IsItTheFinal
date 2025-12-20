@@ -130,6 +130,15 @@ namespace ImmersiveGraph.Core
             {
                 fileFullText.text = data.data.full_text;
 
+                // Forzamos la actualización inmediata del layout para que TMP calcule los caracteres
+                Canvas.ForceUpdateCanvases();
+
+                var selectable = fileFullText.GetComponent<Interaction.SelectableText>();
+                if (selectable != null)
+                {
+                    selectable.UpdateOriginalText();
+                }
+
                 if (data.data.images != null && data.data.images.Length > 0)
                 {
                     StartCoroutine(LoadImageFromDisk(data.data.images[0]));
