@@ -319,11 +319,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.SmartPen
   tipPoint: {fileID: 4615359301539362732}
-  drawingMaterial: {fileID: 2100000, guid: c2099d470269ad048914182776f01f08, type: 2}
-  lineWidth: 0.03
-  drawingLayers:
-    serializedVersion: 2
-    m_Bits: 8
+  tipRenderer: {fileID: 1344587851945780347}
+  connectionLinePrefab: {fileID: 2161875081476625744, guid: af0a194c10086b047aa71f4d22d43323, type: 3}
+  detectionRadius: 0.02
 --- !u!1 &4358520661917017648
 GameObject:
   m_ObjectHideFlags: 0

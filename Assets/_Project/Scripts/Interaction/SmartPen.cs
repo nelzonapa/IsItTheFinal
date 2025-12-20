@@ -1,101 +1,162 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactables; // Unity 6 / XRI 3
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace ImmersiveGraph.Interaction
 {
     [RequireComponent(typeof(XRGrabInteractable))]
     public class SmartPen : MonoBehaviour
     {
-        [Header("Configuración")]
+        [Header("Referencias")]
         public Transform tipPoint;
-        public Material drawingMaterial;
-        public float lineWidth = 0.005f;
+        public Renderer tipRenderer;
+        public GameObject connectionLinePrefab;
 
-        [Header("Filtros")]
-        public LayerMask drawingLayers;
+        [Header("Configuración")]
+        public float detectionRadius = 0.02f;
 
+        // ESTADO
         private XRGrabInteractable _interactable;
-        private LineRenderer _currentLine;
+        private Transform _startNode = null;
+        private LineRenderer _ghostLine;
         private bool _isDrawing = false;
-        private int _positionCount = 0;
-        private Vector3 _lastPos;
 
-        void Start()
+        void Awake()
         {
             _interactable = GetComponent<XRGrabInteractable>();
-            // Eventos de gatillo (Activate)
-            _interactable.activated.AddListener(StartDrawing);
-            _interactable.deactivated.AddListener(StopDrawing);
+
+            // Línea fantasma
+            GameObject ghostObj = new GameObject("GhostLine");
+            ghostObj.transform.SetParent(transform);
+            _ghostLine = ghostObj.AddComponent<LineRenderer>();
+            _ghostLine.startWidth = 0.002f;
+            _ghostLine.endWidth = 0.002f;
+            _ghostLine.material = new Material(Shader.Find("Sprites/Default"));
+            _ghostLine.positionCount = 2; // Importante inicializar
+            _ghostLine.useWorldSpace = true; // Importante
+            _ghostLine.enabled = false;
         }
 
-        void StartDrawing(ActivateEventArgs args)
+        void OnEnable()
         {
-            // Solo empezamos si presionas el gatillo
-            _isDrawing = true;
-            CreateNewLine();
+            _interactable.activated.AddListener(OnTriggerPressed);
+            _interactable.deactivated.AddListener(OnTriggerReleased);
         }
 
-        void StopDrawing(DeactivateEventArgs args)
+        void OnDisable()
         {
-            _isDrawing = false;
-            _currentLine = null;
-        }
-
-        void CreateNewLine()
-        {
-            // Creamos el trazo
-            GameObject lineObj = new GameObject($"Stroke_{Time.time}");
-
-            _currentLine = lineObj.AddComponent<LineRenderer>();
-            _currentLine.material = drawingMaterial;
-            _currentLine.startWidth = lineWidth;
-            _currentLine.endWidth = lineWidth;
-            _currentLine.positionCount = 0;
-            _currentLine.useWorldSpace = true;
-            _currentLine.numCapVertices = 5;
-
-            // IMPORTANTE: El trazo también debe ser clonable
-            lineObj.tag = "ClonableItem";
-
-            // Opcional: Si quieres pintar sobre tu propia pintura, ponle layer Writeable
-            // lineObj.layer = LayerMask.NameToLayer("Writeable"); 
-
-            _positionCount = 0;
+            _interactable.activated.RemoveListener(OnTriggerPressed);
+            _interactable.deactivated.RemoveListener(OnTriggerReleased);
         }
 
         void Update()
         {
-            if (_isDrawing && _currentLine != null)
+            if (_isDrawing)
             {
-                // RAYCAST CHECK: ¿La punta está tocando una superficie "Writeable"?
-                // Lanzamos un rayo minúsculo desde la punta hacia adelante (o hacia adentro)
-                // Si toca algo en la LayerMask, pintamos.
-                if (Physics.CheckSphere(tipPoint.position, 0.005f, drawingLayers))
+                UpdateGhostLine();
+            }
+        }
+
+        void OnTriggerPressed(ActivateEventArgs args)
+        {
+            Collider[] hits = Physics.OverlapSphere(tipPoint.position, detectionRadius);
+
+            foreach (var hit in hits)
+            {
+                // A. BORRADOR (Buscamos el CenterFollow o ConnectionLine)
+                // El cubo del medio tendrá CenterFollow, que es hijo de ConnectionLine
+                ConnectionLine line = hit.GetComponentInParent<ConnectionLine>();
+
+                // Verificamos que lo que tocamos sea el "Handle" (el cubo) o la línea en sí
+                if (line != null)
                 {
-                    if (Vector3.Distance(tipPoint.position, _lastPos) > 0.002f)
+                    // Truco: Para no borrar la línea apenas la creas, verifica distancia o tag
+                    // Pero por ahora, asumimos que si tocas el cubo central, es para borrar.
+                    if (hit.GetComponent<CenterFollow>() != null)
                     {
-                        UpdateLine();
+                        Destroy(line.gameObject);
+                        Debug.Log("Conexión borrada");
+                        return;
                     }
                 }
-                else
+
+                // B. DIBUJAR (Nodos)
+                if (hit.CompareTag("Connectable"))
                 {
-                    // Si levantas el lápiz del papel pero sigues apretando,
-                    // cortamos el trazo actual para no hacer líneas voladoras.
-                    if (_currentLine.positionCount > 0)
-                    {
-                        _currentLine = null; // Romper el trazo actual
-                        CreateNewLine();     // Preparar uno nuevo por si vuelve a tocar
-                    }
+                    _startNode = hit.transform;
+                    _isDrawing = true;
+                    _ghostLine.enabled = true;
+                    // Actualizar ghost line inmediatamente para que salga de la punta
+                    _ghostLine.SetPosition(0, _startNode.position);
+                    _ghostLine.SetPosition(1, tipPoint.position);
+                    return;
                 }
             }
         }
 
-        void UpdateLine()
+        void OnTriggerReleased(DeactivateEventArgs args)
         {
-            _currentLine.positionCount++;
-            _currentLine.SetPosition(_positionCount - 1, tipPoint.position);
-            _lastPos = tipPoint.position;
+            if (_isDrawing)
+            {
+                Collider[] hits = Physics.OverlapSphere(tipPoint.position, detectionRadius);
+                Transform endNode = null;
+
+                foreach (var hit in hits)
+                {
+                    // Evitar conectarse a sí mismo
+                    if (hit.CompareTag("Connectable") && hit.transform != _startNode)
+                    {
+                        endNode = hit.transform;
+                        break;
+                    }
+                }
+
+                if (endNode != null)
+                {
+                    CreateConnection(_startNode, endNode);
+                }
+
+                _isDrawing = false;
+                _ghostLine.enabled = false;
+                _startNode = null;
+            }
+        }
+
+        void UpdateGhostLine()
+        {
+            if (_startNode != null)
+            {
+                _ghostLine.SetPosition(0, _startNode.position);
+                _ghostLine.SetPosition(1, tipPoint.position);
+            }
+        }
+
+        void CreateConnection(Transform start, Transform end)
+        {
+            GameObject lineObj = Instantiate(connectionLinePrefab);
+
+            ConnectionLine script = lineObj.GetComponent<ConnectionLine>();
+            script.Initialize(start, end);
+
+            // Crear el cubo de borrado
+            GameObject handle = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            handle.name = "DeleteHandle";
+            handle.transform.SetParent(lineObj.transform);
+            handle.transform.localScale = new Vector3(0.04f, 0.04f, 0.04f); // Tamaño del cubo borrador
+
+            // Material rojo para el cubo (opcional, para saber que es borrable)
+            Renderer r = handle.GetComponent<Renderer>();
+            if (r != null) r.material.color = Color.red;
+
+            // Script para seguir el centro
+            CenterFollow follower = handle.AddComponent<CenterFollow>();
+            follower.a = start;
+            follower.b = end;
+
+            // Asegurar que el cubo tenga collider (CreatePrimitive ya se lo pone)
+            // Asegurar que sea Trigger para que el lápiz entre suave
+            Collider col = handle.GetComponent<Collider>();
+            if (col) col.isTrigger = true;
         }
     }
 }

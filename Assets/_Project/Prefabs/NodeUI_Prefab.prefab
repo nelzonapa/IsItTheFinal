@@ -85,7 +85,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &3406548258577581565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,7 +117,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Visual.NodeUIController
   titleText: {fileID: 1231838994190928059}
   summaryText: {fileID: 7852929691126506622}
-  loadingBar: {fileID: 0}
 --- !u!1 &3765628327147039794
 GameObject:
   m_ObjectHideFlags: 0

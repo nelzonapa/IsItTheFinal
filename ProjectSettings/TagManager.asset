@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PlayerHand
   - ClonableItem
+  - Connectable
   layers:
   - Default
   - TransparentFX
