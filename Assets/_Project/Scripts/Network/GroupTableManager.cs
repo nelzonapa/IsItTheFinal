@@ -16,15 +16,22 @@ namespace ImmersiveGraph.Network
 
         // --- Puntos de Aparición INDIVIDUAL (Escritorios privados) ---
         [Header("Escritorios Individuales")]
-        [Tooltip("Arrastra aquí el SpawnPoint_Individual de cada SmartDesk (Desk1, Desk2...)")]
         public Transform[] individualDeskSpawns;
 
         [Header("Zona Central")]
         public Transform timelineZone;
 
         [Header("--- FASE 4: KIT DE HERRAMIENTAS ---")]
-        public NetworkObject netSmartPenPrefab;   // Arrastra Network_SmartPen
-        public NetworkObject netNoteBlockPrefab;  // Arrastra Network_NoteBlock (que crearemos abajo)
+        public NetworkObject netSmartPenPrefab;
+        public NetworkObject netNoteBlockPrefab;
+
+        // NUEVO: Puntos exactos para las herramientas
+        [Header("Spawns Exactos de Herramientas")]
+        [Tooltip("Crea objetos vacíos en la mesa para cada jugador: PenPos_0, PenPos_1...")]
+        public Transform[] penSpawnPoints;
+
+        [Tooltip("Crea objetos vacíos en la mesa para cada jugador: BlockPos_0, BlockPos_1...")]
+        public Transform[] blockSpawnPoints;
 
         private void Awake()
         {
@@ -41,44 +48,51 @@ namespace ImmersiveGraph.Network
         public Transform GetSpawnPointForPlayer(PlayerRef player)
         {
             if (userSpawnPoints.Length == 0) return transform;
-
-            // Usamos la misma lógica: ID % Cantidad
-            // Esto asegura que si te toca la Bandeja 1, te toque el SpawnPoint 1
             return userSpawnPoints[player.PlayerId % userSpawnPoints.Length];
         }
 
         public Transform GetIndividualDeskForPlayer(PlayerRef player)
         {
-            if (individualDeskSpawns.Length == 0) return transform; // Fallback
-
-            // Asignar escritorio según ID (Jugador 1 -> Escritorio 1)
+            if (individualDeskSpawns.Length == 0) return transform;
             return individualDeskSpawns[player.PlayerId % individualDeskSpawns.Length];
         }
 
-        // --- SPAWN DE HERRAMIENTAS ---
-        // Este método se debe llamar cuando el jugador entra a la sala (PlayerJoined)
+        // --- SPAWN DE HERRAMIENTAS CORREGIDO ---
         public void SpawnToolsForPlayer(NetworkRunner runner, PlayerRef player)
         {
-            Transform zone = GetReceptionZoneForPlayer(player);
+            // Calculamos el índice seguro
+            int index = player.PlayerId;
 
-            // Definimos posiciones relativas para que no caigan uno encima del otro
-            // Ej: Lápiz a la derecha, Block a la izquierda de la bandeja
-            Vector3 penPos = zone.position + zone.right * 0.15f + Vector3.up * 0.05f;
-            Vector3 blockPos = zone.position - zone.right * 0.15f + Vector3.up * 0.05f;
+            // 1. OBTENER PUNTO DEL LÁPIZ
+            Transform targetPenTrans = null;
+            if (penSpawnPoints.Length > 0)
+            {
+                targetPenTrans = penSpawnPoints[index % penSpawnPoints.Length];
+            }
 
-            // Spawneamos el Lápiz
+            // 2. OBTENER PUNTO DEL BLOCK
+            Transform targetBlockTrans = null;
+            if (blockSpawnPoints.Length > 0)
+            {
+                targetBlockTrans = blockSpawnPoints[index % blockSpawnPoints.Length];
+            }
+
+            // SI NO HAY PUNTOS CONFIGURADOS, USAMOS LA BANDEJA COMO RESPALDO (Fallback)
+            if (targetPenTrans == null) targetPenTrans = GetReceptionZoneForPlayer(player);
+            if (targetBlockTrans == null) targetBlockTrans = GetReceptionZoneForPlayer(player);
+
+            // 3. SPAWNEAR
             if (netSmartPenPrefab != null)
             {
-                runner.Spawn(netSmartPenPrefab, penPos, zone.rotation, player);
+                runner.Spawn(netSmartPenPrefab, targetPenTrans.position, targetPenTrans.rotation, player);
             }
 
-            // Spawneamos el Block de Notas
             if (netNoteBlockPrefab != null)
             {
-                runner.Spawn(netNoteBlockPrefab, blockPos, zone.rotation, player);
+                runner.Spawn(netNoteBlockPrefab, targetBlockTrans.position, targetBlockTrans.rotation, player);
             }
 
-            Debug.Log($"Kit de herramientas entregado al Jugador {player.PlayerId}");
+            Debug.Log($"Kit de herramientas entregado al Jugador {player.PlayerId} en posiciones fijas.");
         }
     }
 }
