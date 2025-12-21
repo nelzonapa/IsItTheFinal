@@ -53,6 +53,12 @@ namespace ImmersiveGraph.Network
                 // SPAWN
                 runner.Spawn(playerPrefab, spawnPosition, Quaternion.identity, player);
 
+                // NUEVO: Entregar herramientas en la mesa grupal
+                if (GroupTableManager.Instance != null)
+                {
+                    GroupTableManager.Instance.SpawnToolsForPlayer(runner, player);
+                }
+
             }
         }
 

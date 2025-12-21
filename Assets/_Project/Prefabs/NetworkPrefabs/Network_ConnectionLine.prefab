@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5655943291682319271}
   - component: {fileID: 598895135044232191}
   - component: {fileID: 7442989004605929229}
-  - component: {fileID: 2025917065855020008}
+  - component: {fileID: 5356999450506748193}
   - component: {fileID: 3462832176927901370}
   m_Layer: 0
   m_Name: Network_ConnectionLine
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.ConnectionLine
   startNode: {fileID: 0}
   endNode: {fileID: 0}
---- !u!114 &2025917065855020008
+--- !u!114 &5356999450506748193
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -168,10 +168,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 2161875081476625744}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10533623ed629624c8acc6869f609bf2, type: 3}
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Fusion.Unity::Fusion.NetworkObjectProviderDefault
-  DelayIfSceneManagerIsBusy: 1
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
+  SortKey: 38932864
+  ObjectInterest: 1
+  Flags: 786433
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 3462832176927901370}
+  ForceRemoteRenderTimeframe: 0
 --- !u!114 &3462832176927901370
 MonoBehaviour:
   m_ObjectHideFlags: 0

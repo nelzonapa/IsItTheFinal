@@ -46,8 +46,11 @@ GameObject:
   - component: {fileID: 5369520780963909860}
   - component: {fileID: 136169651924363002}
   - component: {fileID: 6681731112473728456}
+  - component: {fileID: 3515518391128341249}
+  - component: {fileID: 8992362280173084367}
+  - component: {fileID: 4315164363599971193}
   m_Layer: 0
-  m_Name: SmartPen_Prefab
+  m_Name: Network_SmartPen_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -318,12 +321,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2680fc5a7bb5f64b9a1099a4255a281, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.SmartPen
-  isNetworked: 0
-  netLinePrefab: {fileID: 0}
+  isNetworked: 1
+  netLinePrefab: {fileID: 5356999450506748193, guid: 396de9a506d2d594f9a8ca1c51914b09, type: 3}
   tipPoint: {fileID: 4615359301539362732}
   tipRenderer: {fileID: 1344587851945780347}
-  localLinePrefab: {fileID: 2161875081476625744, guid: af0a194c10086b047aa71f4d22d43323, type: 3}
+  localLinePrefab: {fileID: 0}
   detectionRadius: 0.02
+--- !u!114 &3515518391128341249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3838799213925876278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
+  SortKey: 3712017581
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 8992362280173084367}
+  - {fileID: 4315164363599971193}
+  ForceRemoteRenderTimeframe: 0
+--- !u!114 &8992362280173084367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3838799213925876278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
+  _stateAuthorityChangeErrorCorrectionDelta: 0
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0
+--- !u!114 &4315164363599971193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3838799213925876278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a40760831f56c24db21f4b7441fdc9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Network.NetworkObjectColor
+  targetRenderer: {fileID: 1344587851945780347}
 --- !u!1 &4358520661917017648
 GameObject:
   m_ObjectHideFlags: 0

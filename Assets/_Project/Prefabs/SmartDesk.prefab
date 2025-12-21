@@ -867,6 +867,7 @@ GameObject:
   - component: {fileID: 6268918123770427198}
   - component: {fileID: 525170731983431308}
   - component: {fileID: 5779289886195097638}
+  - component: {fileID: 4277995489900044386}
   m_Layer: 0
   m_Name: Zone5_Shared
   m_TagString: Untagged
@@ -1068,6 +1069,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.Zone5Publisher
   networkObjectPrefab: {fileID: 8130584581019575883, guid: 3d36707717878204981ee83b73ff2112, type: 3}
+--- !u!114 &4277995489900044386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2242100136102775865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 920ac0a432585af4aaebc1cd469780af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MigrationManager
+  zoneCenter: {fileID: 3920732527639097152}
+  zoneSize: {x: 0.88, y: 1, z: 0.93}
+  scanLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  netPostItPrefab: {fileID: -4726014317425667089, guid: 4b71672d9a0fd10489fd04e530722b55, type: 3}
+  netTokenPrefab: {fileID: 7503669862345325201, guid: 1b6b188c3f65f0246ba8a2875fed9901, type: 3}
+  netLinePrefab: {fileID: 5356999450506748193, guid: 396de9a506d2d594f9a8ca1c51914b09, type: 3}
 --- !u!1 &2592376226361987160
 GameObject:
   m_ObjectHideFlags: 0
@@ -2469,6 +2490,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc88006d8b50ee24498d7ff9fff2f58b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Network.TeleportToGroup
+  migrator: {fileID: 4277995489900044386}
 --- !u!1 &5392083453225274785
 GameObject:
   m_ObjectHideFlags: 0

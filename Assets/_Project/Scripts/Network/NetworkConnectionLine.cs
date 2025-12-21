@@ -37,22 +37,15 @@ namespace ImmersiveGraph.Network
 
         public override void Render()
         {
-            // Si aún no tenemos los transform, intentamos buscarlos (pueden tardar en spawnear)
-            if (_startTrans == null || _endTrans == null)
-            {
-                FindTargets();
-            }
+            if (_startTrans == null || _endTrans == null) FindTargets();
 
-            // Si ya los tenemos, actualizamos la línea visual
             if (_startTrans != null && _endTrans != null)
             {
                 _lr.SetPosition(0, _startTrans.position);
                 _lr.SetPosition(1, _endTrans.position);
-            }
-            else
-            {
-                // Si falta un nodo (ej. fue borrado), la línea debería desaparecer
-                // En un entorno ideal, el dueño debería llamar a Runner.Despawn(Object)
+
+                // --- ACTUALIZACIÓN DEL CUBO DE BORRADO ---
+                UpdateHandlePosition();
             }
         }
 
@@ -70,6 +63,30 @@ namespace ImmersiveGraph.Network
                 if (Runner.TryFindObject(EndNodeID, out NetworkObject endObj))
                     _endTrans = endObj.transform;
             }
+        }
+
+        // Variable para guardar el cubo
+        private GameObject _deleteHandle;
+
+        void UpdateHandlePosition()
+        {
+            // Si no existe el cubo, lo creamos
+            if (_deleteHandle == null)
+            {
+                _deleteHandle = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                _deleteHandle.name = "DeleteHandle";
+                _deleteHandle.transform.SetParent(transform);
+                _deleteHandle.transform.localScale = new Vector3(0.04f, 0.04f, 0.04f);
+
+                var r = _deleteHandle.GetComponent<Renderer>();
+                if (r) r.material.color = Color.red;
+
+                var col = _deleteHandle.GetComponent<Collider>();
+                if (col) col.isTrigger = true;
+            }
+
+            // Lo movemos al centro
+            _deleteHandle.transform.position = (_startTrans.position + _endTrans.position) / 2;
         }
     }
 }

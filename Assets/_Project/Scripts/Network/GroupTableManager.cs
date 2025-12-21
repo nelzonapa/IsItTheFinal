@@ -22,6 +22,10 @@ namespace ImmersiveGraph.Network
         [Header("Zona Central")]
         public Transform timelineZone;
 
+        [Header("--- FASE 4: KIT DE HERRAMIENTAS ---")]
+        public NetworkObject netSmartPenPrefab;   // Arrastra Network_SmartPen
+        public NetworkObject netNoteBlockPrefab;  // Arrastra Network_NoteBlock (que crearemos abajo)
+
         private void Awake()
         {
             if (Instance == null) Instance = this;
@@ -49,6 +53,32 @@ namespace ImmersiveGraph.Network
 
             // Asignar escritorio según ID (Jugador 1 -> Escritorio 1)
             return individualDeskSpawns[player.PlayerId % individualDeskSpawns.Length];
+        }
+
+        // --- SPAWN DE HERRAMIENTAS ---
+        // Este método se debe llamar cuando el jugador entra a la sala (PlayerJoined)
+        public void SpawnToolsForPlayer(NetworkRunner runner, PlayerRef player)
+        {
+            Transform zone = GetReceptionZoneForPlayer(player);
+
+            // Definimos posiciones relativas para que no caigan uno encima del otro
+            // Ej: Lápiz a la derecha, Block a la izquierda de la bandeja
+            Vector3 penPos = zone.position + zone.right * 0.15f + Vector3.up * 0.05f;
+            Vector3 blockPos = zone.position - zone.right * 0.15f + Vector3.up * 0.05f;
+
+            // Spawneamos el Lápiz
+            if (netSmartPenPrefab != null)
+            {
+                runner.Spawn(netSmartPenPrefab, penPos, zone.rotation, player);
+            }
+
+            // Spawneamos el Block de Notas
+            if (netNoteBlockPrefab != null)
+            {
+                runner.Spawn(netNoteBlockPrefab, blockPos, zone.rotation, player);
+            }
+
+            Debug.Log($"Kit de herramientas entregado al Jugador {player.PlayerId}");
         }
     }
 }

@@ -12,6 +12,9 @@ namespace ImmersiveGraph.Network
         private XROrigin _xrOrigin;
         private NetworkRunner _runner;
 
+        // REFERENCIA AL MIGRATION MANAGER
+        public MigrationManager migrator;
+
         void Start()
         {
             _xrOrigin = FindFirstObjectByType<XROrigin>();
@@ -29,19 +32,23 @@ namespace ImmersiveGraph.Network
                 return;
             }
 
-            Debug.Log("Teletransportando al punto de spawn asignado...");
+            // --- PASO 1: EJECUTAR LA MIGRACIÓN ---
+            if (migrator != null)
+            {
+                migrator.ExecuteMigration();
+            }
+            else
+            {
+                Debug.LogWarning("No hay MigrationManager asignado, viajando sin cosas...");
+            }
+            // -------------------------------------
 
-            // 1. Pedir el punto exacto al Manager
+            Debug.Log("Teletransportando al punto de spawn asignado...");
             Transform targetSpawn = GroupTableManager.Instance.GetSpawnPointForPlayer(_runner.LocalPlayer);
 
-            if (_xrOrigin != null)
+            if (_xrOrigin != null && targetSpawn != null)
             {
-                // 2. Moverse a la posición del SpawnPoint
-                // TRUCO: Sumamos 0.05 en Y para asegurar que no quedes enterrado en el suelo
                 _xrOrigin.transform.position = targetSpawn.position + new Vector3(0, 0.05f, 0);
-
-                // 3. Copiar la rotación (para que mires hacia donde mira el SpawnPoint)
-                // Solo rotamos en Y para no inclinar la cámara si el punto está chueco
                 Vector3 targetRotation = targetSpawn.rotation.eulerAngles;
                 _xrOrigin.transform.rotation = Quaternion.Euler(0, targetRotation.y, 0);
             }
