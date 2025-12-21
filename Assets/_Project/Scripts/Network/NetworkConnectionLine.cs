@@ -37,15 +37,22 @@ namespace ImmersiveGraph.Network
 
         public override void Render()
         {
+            // Si falta alguno, intentamos buscarlos
             if (_startTrans == null || _endTrans == null) FindTargets();
 
+            // Solo dibujamos si TENEMOS AMBOS
             if (_startTrans != null && _endTrans != null)
             {
+                _lr.enabled = true; // Asegurar que sea visible
                 _lr.SetPosition(0, _startTrans.position);
                 _lr.SetPosition(1, _endTrans.position);
 
-                // --- ACTUALIZACIÓN DEL CUBO DE BORRADO ---
                 UpdateHandlePosition();
+            }
+            else
+            {
+                // Si no los tenemos, ocultamos la línea para que no se vea fea en (0,0,0)
+                _lr.enabled = false;
             }
         }
 

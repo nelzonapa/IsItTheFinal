@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5655943291682319271}
   - component: {fileID: 598895135044232191}
-  - component: {fileID: 7442989004605929229}
   - component: {fileID: 5356999450506748193}
   - component: {fileID: 3462832176927901370}
   m_Layer: 0
@@ -145,20 +144,6 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &7442989004605929229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2161875081476625744}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62d0a0c937044ab4f9cb2ce0c9d6c7cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.ConnectionLine
-  startNode: {fileID: 0}
-  endNode: {fileID: 0}
 --- !u!114 &5356999450506748193
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -134,23 +134,33 @@ public class MigrationManager : MonoBehaviour
 
     void MigrateLine(ConnectionLine localLine)
     {
-        // Verificamos si los padres de esta línea fueron migrados
+        // Validación de seguridad
+        if (localLine.startNode == null || localLine.endNode == null) return;
+
         GameObject startObj = localLine.startNode.gameObject;
         GameObject endObj = localLine.endNode.gameObject;
 
-        // Puede que startNode sea un hijo (ej. el Canvas), buscamos la raíz que está en el mapa
-        // Esto es un truco de búsqueda recursiva hacia arriba si no encuentra la llave
+        // Debug para ver qué está intentando conectar
+        // Debug.Log($"Intentando migrar línea entre {startObj.name} y {endObj.name}...");
+
         NetworkId startNetID = FindNetworkIdFor(startObj);
         NetworkId endNetID = FindNetworkIdFor(endObj);
 
         if (startNetID.IsValid && endNetID.IsValid)
         {
+            // Debug.Log($"¡IDs encontrados! Start: {startNetID} | End: {endNetID}. Spawneando línea...");
+
             // Crear la línea de red
-            // La línea no necesita posición exacta al nacer, se ajustará sola
             NetworkObject netLine = _runner.Spawn(netLinePrefab, Vector3.zero, Quaternion.identity, _runner.LocalPlayer);
 
             // Asignar conexiones
             netLine.GetComponent<NetworkConnectionLine>().SetConnections(startNetID, endNetID);
+        }
+        else
+        {
+            Debug.LogWarning($"[MIGRATION ERROR] No pude encontrar los IDs de red para la línea.\n" +
+                             $"Local Start: {startObj.name} -> NetID Found: {startNetID}\n" +
+                             $"Local End: {endObj.name} -> NetID Found: {endNetID}");
         }
     }
 
