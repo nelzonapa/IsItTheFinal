@@ -3241,7 +3241,7 @@ MonoBehaviour:
   fileOrbitRadius: 5
   lineMaterial: {fileID: 2100000, guid: 0fcf4715c091eda4f97e84803e479e04, type: 2}
   lineWidth: 0.005
-  loaderOffset: {x: 0, y: -0.25, z: 0}
+  loaderOffset: {x: 0, y: -1, z: 0}
   uiOffset: {x: 0, y: -3, z: 0}
   linkedZone3Manager: {fileID: 1713510425057211677}
 --- !u!1 &7913309574898258690
