@@ -4,7 +4,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using System.Collections.Generic;
 using ImmersiveGraph.Data;
 using ImmersiveGraph.Visual;
-using ImmersiveGraph.Core; //PARA VER Zone3Manager
+using ImmersiveGraph.Core;
 
 namespace ImmersiveGraph.Interaction
 {
@@ -26,27 +26,34 @@ namespace ImmersiveGraph.Interaction
         public Zone3Manager localZone3Manager;
 
         [Header("Referencias UI")]
-        public NodeUIController infoUI;       
-        public NodeLoaderController loaderUI; 
+        public NodeUIController infoUI;
+        public NodeLoaderController loaderUI;
+
+        // --- VARIABLES PÚBLICAS PARA RECIBIR CONFIGURACIÓN ---
+        public GameObject reviewedMarkerPrefab;
+        public Vector3 markerLocalOffset;
+        public Vector3 markerLocalScale;
+        // ----------------------------------------------------
 
         // Lógica Interna
         private XRGrabInteractable _interactable;
         private Renderer _renderer;
         private Color _originalColor;
         private Color _hoverColor;
-        
-        // Hold Logic
+
         private bool _isGrabbing = false;
         private float _holdTimer = 0f;
         private float _activationTime = 4.0f;
         private bool _hasActivated = false;
         private bool _isExpanded = false;
 
+        private bool _isReviewed = false;
+
         void Awake()
         {
             _interactable = GetComponent<XRGrabInteractable>();
             _renderer = GetComponent<Renderer>();
-            
+
             Rigidbody rb = GetComponent<Rigidbody>();
             if (rb == null) rb = gameObject.AddComponent<Rigidbody>();
             rb.useGravity = false;
@@ -97,21 +104,17 @@ namespace ImmersiveGraph.Interaction
 
         void Update()
         {
-            // 1. Líneas
             if (incomingLine != null && parentNodeTransform != null)
             {
                 incomingLine.SetPosition(0, parentNodeTransform.position);
                 incomingLine.SetPosition(1, transform.position);
             }
 
-            // 2. Lógica de Carga
             if (_isGrabbing && !_hasActivated)
             {
                 _holdTimer += Time.deltaTime;
-                
                 float progress = _holdTimer / _activationTime;
-                
-                // Actualizamos la nueva barra horizontal
+
                 if (loaderUI != null) loaderUI.SetProgress(progress);
 
                 if (_holdTimer >= _activationTime)
@@ -132,13 +135,35 @@ namespace ImmersiveGraph.Interaction
         {
             _isGrabbing = false;
             _holdTimer = 0f;
-            if (loaderUI != null) loaderUI.SetProgress(0); // Resetear barra
+            if (loaderUI != null) loaderUI.SetProgress(0);
         }
 
         void ExecuteActivation()
         {
             _hasActivated = true;
-            if (loaderUI != null) loaderUI.SetProgress(1f); // Llenar barra
+            if (loaderUI != null) loaderUI.SetProgress(1f);
+
+            // --- INSTANCIAR CHINCHETA ---
+            if (!_isReviewed && reviewedMarkerPrefab != null)
+            {
+                Debug.Log($"Activando chincheta en {name}");
+
+                GameObject marker = Instantiate(reviewedMarkerPrefab, transform);
+
+                // Usamos las variables que nos pasó el Spawner
+                marker.transform.localPosition = markerLocalOffset;
+                marker.transform.localScale = markerLocalScale;
+
+                // Aseguramos rotación cero relativa
+                marker.transform.localRotation = Quaternion.identity;
+
+                _isReviewed = true;
+            }
+            else if (reviewedMarkerPrefab == null)
+            {
+                Debug.LogWarning("No aparece la chincheta porque 'reviewedMarkerPrefab' es NULL en el GraphNode.");
+            }
+            // -----------------------------
 
             if (nodeType == "community")
             {
@@ -150,7 +175,6 @@ namespace ImmersiveGraph.Interaction
             {
                 SendToZone3();
             }
-
             else if (nodeType == "root")
             {
                 SendToZone3();
@@ -160,16 +184,8 @@ namespace ImmersiveGraph.Interaction
         void SendToZone3()
         {
             Debug.Log($"--> ENVIANDO {myData.title} A ZONE 3");
-
-            // USAMOS LA REFERENCIA LOCAL
-            if (localZone3Manager != null)
-            {
-                localZone3Manager.ShowNodeDetails(myData);
-            }
-            else
-            {
-                Debug.LogError($"El nodo {name} no tiene asignado un Zone3Manager local.");
-            }
+            if (localZone3Manager != null) localZone3Manager.ShowNodeDetails(myData);
+            else Debug.LogError($"El nodo {name} no tiene asignado un Zone3Manager local.");
         }
 
         void SetChildrenVisibility(bool state)

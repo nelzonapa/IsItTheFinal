@@ -1,11 +1,11 @@
 using ImmersiveGraph.Core;
 using ImmersiveGraph.Data;
 using ImmersiveGraph.Interaction;
-using ImmersiveGraph.Visual; // Asegúrate de tener los namespaces correctos
+using ImmersiveGraph.Visual;
 using System.Collections;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Networking; // NECESARIO PARA ANDROID
+using UnityEngine.Networking;
 
 namespace ImmersiveGraph.Visual
 {
@@ -21,6 +21,13 @@ namespace ImmersiveGraph.Visual
         public GameObject nodeUIPrefab;
         public GameObject loadingBarPrefab;
 
+        // --- CHINCHETA CONFIG ---
+        [Header("Configuración Visual Chincheta")]
+        public GameObject reviewedMarkerPrefab; // Arrastra tu cubo aquí
+        public Vector3 markerOffset = new Vector3(0, 0.25f, 0); // Altura sobre el nodo
+        public Vector3 markerScale = new Vector3(0.2f, 0.2f, 0.2f); // Tamaño del cubo
+        // ------------------------
+
         [Header("Layout")]
         public float communityOrbitRadius = 0.4f;
         public float fileOrbitRadius = 0.15f;
@@ -34,7 +41,6 @@ namespace ImmersiveGraph.Visual
         [Header("Referencias de Escena")]
         public Zone3Manager linkedZone3Manager;
 
-        // CAMBIO 1: Start ahora es una Corrutina
         IEnumerator Start()
         {
             yield return LoadGraphRoutine();
@@ -45,43 +51,29 @@ namespace ImmersiveGraph.Visual
             string filePath = Path.Combine(Application.streamingAssetsPath, jsonFileName);
             string jsonContent = "";
 
-            // DETECCIÓN DE PLATAFORMA
             if (filePath.Contains("://") || filePath.Contains("jar:"))
             {
-                // ESTAMOS EN ANDROID / QUEST
                 Debug.Log($"[ANDROID LOAD] Intentando leer: {filePath}");
-
                 using (UnityWebRequest www = UnityWebRequest.Get(filePath))
                 {
                     yield return www.SendWebRequest();
-
-                    if (www.result != UnityWebRequest.Result.Success)
+                    if (www.result == UnityWebRequest.Result.Success)
                     {
-                        Debug.LogError($"Error leyendo JSON en Android: {www.error}");
-                        yield break; // Salimos si falla
+                        jsonContent = www.downloadHandler.text;
                     }
                     else
                     {
-                        jsonContent = www.downloadHandler.text;
-                        Debug.Log("JSON cargado exitosamente en Android.");
+                        Debug.LogError("Error JSON Android: " + www.error);
+                        yield break;
                     }
                 }
             }
             else
             {
-                // ESTAMOS EN PC (EDITOR / WINDOWS)
-                if (File.Exists(filePath))
-                {
-                    jsonContent = File.ReadAllText(filePath);
-                }
-                else
-                {
-                    Debug.LogError($"No encuentro el archivo en PC: {filePath}");
-                    yield break;
-                }
+                if (File.Exists(filePath)) jsonContent = File.ReadAllText(filePath);
+                else yield break;
             }
 
-            // PROCESAR EL JSON
             if (!string.IsNullOrEmpty(jsonContent))
             {
                 try
@@ -89,16 +81,9 @@ namespace ImmersiveGraph.Visual
                     NodeData rootNode = JsonUtility.FromJson<NodeData>(jsonContent);
                     if (rootNode != null) GenerateH3Layout(rootNode);
                 }
-                catch (System.Exception e)
-                {
-                    Debug.LogError("Error Parseando JSON: " + e.Message);
-                }
+                catch (System.Exception e) { Debug.LogError("Error JSON: " + e.Message); }
             }
         }
-
-        // ... (EL RESTO DEL CÓDIGO GenerateH3Layout, CreateNodeObject, ETC. SE MANTIENE EXACTAMENTE IGUAL) ...
-        // Copia y pega tus funciones GenerateH3Layout, CreateNodeObject, CreateLine, CalculateFibonacciSphere aquí abajo.
-        // No cambian nada, solo cambió la forma de obtener el texto del archivo.
 
         void GenerateH3Layout(NodeData rootData)
         {
@@ -115,7 +100,6 @@ namespace ImmersiveGraph.Visual
             {
                 NodeData commData = rootData.children[i];
                 Color groupColor = Color.HSVToRGB((float)i / commCount, 0.7f, 0.9f);
-
                 GameObject lineToComm = CreateLine(rootObj.transform.position, rootObj.transform);
                 GameObject commObj = CreateNodeObject(communityPrefab, rootObj.transform, commPositions[i], commData, "community", rootObj.transform, lineToComm.GetComponent<LineRenderer>(), groupColor);
                 GraphNode commLogic = commObj.GetComponent<GraphNode>();
@@ -129,7 +113,6 @@ namespace ImmersiveGraph.Visual
                         NodeData fileData = commData.children[j];
                         GameObject lineToFile = CreateLine(commObj.transform.position, commObj.transform);
                         GameObject fileObj = CreateNodeObject(filePrefab, commObj.transform, filePositions[j], fileData, "file", commObj.transform, lineToFile.GetComponent<LineRenderer>(), groupColor);
-
                         if (commLogic != null)
                         {
                             commLogic.childNodes.Add(fileObj);
@@ -154,37 +137,32 @@ namespace ImmersiveGraph.Visual
             GraphNode logic = obj.AddComponent<GraphNode>();
             logic.nodeType = type;
             logic.myData = data;
-
-            // --- CONEXIÓN VITAL ---
             logic.localZone3Manager = linkedZone3Manager;
+
+            // --- PASAR CONFIGURACIÓN DE CHINCHETA AL NODO ---
+            logic.reviewedMarkerPrefab = reviewedMarkerPrefab;
+            logic.markerLocalOffset = markerOffset;
+            logic.markerLocalScale = markerScale;
+            // ------------------------------------------------
 
             logic.InitializeNode(parentNode, incomingLine);
 
-            // 1. INSTANCIAR BARRA DE CARGA (Arriba del texto)
             if (loadingBarPrefab != null)
             {
                 GameObject loadObj = Instantiate(loadingBarPrefab, obj.transform);
                 loadObj.transform.localPosition = loaderOffset;
-                loadObj.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f); // Ajustar escala a ojo
-
-                NodeLoaderController loaderCtrl = loadObj.GetComponent<NodeLoaderController>();
-                logic.loaderUI = loaderCtrl;
+                loadObj.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                logic.loaderUI = loadObj.GetComponent<NodeLoaderController>();
             }
 
-            // 2. INSTANCIAR PANEL DE TEXTO (Abajo del todo)
             if (nodeUIPrefab != null)
             {
                 GameObject uiObj = Instantiate(nodeUIPrefab, obj.transform);
                 uiObj.transform.localPosition = uiOffset;
                 uiObj.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
-
                 NodeUIController uiCtrl = uiObj.GetComponent<NodeUIController>();
-                if (uiCtrl != null)
-                {
-                    string summary = string.IsNullOrEmpty(data.summary) ? "Sin descripción" : data.summary;
-                    uiCtrl.SetupUI(data.title, summary);
-                    logic.infoUI = uiCtrl;
-                }
+                if (uiCtrl != null) uiCtrl.SetupUI(data.title, string.IsNullOrEmpty(data.summary) ? "Sin descripción" : data.summary);
+                logic.infoUI = uiCtrl;
             }
             return obj;
         }
