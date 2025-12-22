@@ -182,6 +182,16 @@ MonoBehaviour:
   headTransform: {fileID: 8662602644003039262}
   leftHandTransform: {fileID: 1818450885581785766}
   rightHandTransform: {fileID: 5559632623262625186}
+  bodyRenderers:
+  - {fileID: 4328497008976547676}
+  - {fileID: 2790805888222743712}
+  - {fileID: 3657005111593984450}
+  _HeadPos: {x: 0, y: 0, z: 0}
+  _HeadRot: {x: 0, y: 0, z: 0, w: 0}
+  _LeftHandPos: {x: 0, y: 0, z: 0}
+  _LeftHandRot: {x: 0, y: 0, z: 0, w: 0}
+  _RightHandPos: {x: 0, y: 0, z: 0}
+  _RightHandRot: {x: 0, y: 0, z: 0, w: 0}
 --- !u!120 &8178061240363266782
 LineRenderer:
   serializedVersion: 3
