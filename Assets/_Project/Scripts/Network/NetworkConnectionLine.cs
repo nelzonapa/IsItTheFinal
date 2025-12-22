@@ -13,6 +13,9 @@ namespace ImmersiveGraph.Network
         private Transform _startTrans;
         private Transform _endTrans;
 
+        // Variable para guardar el cubo
+        private GameObject _deleteHandle;
+
         private void Awake()
         {
             _lr = GetComponent<LineRenderer>();
@@ -22,7 +25,6 @@ namespace ImmersiveGraph.Network
 
         public override void Spawned()
         {
-            // Intentar buscar referencias iniciales
             FindTargets();
         }
 
@@ -37,28 +39,29 @@ namespace ImmersiveGraph.Network
 
         public override void Render()
         {
-            // Si falta alguno, intentamos buscarlos
+            // 1. Buscar objetivos si faltan
             if (_startTrans == null || _endTrans == null) FindTargets();
 
-            // Solo dibujamos si TENEMOS AMBOS
+            // 2. Si tenemos ambos, dibujamos
             if (_startTrans != null && _endTrans != null)
             {
-                _lr.enabled = true; // Asegurar que sea visible
+                _lr.enabled = true;
                 _lr.SetPosition(0, _startTrans.position);
                 _lr.SetPosition(1, _endTrans.position);
 
+                // Actualizar la posición del cubo
                 UpdateHandlePosition();
             }
             else
             {
-                // Si no los tenemos, ocultamos la línea para que no se vea fea en (0,0,0)
+                // Si falta un nodo, ocultamos todo para evitar líneas al infinito
                 _lr.enabled = false;
+                if (_deleteHandle != null) _deleteHandle.SetActive(false);
             }
         }
 
         void FindTargets()
         {
-            // Buscamos los objetos en la red usando sus IDs
             if (_startTrans == null && StartNodeID.IsValid)
             {
                 if (Runner.TryFindObject(StartNodeID, out NetworkObject startObj))
@@ -72,28 +75,47 @@ namespace ImmersiveGraph.Network
             }
         }
 
-        // Variable para guardar el cubo
-        private GameObject _deleteHandle;
-
         void UpdateHandlePosition()
         {
-            // Si no existe el cubo, lo creamos
+            // CREACIÓN DEL CUBO (Solo una vez)
             if (_deleteHandle == null)
             {
                 _deleteHandle = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 _deleteHandle.name = "DeleteHandle";
+
+                // Hacemos al cubo hijo de la línea para que se borre si la línea se borra
                 _deleteHandle.transform.SetParent(transform);
                 _deleteHandle.transform.localScale = new Vector3(0.04f, 0.04f, 0.04f);
 
+                // --- ARREGLO DEL COLOR ROSA ---
                 var r = _deleteHandle.GetComponent<Renderer>();
-                if (r) r.material.color = Color.red;
+                if (r != null)
+                {
+                    // Asignamos el shader "Sprites/Default" que siempre funciona en VR/Android
+                    // y es muy ligero.
+                    r.material = new Material(Shader.Find("Sprites/Default"));
+                    r.material.color = Color.red;
+                }
+                // ------------------------------
 
                 var col = _deleteHandle.GetComponent<Collider>();
                 if (col) col.isTrigger = true;
             }
 
-            // Lo movemos al centro
-            _deleteHandle.transform.position = (_startTrans.position + _endTrans.position) / 2;
+            // MANTENER POSICIÓN
+            if (!_deleteHandle.activeSelf) _deleteHandle.SetActive(true);
+
+            // Calculamos el punto medio exacto en el mundo
+            Vector3 midPoint = (_startTrans.position + _endTrans.position) / 2;
+
+            // Asignamos la posición
+            _deleteHandle.transform.position = midPoint;
+
+            // Opcional: Reiniciar la rotación para que el cubo siempre esté alineado con el mundo
+            // y no gire raro si la línea tiene rotación.
+            _deleteHandle.transform.rotation = Quaternion.identity;
         }
+
+        // Limpieza: Si este objeto se destruye, Unity destruye el hijo (_deleteHandle) automáticamente.
     }
 }

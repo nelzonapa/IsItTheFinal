@@ -1,10 +1,11 @@
 using ImmersiveGraph.Core;
 using ImmersiveGraph.Data;
 using ImmersiveGraph.Interaction;
-using ImmersiveGraph.Visual;
-using System.Collections.Generic;
+using ImmersiveGraph.Visual; // Asegúrate de tener los namespaces correctos
+using System.Collections;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Networking; // NECESARIO PARA ANDROID
 
 namespace ImmersiveGraph.Visual
 {
@@ -17,8 +18,8 @@ namespace ImmersiveGraph.Visual
         public GameObject filePrefab;
 
         [Header("Prefabs UI")]
-        public GameObject nodeUIPrefab;      // Panel Texto
-        public GameObject loadingBarPrefab;  // <--- NUEVO: Barra Horizontal
+        public GameObject nodeUIPrefab;
+        public GameObject loadingBarPrefab;
 
         [Header("Layout")]
         public float communityOrbitRadius = 0.4f;
@@ -27,27 +28,77 @@ namespace ImmersiveGraph.Visual
         public float lineWidth = 0.002f;
 
         [Header("Posiciones UI")]
-        public Vector3 loaderOffset = new Vector3(0, -0.25f, 0); // Barra (En medio)
-        public Vector3 uiOffset = new Vector3(0, -0.6f, 0);      // Texto (Abajo)
+        public Vector3 loaderOffset = new Vector3(0, -0.25f, 0);
+        public Vector3 uiOffset = new Vector3(0, -0.6f, 0);
 
         [Header("Referencias de Escena")]
         public Zone3Manager linkedZone3Manager;
 
-        void Start() { LoadGraph(); }
+        // CAMBIO 1: Start ahora es una Corrutina
+        IEnumerator Start()
+        {
+            yield return LoadGraphRoutine();
+        }
 
-        void LoadGraph()
+        IEnumerator LoadGraphRoutine()
         {
             string filePath = Path.Combine(Application.streamingAssetsPath, jsonFileName);
-            if (File.Exists(filePath))
+            string jsonContent = "";
+
+            // DETECCIÓN DE PLATAFORMA
+            if (filePath.Contains("://") || filePath.Contains("jar:"))
+            {
+                // ESTAMOS EN ANDROID / QUEST
+                Debug.Log($"[ANDROID LOAD] Intentando leer: {filePath}");
+
+                using (UnityWebRequest www = UnityWebRequest.Get(filePath))
+                {
+                    yield return www.SendWebRequest();
+
+                    if (www.result != UnityWebRequest.Result.Success)
+                    {
+                        Debug.LogError($"Error leyendo JSON en Android: {www.error}");
+                        yield break; // Salimos si falla
+                    }
+                    else
+                    {
+                        jsonContent = www.downloadHandler.text;
+                        Debug.Log("JSON cargado exitosamente en Android.");
+                    }
+                }
+            }
+            else
+            {
+                // ESTAMOS EN PC (EDITOR / WINDOWS)
+                if (File.Exists(filePath))
+                {
+                    jsonContent = File.ReadAllText(filePath);
+                }
+                else
+                {
+                    Debug.LogError($"No encuentro el archivo en PC: {filePath}");
+                    yield break;
+                }
+            }
+
+            // PROCESAR EL JSON
+            if (!string.IsNullOrEmpty(jsonContent))
             {
                 try
                 {
-                    NodeData rootNode = JsonUtility.FromJson<NodeData>(File.ReadAllText(filePath));
+                    NodeData rootNode = JsonUtility.FromJson<NodeData>(jsonContent);
                     if (rootNode != null) GenerateH3Layout(rootNode);
                 }
-                catch (System.Exception e) { Debug.LogError("Error JSON: " + e.Message); }
+                catch (System.Exception e)
+                {
+                    Debug.LogError("Error Parseando JSON: " + e.Message);
+                }
             }
         }
+
+        // ... (EL RESTO DEL CÓDIGO GenerateH3Layout, CreateNodeObject, ETC. SE MANTIENE EXACTAMENTE IGUAL) ...
+        // Copia y pega tus funciones GenerateH3Layout, CreateNodeObject, CreateLine, CalculateFibonacciSphere aquí abajo.
+        // No cambian nada, solo cambió la forma de obtener el texto del archivo.
 
         void GenerateH3Layout(NodeData rootData)
         {

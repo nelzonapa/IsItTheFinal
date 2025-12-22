@@ -199,17 +199,27 @@ namespace ImmersiveGraph.Interaction
         }
 
         // Helper para el cubo de borrado local
+        // Helper para el cubo de borrado local
         void AddDeleteHandle(GameObject parent, Transform a, Transform b)
         {
             GameObject handle = GameObject.CreatePrimitive(PrimitiveType.Cube);
             handle.name = "DeleteHandle";
             handle.transform.SetParent(parent.transform);
             handle.transform.localScale = new Vector3(0.04f, 0.04f, 0.04f);
+
             Renderer r = handle.GetComponent<Renderer>();
-            if (r != null) r.material.color = Color.red;
+            if (r != null)
+            {
+                // --- CORRECCIÓN ANTI-ROSA PARA QUEST ---
+                // Usamos el mismo shader seguro que en la red
+                r.material = new Material(Shader.Find("Sprites/Default"));
+                r.material.color = Color.red;
+            }
+
             CenterFollow follower = handle.AddComponent<CenterFollow>();
             follower.a = a;
             follower.b = b;
+
             Collider col = handle.GetComponent<Collider>();
             if (col) col.isTrigger = true;
         }
