@@ -131,7 +131,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0.1957793, y: 0.568818, z: 0.23105475, w: 0.2857317}
+  m_margin: {x: 0.12108585, y: 0.74891174, z: 0.14085868, w: 0.07534824}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -470,7 +470,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0.25398374, z: 0.8448488, w: 0.25133848}
+  m_margin: {x: 0.013950944, y: 0.25398374, z: 0.021741182, w: 0.5254752}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1497,7 +1497,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0.19754288, y: 0.4444717, z: 0.2363457, w: 0.40478694}
+  m_margin: {x: 0.124258816, y: 0.5749993, z: 0.14755894, w: 0.27372092}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1771,7 +1771,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0.1940154, y: 0.31747967, z: 0.15697652, w: 0.56352633}
+  m_margin: {x: 0.124959186, y: 0.40031895, z: 0.15697652, w: 0.4498377}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1908,7 +1908,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0.9064339}
+  m_margin: {x: 0, y: 0, z: 0.0013948977, w: 0.9064339}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1929,7 +1929,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8241810337405298692
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2082,7 +2082,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0.7531324, y: 0.24604678, z: 0, w: 0.25133863}
+  m_margin: {x: 0.015125811, y: 0.492979, z: 0, w: 0.19483715}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2506,7 +2506,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1319559131080296645
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2807,7 +2807,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: TIPO
+  m_text: tipo
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2834,8 +2834,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.04
-  m_fontSizeBase: 0.04
+  m_fontSize: 0.025
+  m_fontSizeBase: 0.025
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2873,7 +2873,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0.79017186, y: 0, z: 0, w: 0.8995257}
+  m_margin: {x: 0.3604816, y: 0.07952064, z: 0.36412048, w: 0.87650675}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -3875,27 +3875,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2219212570826097103, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2219212570826097103, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2219212570826097103, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 463
       objectReference: {fileID: 0}
     - target: {fileID: 2219212570826097103, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 21.23
       objectReference: {fileID: 0}
     - target: {fileID: 2219212570826097103, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 241.5
       objectReference: {fileID: 0}
     - target: {fileID: 2219212570826097103, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20.615
       objectReference: {fileID: 0}
     - target: {fileID: 5569687750272540771, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_Pivot.x
@@ -3991,27 +3991,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6005337733842216256, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 41.23
       objectReference: {fileID: 0}
     - target: {fileID: 6320061725465671354, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6320061725465671354, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8322378673447104690, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8322378673447104690, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8322378673447104690, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 8643233759981964764, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_Name

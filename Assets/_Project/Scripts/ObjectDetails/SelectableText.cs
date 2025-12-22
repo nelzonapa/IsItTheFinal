@@ -100,10 +100,16 @@ namespace ImmersiveGraph.Interaction
             }
         }
 
-        // --- INTERACCIÓN VR ---
+        // --- INTERACCIÓN VR MEJORADA ---
         private int GetCharIndex(PointerEventData eventData)
         {
-            return TMP_TextUtilities.FindIntersectingCharacter(_tmp, eventData.position, Camera.main, true);
+            // MEJORA: En lugar de Camera.main, usamos la cámara que generó el evento.
+            // En XR Toolkit, esto suele ser la cámara asociada al Canvas o al Controller.
+            Camera targetCamera = eventData.enterEventCamera;
+
+            if (targetCamera == null) targetCamera = Camera.main;
+
+            return TMP_TextUtilities.FindIntersectingCharacter(_tmp, eventData.position, targetCamera, true);
         }
 
         public void OnPointerDown(PointerEventData eventData)
