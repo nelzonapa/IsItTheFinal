@@ -366,7 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a40760831f56c24db21f4b7441fdc9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Network.NetworkObjectColor
-  targetRenderer: {fileID: 0}
+  targetRenderer: {fileID: 568575388862341073}
 --- !u!114 &1786162687786358965
 MonoBehaviour:
   m_ObjectHideFlags: 0
