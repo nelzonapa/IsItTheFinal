@@ -3,6 +3,7 @@ using ImmersiveGraph.Data;
 using ImmersiveGraph.Interaction;
 using ImmersiveGraph.Visual;
 using System.Collections;
+using System.Collections.Generic; // Necesario para Dictionary
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -11,6 +12,13 @@ namespace ImmersiveGraph.Visual
 {
     public class H3GraphSpawner : MonoBehaviour
     {
+
+        public static H3GraphSpawner Instance; // Singleton para acceso global
+
+        // --- NUEVO: BASE DE DATOS EN MEMORIA ---
+        public Dictionary<string, NodeData> nodeDatabase = new Dictionary<string, NodeData>();
+        // ---------------------------------------}
+
         [Header("Configuración")]
         public string jsonFileName = "hierarchy_complete.json";
         public GameObject rootPrefab;
@@ -40,6 +48,11 @@ namespace ImmersiveGraph.Visual
 
         [Header("Referencias de Escena")]
         public Zone3Manager linkedZone3Manager;
+
+        void Awake()
+        {
+            if (Instance == null) Instance = this;
+        }
 
         IEnumerator Start()
         {
@@ -87,6 +100,11 @@ namespace ImmersiveGraph.Visual
 
         void GenerateH3Layout(NodeData rootData)
         {
+            // Limpiamos la base de datos antes de regenerar
+            nodeDatabase.Clear();
+            // Función recursiva auxiliar para registrar todos los nodos (padres e hijos)
+            RegisterNodeToDatabase(rootData);
+
             foreach (Transform child in transform) Destroy(child.gameObject);
 
             GameObject rootObj = CreateNodeObject(rootPrefab, transform, new Vector3(0, 0.2f, 0), rootData, "root", null, null, Color.white);
@@ -122,6 +140,37 @@ namespace ImmersiveGraph.Visual
                 }
                 if (commLogic != null) commLogic.InitializeNode(rootObj.transform, lineToComm.GetComponent<LineRenderer>());
             }
+        }
+
+        // --- NUEVA FUNCIÓN RECURSIVA ---
+        void RegisterNodeToDatabase(NodeData node)
+        {
+            if (node == null) return;
+
+            // Registramos este nodo por su ID
+            if (!string.IsNullOrEmpty(node.id) && !nodeDatabase.ContainsKey(node.id))
+            {
+                nodeDatabase.Add(node.id, node);
+            }
+
+            // Buscamos en sus hijos
+            if (node.children != null)
+            {
+                foreach (var child in node.children)
+                {
+                    RegisterNodeToDatabase(child);
+                }
+            }
+        }
+
+        // --- NUEVA FUNCIÓN PÚBLICA PARA CONSULTAR ---
+        public NodeData GetNodeDataByID(string id)
+        {
+            if (nodeDatabase.ContainsKey(id))
+            {
+                return nodeDatabase[id];
+            }
+            return null;
         }
 
         GameObject CreateNodeObject(GameObject prefab, Transform parent, Vector3 localPos, NodeData data, string type, Transform parentNode, LineRenderer incomingLine, Color nodeColor)

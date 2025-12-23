@@ -90,6 +90,18 @@ namespace ImmersiveGraph.Core
             // ----------------------------------------
         }
 
+
+        // --- AGREGA ESTA FUNCIÓN AUXILIAR AL FINAL ---
+        void UpdateSelectableContext(GameObject panel, string nodeID)
+        {
+            // Busca todos los scripts SelectableText dentro del panel activo
+            var selectables = panel.GetComponentsInChildren<Interaction.SelectableText>(true);
+            foreach (var sel in selectables)
+            {
+                sel.currentContextNodeID = nodeID;
+            }
+        }
+        // ---------------------------------------------
         void ShowRootDetails(NodeData data)
         {
             rootPanel.SetActive(true);
@@ -102,6 +114,9 @@ namespace ImmersiveGraph.Core
 
                 rootConclusionText.text = "Conclusión: \n" + data.details.conclusion ?? "Sin conclusión";
             }
+
+            // NUEVO: Inyectar ID
+            UpdateSelectableContext(rootPanel, data.id);
         }
 
         void ShowCommunityDetails(NodeData data)
@@ -125,6 +140,9 @@ namespace ImmersiveGraph.Core
                 else if (commAmenazaText.text == "Medio") commAmenazaText.color = Color.yellow;
                 else commAmenazaText.color = Color.white;
             }
+
+            // NUEVO: Inyectar ID
+            UpdateSelectableContext(communityPanel, data.id);
         }
 
         void ShowFileDetails(NodeData data)
@@ -161,6 +179,9 @@ namespace ImmersiveGraph.Core
                     fileImageViewer.color = Color.red;
                 }
             }
+
+            // NUEVO: Inyectar ID
+            UpdateSelectableContext(filePanel, data.id);
         }
 
         IEnumerator LoadImageFromDisk(string jsonPath)

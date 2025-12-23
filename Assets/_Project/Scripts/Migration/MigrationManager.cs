@@ -120,8 +120,13 @@ public class MigrationManager : MonoBehaviour
 
             // Sincronizar Datos
             string label = localToken.labelText.text;
-            // Pasamos ID vacío por ahora o el que tenía
-            newNetObj.GetComponent<NetworkTokenSync>().InitializeToken(label, "migrated_token");
+
+            // --- CAMBIO: Pasamos el ID real que tenía guardado el token local ---
+            string sourceID = localToken.OriginNodeID;
+            // Si por alguna razón está vacío, ponemos un default
+            if (string.IsNullOrEmpty(sourceID)) sourceID = "unknown";
+
+            newNetObj.GetComponent<NetworkTokenSync>().InitializeToken(label, sourceID);
         }
 
         // 3. REGISTRAR EN EL MAPA

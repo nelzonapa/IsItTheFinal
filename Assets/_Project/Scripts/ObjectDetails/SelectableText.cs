@@ -2,18 +2,28 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-using System.Linq; // Para ordenar listas
+using System.Linq;
+using Fusion; // <--- NECESARIO PARA FUSION
+using ImmersiveGraph.Network; // <--- NECESARIO PARA ACCEDER A NetworkTokenSync
 
 namespace ImmersiveGraph.Interaction
 {
     [RequireComponent(typeof(TextMeshProUGUI))]
     public class SelectableText : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
-        [Header("Configuración")]
-        public Color highlightColor = Color.red;
-        public GameObject tokenPrefab; // <--- ARRASTRA AQUÍ TU PREFAB DE LA FICHA
+        [Header("Configuración Local")]
+        public Color highlightColor = Color.yellow; // Amarillo se ve mejor en VR
+        public GameObject tokenPrefab; // Prefab LOCAL (ExtractedToken)
 
-        // Clase interna para guardar datos de cada subrayado
+        [Header("Configuración Red (Fase 3)")]
+        public bool isNetworkMode = false; // ¿Estoy en el panel flotante?
+        public NetworkObject netTokenPrefab; // Prefab de RED (Network_Token)
+
+        // --- CONTEXTO ---
+        // El ID del nodo origen (se llena automáticamente por Zone3Manager o NetworkDocViewer)
+        public string currentContextNodeID = "";
+
+        // Clase interna
         [System.Serializable]
         private class HighlightData
         {
@@ -23,10 +33,9 @@ namespace ImmersiveGraph.Interaction
         }
 
         private TextMeshProUGUI _tmp;
-        private string _cleanText; // Texto virgen sin colores
+        private string _cleanText;
         private List<HighlightData> _activeHighlights = new List<HighlightData>();
 
-        // Estado de selección actual (temporal mientras arrastras)
         private int _currentDragStart = -1;
         private int _currentDragEnd = -1;
         private bool _isSelecting = false;
@@ -34,6 +43,7 @@ namespace ImmersiveGraph.Interaction
         private void Awake()
         {
             _tmp = GetComponent<TextMeshProUGUI>();
+            _tmp.ForceMeshUpdate(); // Vital para el cálculo geométrico
             UpdateOriginalText();
         }
 
@@ -41,20 +51,16 @@ namespace ImmersiveGraph.Interaction
         {
             if (_tmp == null) _tmp = GetComponent<TextMeshProUGUI>();
 
-            // Limpiamos etiquetas viejas para tener la base limpia
             _cleanText = System.Text.RegularExpressions.Regex.Replace(_tmp.text, "<.*?>", string.Empty);
             _activeHighlights.Clear();
             _tmp.text = _cleanText;
+            _tmp.ForceMeshUpdate();
         }
 
-        // --- SISTEMA DE VISUALIZACIÓN ---
-        // Esta función reconstruye todo el texto con TODOS los resaltados activos + el que estás arrastrando
         private void RefreshVisuals()
         {
-            // 1. Hacemos una lista temporal con los ya confirmados
             List<HighlightData> allHighlights = new List<HighlightData>(_activeHighlights);
 
-            // 2. Si estamos arrastrando, agregamos el temporal
             if (_isSelecting && _currentDragStart != -1 && _currentDragEnd != -1)
             {
                 allHighlights.Add(new HighlightData
@@ -64,9 +70,6 @@ namespace ImmersiveGraph.Interaction
                 });
             }
 
-            // 3. IMPORTANTE: Ordenar de ATRÁS hacia ADELANTE (descendente)
-            // Si insertamos etiquetas al principio, los índices del final se corren.
-            // Al hacerlo desde el final, los índices del principio siguen siendo válidos.
             allHighlights = allHighlights.OrderByDescending(h => h.start).ToList();
 
             System.Text.StringBuilder sb = new System.Text.StringBuilder(_cleanText);
@@ -74,42 +77,63 @@ namespace ImmersiveGraph.Interaction
 
             foreach (var h in allHighlights)
             {
-                // Validar rangos
                 if (h.start < 0 || h.end >= _cleanText.Length) continue;
-
-                // Insertar cierre </color>
                 if (h.end + 1 < sb.Length) sb.Insert(h.end + 1, "</color>");
                 else sb.Append("</color>");
-
-                // Insertar apertura <color>
                 sb.Insert(h.start, $"<color=#{colorHex}>");
             }
 
             _tmp.text = sb.ToString();
         }
 
-        // --- GESTIÓN PÚBLICA (Para TrashZone) ---
         public void RemoveHighlight(string id)
         {
             var item = _activeHighlights.Find(h => h.id == id);
             if (item != null)
             {
                 _activeHighlights.Remove(item);
-                RefreshVisuals(); // Repintar sin el rojo eliminado
-                Debug.Log($"Highlight {id} eliminado y texto restaurado.");
+                RefreshVisuals();
             }
         }
 
-        // --- INTERACCIÓN VR MEJORADA ---
+        // --- CÁLCULO GEOMÉTRICO ROBUSTO PARA VR (Mantenemos esto porque es lo que funcionó) ---
         private int GetCharIndex(PointerEventData eventData)
         {
-            // MEJORA: En lugar de Camera.main, usamos la cámara que generó el evento.
-            // En XR Toolkit, esto suele ser la cámara asociada al Canvas o al Controller.
-            Camera targetCamera = eventData.enterEventCamera;
+            // 1. Punto de impacto 3D
+            Vector3 worldPoint = eventData.pointerCurrentRaycast.worldPosition;
+            if (worldPoint == Vector3.zero) return -1;
 
-            if (targetCamera == null) targetCamera = Camera.main;
+            // 2. Convertir a Local
+            Vector3 localPoint = transform.InverseTransformPoint(worldPoint);
 
-            return TMP_TextUtilities.FindIntersectingCharacter(_tmp, eventData.position, targetCamera, true);
+            // 3. Buscar en la malla de texto
+            TMP_TextInfo textInfo = _tmp.textInfo;
+            if (textInfo == null || textInfo.characterCount == 0) return -1;
+
+            float minDistance = float.MaxValue;
+            int closestIndex = -1;
+
+            for (int i = 0; i < textInfo.characterCount; i++)
+            {
+                TMP_CharacterInfo charInfo = textInfo.characterInfo[i];
+                if (!charInfo.isVisible) continue;
+
+                float minX = charInfo.bottomLeft.x; float maxX = charInfo.topRight.x;
+                float minY = charInfo.bottomLeft.y; float maxY = charInfo.topRight.y;
+                float padding = 5f; // Margen para dedos gordos
+
+                if (localPoint.x >= minX - padding && localPoint.x <= maxX + padding &&
+                    localPoint.y >= minY - padding && localPoint.y <= maxY + padding)
+                {
+                    return i;
+                }
+
+                float dist = Vector3.Distance(localPoint, (charInfo.bottomLeft + charInfo.topRight) / 2);
+                if (dist < minDistance) { minDistance = dist; closestIndex = i; }
+            }
+
+            if (minDistance < 20f) return closestIndex;
+            return -1;
         }
 
         public void OnPointerDown(PointerEventData eventData)
@@ -141,51 +165,78 @@ namespace ImmersiveGraph.Interaction
             if (!_isSelecting) return;
             _isSelecting = false;
 
-            // Confirmar selección
             if (_currentDragStart != -1 && _currentDragEnd != -1)
             {
                 int start = Mathf.Min(_currentDragStart, _currentDragEnd);
                 int end = Mathf.Max(_currentDragStart, _currentDragEnd);
                 int length = (end - start) + 1;
 
-                // Evitar clicks vacíos o errores
                 if (length > 0 && start + length <= _cleanText.Length)
                 {
                     string selectedText = _cleanText.Substring(start, length);
-
-                    // 1. Guardar Highlight Confirmado
-                    string newID = System.Guid.NewGuid().ToString(); // ID Único
+                    string newID = System.Guid.NewGuid().ToString();
                     _activeHighlights.Add(new HighlightData { id = newID, start = start, end = end });
 
-                    // 2. Crear Token Físico
+                    // LLAMAMOS AL SPAWN HÍBRIDO
                     SpawnToken(selectedText, newID, eventData);
                 }
             }
 
-            // Limpiamos variables temporales
             _currentDragStart = -1;
             _currentDragEnd = -1;
-            RefreshVisuals(); // Repintar final con el nuevo guardado
+            RefreshVisuals();
         }
 
+        // --- LÓGICA DE SPAWN FASE 3 (HÍBRIDA) ---
         void SpawnToken(string text, string id, PointerEventData eventData)
         {
-            if (tokenPrefab == null) return;
-
-            // Instanciar donde ocurrió el evento (cerca de la mano/puntero)
-            // eventData.pointerCurrentRaycast.worldPosition es el punto exacto de impacto en el UI 3D
+            // Cálculo de posición visual
             Vector3 spawnPos = eventData.pointerCurrentRaycast.worldPosition;
-
-            // Lo movemos un poquito hacia la cámara para que no nazca dentro del papel
+            if (spawnPos == Vector3.zero) spawnPos = transform.position;
             spawnPos += (Camera.main.transform.position - spawnPos).normalized * 0.1f;
 
-            GameObject token = Instantiate(tokenPrefab, spawnPos, Quaternion.identity);
-
-            // Configurar el token
-            var tokenScript = token.GetComponent<ExtractedToken>();
-            if (tokenScript != null)
+            // --- BIFURCACIÓN ---
+            if (isNetworkMode)
             {
-                tokenScript.SetupToken(text, this, id);
+                // MODO RED: Estamos en el Panel Flotante
+                if (netTokenPrefab != null)
+                {
+                    // Buscamos el Runner de Fusion
+                    NetworkRunner runner = FindFirstObjectByType<NetworkRunner>();
+
+                    if (runner != null && runner.IsRunning)
+                    {
+                        // 1. Crear Objeto en la Red
+                        NetworkObject netObj = runner.Spawn(netTokenPrefab, spawnPos, Quaternion.identity, runner.LocalPlayer);
+
+                        // 2. Inicializar Datos Sincronizados
+                        var netSync = netObj.GetComponent<NetworkTokenSync>();
+                        if (netSync != null)
+                        {
+                            // Inyectamos el Texto y el ID del Documento Origen
+                            netSync.InitializeToken(text, currentContextNodeID);
+                        }
+
+                        Debug.Log("Token de RED creado desde Panel Flotante");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("Error: Estás en Modo Red pero 'netTokenPrefab' está vacío en SelectableText.");
+                }
+            }
+            else
+            {
+                // MODO LOCAL: Estamos en SmartDesk (Comportamiento Original)
+                if (tokenPrefab != null)
+                {
+                    GameObject token = Instantiate(tokenPrefab, spawnPos, Quaternion.identity);
+                    var tokenScript = token.GetComponent<ExtractedToken>();
+                    if (tokenScript != null)
+                    {
+                        tokenScript.SetupToken(text, this, id, currentContextNodeID);
+                    }
+                }
             }
         }
     }

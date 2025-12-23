@@ -1,41 +1,42 @@
-using UnityEngine;
 using Fusion;
 using TMPro;
+using UnityEngine;
 
 namespace ImmersiveGraph.Network
 {
     public class NetworkTokenSync : NetworkBehaviour
     {
         [Header("Referencias")]
-        public TextMeshProUGUI labelText;
+        public TextMeshProUGUI tokenLabel;
 
-        [Networked, OnChangedRender(nameof(OnLabelChanged))]
-        public NetworkString<_64> TokenLabel { get; set; }
+        // VARIABLES DE RED
+        [Networked] public NetworkString<_64> TokenLabel { get; set; }
 
-        // Guardamos el ID original por si necesitamos lógica de trazabilidad
-        [Networked] public NetworkString<_64> OriginalHighlightID { get; set; }
+        // --- NUEVO: ID DEL NODO ORIGEN SINCRONIZADO ---
+        [Networked] public NetworkString<_64> SourceNodeID { get; set; }
+        // ----------------------------------------------
 
         public override void Spawned()
         {
-            if (!Object.HasStateAuthority)
-            {
-                labelText.text = TokenLabel.ToString();
-            }
+            UpdateVisuals();
         }
 
-        // Método para inicializarlo al nacer (lo llamará el MigrationManager)
-        public void InitializeToken(string text, string id)
+        // Actualizamos la inicialización para recibir el sourceID
+        public void InitializeToken(string content, string sourceID)
         {
-            if (Object.HasStateAuthority)
-            {
-                TokenLabel = text;
-                OriginalHighlightID = id;
-            }
+            TokenLabel = content;
+            SourceNodeID = sourceID; // Guardamos en la nube de Fusion
+            UpdateVisuals();
         }
 
-        void OnLabelChanged()
+        public override void Render()
         {
-            labelText.text = TokenLabel.ToString();
+            UpdateVisuals();
+        }
+
+        void UpdateVisuals()
+        {
+            if (tokenLabel != null) tokenLabel.text = TokenLabel.ToString();
         }
     }
 }
