@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5248590447846556937}
   - component: {fileID: 4617117406571405985}
   - component: {fileID: 5100626207742849744}
+  - component: {fileID: 5595273494328926039}
   m_Layer: 0
   m_Name: AppManager
   m_TagString: Untagged
@@ -73,3 +74,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Network.NetworkPlayerSpawner
   playerPrefab: {fileID: 7011765742828095650, guid: 828fe10dc71fad44fa7377f13350d840, type: 3}
+--- !u!114 &5595273494328926039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6419052083243706304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 719b348a4ccef8a40b93ac4bde69846c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Data.ExperimentDataLogger
