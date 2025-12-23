@@ -1,10 +1,9 @@
 using Fusion;
 using UnityEngine;
-using UnityEngine.UI; // Para la barra de carga
+using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactables; // Para detectar el Grab
-// Si usas XR Toolkit nuevo (2.x o 3.x), usa: UnityEngine.XR.Interaction.Toolkit.Interactables;
-// Si te da error la línea de arriba, bórrala y usa solo la primera.
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+// using UnityEngine.XR.Interaction.Toolkit.Interactables; // Descomenta si usas XR Toolkit nuevo
 
 namespace ImmersiveGraph.Network
 {
@@ -13,34 +12,32 @@ namespace ImmersiveGraph.Network
     {
         [Header("Configuración")]
         public float holdDuration = 4.0f;
-        public Vector3 panelSpawnOffset = new Vector3(0, 0.4f, 0); // Aparecerá 40cm arriba del token
+        // El offset ahora lo maneja el panel, pero lo dejamos aquí por si acaso
 
         [Header("Referencias")]
-        public Image loadingBarImage; // La imagen circular o barra que se llenará
-        public Canvas loaderCanvas;   // Para ocultarlo cuando no se usa
-        public NetworkObject docPanelPrefab; // El prefab Network_DocPanel
+        public Image loadingBarImage;
+        public Canvas loaderCanvas;
+        public NetworkObject docPanelPrefab;
 
-        // Referencia obligatoria para sacar el ID
         private NetworkTokenSync _tokenSync;
         private XRGrabInteractable _interactable;
 
-        // Lógica Interna
+        // --- NUEVO: Referencia al ID del Panel Activo ---
+        [Networked] public NetworkId ActivePanelId { get; set; }
+        // -----------------------------------------------
+
         private bool _isHeld = false;
         private float _timer = 0f;
-        private bool _hasSpawned = false;
 
         private void Awake()
         {
             _tokenSync = GetComponent<NetworkTokenSync>();
             _interactable = GetComponent<XRGrabInteractable>();
-
-            // Apagar barra al inicio
             if (loaderCanvas != null) loaderCanvas.enabled = false;
         }
 
         public override void Spawned()
         {
-            // Suscribirse a eventos de agarre (Solo nos importa si somos nosotros quienes lo agarramos)
             if (_interactable != null)
             {
                 _interactable.selectEntered.AddListener(OnGrabStart);
@@ -59,33 +56,30 @@ namespace ImmersiveGraph.Network
 
         void Update()
         {
-            // La lógica visual corre en local para quien lo sostiene
-            if (_isHeld && !_hasSpawned)
+            // Solo corremos la barra si no hay panel (o si queremos forzar el check)
+            if (_isHeld)
             {
                 _timer += Time.deltaTime;
                 float progress = _timer / holdDuration;
 
-                // Actualizar barra visual
                 if (loadingBarImage != null) loadingBarImage.fillAmount = progress;
 
-                // CHEQUEO DE TIEMPO
                 if (_timer >= holdDuration)
                 {
-                    SpawnDocumentPanel();
-                    _hasSpawned = true; // Evitar que spawnee 100 paneles por segundo
-                    if (loaderCanvas != null) loaderCanvas.enabled = false; // Ocultar barra
+                    TrySpawnOrFlash();
+
+                    // Resetear para que no spamee
+                    _timer = 0f;
+                    _isHeld = false; // Soltamos lógica interna aunque siga agarrado
+                    if (loaderCanvas != null) loaderCanvas.enabled = false;
                 }
             }
         }
 
         void OnGrabStart(SelectEnterEventArgs args)
         {
-            // Solo activamos la lógica si somos nosotros quien lo agarra
-            // (En VR, el SelectEnter suele dispararse en el cliente local)
             _isHeld = true;
             _timer = 0f;
-            _hasSpawned = false;
-
             if (loaderCanvas != null)
             {
                 loaderCanvas.enabled = true;
@@ -97,36 +91,56 @@ namespace ImmersiveGraph.Network
         {
             _isHeld = false;
             _timer = 0f;
-            _hasSpawned = false;
-
             if (loaderCanvas != null) loaderCanvas.enabled = false;
+        }
+
+        void TrySpawnOrFlash()
+        {
+            if (docPanelPrefab == null || _tokenSync == null) return;
+
+            // 1. VERIFICAR SI YA EXISTE UN PANEL ACTIVO
+            if (ActivePanelId.IsValid)
+            {
+                // Intentamos buscarlo en la red
+                NetworkObject existingPanel = Runner.FindObject(ActivePanelId);
+
+                if (existingPanel != null)
+                {
+                    // CASO A: Ya existe -> Hacerlo parpadear
+                    Debug.Log("Panel ya existe. Parpadeando...");
+                    var viewer = existingPanel.GetComponent<NetworkDocViewer>();
+                    if (viewer != null) viewer.Rpc_FlashError(); // Llamada RPC
+                    return;
+                }
+                else
+                {
+                    // CASO B: Teníamos un ID, pero el objeto fue destruido (cerrado con la X)
+                    // Así que el ID es basura vieja. Procedemos a crear uno nuevo.
+                }
+            }
+
+            // 2. CREAR NUEVO PANEL
+            SpawnDocumentPanel();
         }
 
         void SpawnDocumentPanel()
         {
-            // VALIDACIONES DE SEGURIDAD
-            if (docPanelPrefab == null) { Debug.LogError("Falta asignar docPanelPrefab"); return; }
-            if (_tokenSync == null) { Debug.LogError("No tengo NetworkTokenSync para leer el ID"); return; }
-
-            // Leemos el ID guardado en la Fase 1
             string sourceID = _tokenSync.SourceNodeID.ToString();
+            Debug.Log($"[Token] Creando panel para ID: {sourceID}");
 
-            Debug.Log($"[Token] Invocando panel para ID: {sourceID}");
+            // Spawneamos cerca del token
+            Vector3 spawnPos = transform.position + new Vector3(0, 0.4f, 0);
 
-            // SPAWN EN LA RED
-            // Usamos Runner.Spawn. 
-            // Posición: Donde está el token + offset
-            Vector3 spawnPos = transform.position + panelSpawnOffset;
-            Quaternion spawnRot = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
-            // (Truco: Que aparezca mirando hacia el usuario, o usa Quaternion.identity)
-
+            // Lo creamos
             NetworkObject panelObj = Runner.Spawn(docPanelPrefab, spawnPos, Quaternion.identity, Runner.LocalPlayer);
 
-            // INYECCIÓN DE DATOS (FASE 2)
-            // Obtenemos el script del panel y le pasamos el ID
             if (panelObj != null)
             {
-                panelObj.GetComponent<NetworkDocViewer>().InitializePanel(sourceID);
+                // Guardamos la referencia para el futuro (Singleton Logic)
+                ActivePanelId = panelObj.Id;
+
+                // Inicializamos pasando el ID del documento Y el ID de este Token (para que nos siga)
+                panelObj.GetComponent<NetworkDocViewer>().InitializePanel(sourceID, Object.Id);
             }
         }
     }
