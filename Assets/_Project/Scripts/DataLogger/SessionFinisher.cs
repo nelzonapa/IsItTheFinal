@@ -6,29 +6,27 @@ namespace ImmersiveGraph.Data
 {
     public class SessionFinisher : MonoBehaviour
     {
-        // OPCIÓN A: Si usas un Botón de UI (Canvas)
-        public Button uiButton;
-
-        // OPCIÓN B: Si usas un objeto 3D físico interactuable
-        // public UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable physicalButton;
+        public Button uiButton; // Asigna tu botón de UI aquí
 
         void Start()
         {
-            if (uiButton != null)
-            {
-                uiButton.onClick.AddListener(FinishSession);
-            }
+            if (uiButton != null) uiButton.onClick.AddListener(FinishSession);
         }
 
         public void FinishSession()
         {
             if (ExperimentDataLogger.Instance != null)
             {
-                ExperimentDataLogger.Instance.ExportFinalGraphState();
-                Debug.Log("Sesión finalizada. Datos exportados.");
+                // 1. Registrar el momento exacto del fin (Para restar con el inicio en Excel)
+                ExperimentDataLogger.Instance.LogEvent("SYSTEM", "SESSION_FINISHED_BY_USER", "Button Pressed", Vector3.zero);
 
-                // Opcional: Sonido de éxito o cerrar la app
-                // Application.Quit(); 
+                // 2. Exportar el JSON del Grafo
+                ExperimentDataLogger.Instance.ExportFinalGraphState();
+
+                // 3. Guardar el CSV en disco
+                ExperimentDataLogger.Instance.SaveLogsToDisk();
+
+                Debug.Log("--- EXPERIMENTO FINALIZADO ---");
             }
             else
             {

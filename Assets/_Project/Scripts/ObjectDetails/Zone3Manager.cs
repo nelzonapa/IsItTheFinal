@@ -76,6 +76,18 @@ namespace ImmersiveGraph.Core
                     ShowFileDetails(data);
                     break;
             }
+
+            // --- METRICA 4: ESTRATEGIA INDIVIDUAL ---
+            if (ExperimentDataLogger.Instance != null)
+            {
+                ExperimentDataLogger.Instance.LogEvent(
+                    "STRATEGY",
+                    "Individual Analysis",
+                    $"Reading Details of: {data.title}",
+                    Vector3.zero
+                );
+            }
+            // ----------------------------------------
         }
 
         void ShowRootDetails(NodeData data)

@@ -194,7 +194,33 @@ namespace ImmersiveGraph.Interaction
             foreach (var line in childConnectionLines) if (line != null) line.SetActive(state);
         }
 
-        void OnHoverEnter(HoverEnterEventArgs args) { if (_renderer != null) _renderer.material.color = _hoverColor; }
+        // Variables para evitar spam de logs
+        private float _lastHoverLogTime = 0f;
+        private float _logCooldown = 1.0f; // Solo registrar una mirada cada 1 segundo al mismo nodo
+
+        void OnHoverEnter(HoverEnterEventArgs args)
+        {
+            if (_renderer != null) _renderer.material.color = _hoverColor;
+
+            // --- METRICA 3: REGISTRO DE ATENCIÓN (DEÍCTICA) ---
+            if (ExperimentDataLogger.Instance != null)
+            {
+                // Solo logueamos si ha pasado tiempo suficiente para no saturar
+                if (Time.time - _lastHoverLogTime > _logCooldown)
+                {
+                    _lastHoverLogTime = Time.time;
+
+                    // Registramos: QUÉ miró y DÓNDE está
+                    ExperimentDataLogger.Instance.LogEvent(
+                        "ATTENTION",         // Tipo Evento
+                        "Gaze/Hover",        // Categoría
+                        $"Node: {myData.title} ({nodeType})", // Detalle
+                        transform.position   // Posición
+                    );
+                }
+            }
+            // --------------------------------------------------
+        }
         void OnHoverExit(HoverExitEventArgs args) { if (_renderer != null) _renderer.material.color = _originalColor; }
     }
 }

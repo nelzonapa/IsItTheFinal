@@ -1,4 +1,5 @@
 using Fusion;
+using ImmersiveGraph.Data;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -42,6 +43,19 @@ namespace ImmersiveGraph.Network
                 Debug.LogWarning("No hay MigrationManager asignado, viajando sin cosas...");
             }
             // -------------------------------------
+
+
+            // --- METRICA 4: REGISTRO DE TRANSICIÓN ---
+            if (ExperimentDataLogger.Instance != null)
+            {
+                ExperimentDataLogger.Instance.LogEvent(
+                    "TRANSITION",
+                    "Workspace Change",
+                    "User Teleported to Group Table",
+                    transform.position
+                );
+            }
+            // -----------------------------------------
 
             Debug.Log("Teletransportando al punto de spawn asignado...");
             Transform targetSpawn = GroupTableManager.Instance.GetSpawnPointForPlayer(_runner.LocalPlayer);
