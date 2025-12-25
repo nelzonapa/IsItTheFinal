@@ -3,11 +3,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
-// using UnityEngine.XR.Interaction.Toolkit.Interactables; // Descomenta si usas XR Toolkit nuevo
 
 namespace ImmersiveGraph.Network
 {
     [RequireComponent(typeof(XRGrabInteractable))]
+
+    [RequireComponent(typeof(AudioSource))] // <--- Nuevo requisito
     public class NetworkTokenInteraction : NetworkBehaviour
     {
         [Header("Configuración")]
@@ -18,11 +19,13 @@ namespace ImmersiveGraph.Network
         public Image loadingBarImage;
         public Canvas loaderCanvas;
         public NetworkObject docPanelPrefab;
+        public AudioClip openPanelSound; // mi sonido
 
         private NetworkTokenSync _tokenSync;
         private XRGrabInteractable _interactable;
 
-        // --- NUEVO: Referencia al ID del Panel Activo ---
+        private AudioSource _audioSource; // <--- Referencia audio
+
         [Networked] public NetworkId ActivePanelId { get; set; }
         // -----------------------------------------------
 
@@ -33,6 +36,9 @@ namespace ImmersiveGraph.Network
         {
             _tokenSync = GetComponent<NetworkTokenSync>();
             _interactable = GetComponent<XRGrabInteractable>();
+
+            _audioSource = GetComponent<AudioSource>(); // <--- Inicializar audio
+
             if (loaderCanvas != null) loaderCanvas.enabled = false;
         }
 
@@ -127,6 +133,13 @@ namespace ImmersiveGraph.Network
         {
             string sourceID = _tokenSync.SourceNodeID.ToString();
             Debug.Log($"[Token] Creando panel para ID: {sourceID}");
+
+            // --- SONIDO DE APERTURA ---
+            if (_audioSource != null && openPanelSound != null)
+            {
+                _audioSource.PlayOneShot(openPanelSound);
+            }
+            // --------------------------
 
             // Spawneamos cerca del token
             Vector3 spawnPos = transform.position + new Vector3(0, 0.4f, 0);
