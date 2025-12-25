@@ -3944,6 +3944,10 @@ PrefabInstance:
       value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 4617117406571405985, guid: a0a93b5d5e33bc1439a44548cdeb6b62, type: 3}
+      propertyPath: successSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 3acbc0285f2534a4aa61d2245f710128, type: 3}
+    - target: {fileID: 4617117406571405985, guid: a0a93b5d5e33bc1439a44548cdeb6b62, type: 3}
       propertyPath: welcomePanel
       value: 
       objectReference: {fileID: 991847844}
@@ -3954,6 +3958,10 @@ PrefabInstance:
     - target: {fileID: 6419052083243706304, guid: a0a93b5d5e33bc1439a44548cdeb6b62, type: 3}
       propertyPath: m_Name
       value: AppManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8350123562296862600, guid: a0a93b5d5e33bc1439a44548cdeb6b62, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
