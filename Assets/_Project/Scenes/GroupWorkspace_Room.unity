@@ -399,6 +399,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &127228071 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7906770018724310253, guid: 3a71b8d8dc8e08f46b14b4a6cd7e49a6, type: 3}
+  m_PrefabInstance: {fileID: 991847842}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1 &136970458
 GameObject:
   m_ObjectHideFlags: 0
@@ -2126,6 +2137,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6114957430069428033, guid: 3a71b8d8dc8e08f46b14b4a6cd7e49a6, type: 3}
   m_PrefabInstance: {fileID: 991847842}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1045632636 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2196464821798059483, guid: 3a71b8d8dc8e08f46b14b4a6cd7e49a6, type: 3}
+  m_PrefabInstance: {fileID: 991847842}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &1108451564 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4617117406571405985, guid: a0a93b5d5e33bc1439a44548cdeb6b62, type: 3}
@@ -3914,9 +3936,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4617117406571405985, guid: a0a93b5d5e33bc1439a44548cdeb6b62, type: 3}
+      propertyPath: statusText
+      value: 
+      objectReference: {fileID: 1045632636}
+    - target: {fileID: 4617117406571405985, guid: a0a93b5d5e33bc1439a44548cdeb6b62, type: 3}
+      propertyPath: uiDistance
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4617117406571405985, guid: a0a93b5d5e33bc1439a44548cdeb6b62, type: 3}
       propertyPath: welcomePanel
       value: 
       objectReference: {fileID: 991847844}
+    - target: {fileID: 4617117406571405985, guid: a0a93b5d5e33bc1439a44548cdeb6b62, type: 3}
+      propertyPath: connectButton
+      value: 
+      objectReference: {fileID: 127228071}
     - target: {fileID: 6419052083243706304, guid: a0a93b5d5e33bc1439a44548cdeb6b62, type: 3}
       propertyPath: m_Name
       value: AppManager
