@@ -164,6 +164,7 @@ GameObject:
   - component: {fileID: -1002754050008243412}
   - component: {fileID: 8932194995737890926}
   - component: {fileID: 5144573020047494926}
+  - component: {fileID: 5575649209016770212}
   m_Layer: 0
   m_Name: Network_PostIt
   m_TagString: Connectable
@@ -564,6 +565,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86b592e3fb6408f46a52fea610aa3e69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Network.NetworkGrabbable
+--- !u!114 &5575649209016770212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4536787217673639573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d557b363d20e2814faa2e171478f65ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Visual.InteractableFeedback
+  hoverGlowColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
+  grabGlowColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &4596163362847303282
 GameObject:
   m_ObjectHideFlags: 0

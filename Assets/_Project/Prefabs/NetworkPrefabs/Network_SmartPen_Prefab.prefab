@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 3515518391128341249}
   - component: {fileID: 8992362280173084367}
   - component: {fileID: 4315164363599971193}
+  - component: {fileID: 4644356538969254962}
   m_Layer: 0
   m_Name: Network_SmartPen_Prefab
   m_TagString: Untagged
@@ -377,6 +378,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Network.NetworkObjectColor
   targetRenderer: {fileID: 1344587851945780347}
+--- !u!114 &4644356538969254962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3838799213925876278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d557b363d20e2814faa2e171478f65ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Visual.InteractableFeedback
+  hoverGlowColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
+  grabGlowColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &4358520661917017648
 GameObject:
   m_ObjectHideFlags: 0

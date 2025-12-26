@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 5369520780963909860}
   - component: {fileID: 136169651924363002}
   - component: {fileID: 6681731112473728456}
+  - component: {fileID: 3256461007693832069}
   m_Layer: 0
   m_Name: SmartPen_Prefab
   m_TagString: Untagged
@@ -324,6 +325,20 @@ MonoBehaviour:
   tipRenderer: {fileID: 1344587851945780347}
   localLinePrefab: {fileID: 2161875081476625744, guid: af0a194c10086b047aa71f4d22d43323, type: 3}
   detectionRadius: 0.02
+--- !u!114 &3256461007693832069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3838799213925876278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d557b363d20e2814faa2e171478f65ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Visual.InteractableFeedback
+  hoverGlowColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
+  grabGlowColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &4358520661917017648
 GameObject:
   m_ObjectHideFlags: 0
