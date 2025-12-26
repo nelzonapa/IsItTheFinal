@@ -49,6 +49,9 @@ namespace ImmersiveGraph.Visual
         [Header("Referencias de Escena")]
         public Zone3Manager linkedZone3Manager;
 
+        [Header("Feedback de Audio")]
+        public AudioClip nodeExpandSound;
+
         void Awake()
         {
             if (Instance == null) Instance = this;
@@ -187,6 +190,9 @@ namespace ImmersiveGraph.Visual
             logic.nodeType = type;
             logic.myData = data;
             logic.localZone3Manager = linkedZone3Manager;
+
+            // --- INYECTAR AUDIO AL NODO ---
+            logic.expandSound = nodeExpandSound;
 
             // --- PASAR CONFIGURACIÓN DE CHINCHETA AL NODO ---
             logic.reviewedMarkerPrefab = reviewedMarkerPrefab;

@@ -10,6 +10,7 @@ namespace ImmersiveGraph.Interaction
 {
     [RequireComponent(typeof(XRGrabInteractable))]
     [RequireComponent(typeof(SphereCollider))]
+    [RequireComponent(typeof(AudioSource))] 
     public class GraphNode : MonoBehaviour
     {
         [Header("Datos")]
@@ -49,8 +50,21 @@ namespace ImmersiveGraph.Interaction
 
         private bool _isReviewed = false;
 
+        // --- AUDIO ---
+        public AudioClip expandSound; // Recibido desde el Spawner
+        private AudioSource _audioSource;
+
         void Awake()
         {
+
+            _audioSource = GetComponent<AudioSource>();
+            if (_audioSource == null) _audioSource = gameObject.AddComponent<AudioSource>();
+
+            // Configuración 3D para que el sonido venga del nodo
+            _audioSource.spatialBlend = 1.0f;
+            _audioSource.playOnAwake = false;
+
+
             _interactable = GetComponent<XRGrabInteractable>();
             _renderer = GetComponent<Renderer>();
 
@@ -184,7 +198,15 @@ namespace ImmersiveGraph.Interaction
         void SendToZone3()
         {
             Debug.Log($"--> ENVIANDO {myData.title} A ZONE 3");
-            if (localZone3Manager != null) localZone3Manager.ShowNodeDetails(myData);
+            if (localZone3Manager != null)
+            {
+                localZone3Manager.ShowNodeDetails(myData);
+                // --- SONIDO DE APERTURA ---
+                if (_audioSource != null && expandSound != null)
+                {
+                    _audioSource.PlayOneShot(expandSound);
+                }
+            }
             else Debug.LogError($"El nodo {name} no tiene asignado un Zone3Manager local.");
         }
 

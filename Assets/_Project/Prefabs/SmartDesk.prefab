@@ -3046,6 +3046,7 @@ MonoBehaviour:
   loaderOffset: {x: 0, y: -1, z: 0}
   uiOffset: {x: 0, y: -3, z: 0}
   linkedZone3Manager: {fileID: 1713510425057211677}
+  nodeExpandSound: {fileID: 8300000, guid: 5425ccc68c0bc0b4f9e782e18fcd8148, type: 3}
 --- !u!1 &7913309574898258690
 GameObject:
   m_ObjectHideFlags: 0
