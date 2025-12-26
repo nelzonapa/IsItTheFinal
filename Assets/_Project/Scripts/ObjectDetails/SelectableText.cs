@@ -4,7 +4,8 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Linq;
 using Fusion; 
-using ImmersiveGraph.Network; 
+using ImmersiveGraph.Network;
+using ImmersiveGraph.Core;
 
 namespace ImmersiveGraph.Interaction
 {
@@ -266,6 +267,15 @@ namespace ImmersiveGraph.Interaction
                 if (tokenPrefab != null)
                 {
                     GameObject token = Instantiate(tokenPrefab, spawnPos, Quaternion.identity);
+
+                    // --- NUEVO: PINTAR EL TOKEN LOCAL ---
+                    var renderer = token.GetComponentInChildren<Renderer>(); // Busca el cubo visual
+                    if (renderer != null)
+                    {
+                        renderer.material.color = UserColorPalette.GetLocalPlayerColor();
+                    }
+                    // ------------------------------------
+
                     var tokenScript = token.GetComponent<ExtractedToken>();
                     if (tokenScript != null)
                     {

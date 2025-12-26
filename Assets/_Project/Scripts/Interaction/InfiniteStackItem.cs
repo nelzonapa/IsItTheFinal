@@ -1,23 +1,24 @@
+using ImmersiveGraph.Core; // <--- NECESARIO
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace ImmersiveGraph.Interaction
 {
-    // Poner esto en el Prefab del Post-it
-    [RequireComponent(typeof(XRGrabInteractable))]
+    [RequireComponent(typeof(UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable))]
     public class InfiniteStackItem : MonoBehaviour
     {
         private bool hasSpawnedReplacement = false;
         private Vector3 startPosition;
         private Quaternion startRotation;
+        private Renderer _myRenderer; // Para cambiar mi color
 
         void Start()
         {
             startPosition = transform.position;
             startRotation = transform.rotation;
+            _myRenderer = GetComponentInChildren<Renderer>(); // Obtenemos referencia visual
 
-            var grab = GetComponent<XRGrabInteractable>();
+            var grab = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
             grab.selectEntered.AddListener(OnGrab);
         }
 
@@ -25,14 +26,28 @@ namespace ImmersiveGraph.Interaction
         {
             if (!hasSpawnedReplacement)
             {
-                hasSpawnedReplacement = true; // Yo ya soy libre, ya no genero más
+                hasSpawnedReplacement = true; // Ya soy libre
 
-                // Crear mi reemplazo en la mesa
+                // 1. PINTARME A Mï¿½ MISMO (El que tengo en la mano)
+                if (_myRenderer != null)
+                {
+                    _myRenderer.material.color = UserColorPalette.GetLocalPlayerColor();
+                }
+
+                // 2. CREAR EL REEMPLAZO EN LA MESA
                 GameObject replacement = Instantiate(this.gameObject, startPosition, startRotation);
-                replacement.name = this.gameObject.name; // Mantener nombre limpio
+                replacement.name = this.gameObject.name;
 
-                // Importante: El reemplazo nace "nuevo" (hasSpawnedReplacement = false), 
-                // así que estará listo para el siguiente agarre.
+                // 3. RESTAURAR EL COLOR DEL REEMPLAZO
+                // Como 'replacement' es una copia de 'this' (que acabamos de pintar),
+                // nacerï¿½ pintado. Hay que devolverlo al color original (ej. blanco o amarillo pï¿½lido).
+                var repRenderer = replacement.GetComponentInChildren<Renderer>();
+                if (repRenderer != null)
+                {
+                    // Asumiendo que el color base de tus post-its es blanco o un amarillo claro por defecto.
+                    // Si tienes un color especï¿½fico, ponlo aquï¿½.
+                    repRenderer.material.color = Color.white;
+                }
             }
         }
     }
