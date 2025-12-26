@@ -868,7 +868,6 @@ GameObject:
   - component: {fileID: 525170731983431308}
   - component: {fileID: 5779289886195097638}
   - component: {fileID: 4277995489900044386}
-  - component: {fileID: 6707689157392680625}
   m_Layer: 0
   m_Name: Zone5_Shared
   m_TagString: Untagged
@@ -1090,19 +1089,6 @@ MonoBehaviour:
   netPostItPrefab: {fileID: -4726014317425667089, guid: 4b71672d9a0fd10489fd04e530722b55, type: 3}
   netTokenPrefab: {fileID: 7503669862345325201, guid: 1b6b188c3f65f0246ba8a2875fed9901, type: 3}
   netLinePrefab: {fileID: 5356999450506748193, guid: 396de9a506d2d594f9a8ca1c51914b09, type: 3}
---- !u!114 &6707689157392680625
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2242100136102775865}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b932576a2de4144458bbd3d733eb5806, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.MigrationZoneVisuals
-  zoneReadyColor: {r: 0, g: 0.7509433, b: 0, a: 1}
 --- !u!1 &2592376226361987160
 GameObject:
   m_ObjectHideFlags: 0
@@ -3520,7 +3506,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4140013857039541987, guid: 3c0dbf2e662876b4e847e04ba2400a5f, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -72.380005
       objectReference: {fileID: 0}
     - target: {fileID: 4536787217673639573, guid: 3c0dbf2e662876b4e847e04ba2400a5f, type: 3}
       propertyPath: m_Name
@@ -3766,27 +3752,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2219212570826097103, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2219212570826097103, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2219212570826097103, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 463
       objectReference: {fileID: 0}
     - target: {fileID: 2219212570826097103, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 21.23
       objectReference: {fileID: 0}
     - target: {fileID: 2219212570826097103, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 241.5
       objectReference: {fileID: 0}
     - target: {fileID: 2219212570826097103, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20.615
       objectReference: {fileID: 0}
     - target: {fileID: 5569687750272540771, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_Pivot.x
