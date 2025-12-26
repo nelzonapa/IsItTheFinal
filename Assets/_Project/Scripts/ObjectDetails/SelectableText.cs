@@ -3,12 +3,14 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Linq;
-using Fusion; // <--- NECESARIO PARA FUSION
-using ImmersiveGraph.Network; // <--- NECESARIO PARA ACCEDER A NetworkTokenSync
+using Fusion; 
+using ImmersiveGraph.Network; 
 
 namespace ImmersiveGraph.Interaction
 {
     [RequireComponent(typeof(TextMeshProUGUI))]
+
+    [RequireComponent(typeof(AudioSource))] // para audio
     public class SelectableText : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
         [Header("Configuración Local")]
@@ -19,7 +21,10 @@ namespace ImmersiveGraph.Interaction
         public bool isNetworkMode = false; // ¿Estoy en el panel flotante?
         public NetworkObject netTokenPrefab; // Prefab de RED (Network_Token)
 
-        // --- CONTEXTO ---
+        [Header("Audio Feedback")] // 
+        public AudioClip highlightLoopSound; // Sonido continuo (tipo lápiz escribiendo o zumbido suave)
+        public AudioClip tokenSpawnSound;    // Sonido "Pop" o "Ding" de éxito
+
         // El ID del nodo origen (se llena automáticamente por Zone3Manager o NetworkDocViewer)
         public string currentContextNodeID = "";
 
@@ -40,9 +45,13 @@ namespace ImmersiveGraph.Interaction
         private int _currentDragEnd = -1;
         private bool _isSelecting = false;
 
+
+        private AudioSource _audioSource; // audiooo
+
         private void Awake()
         {
             _tmp = GetComponent<TextMeshProUGUI>();
+            _audioSource = GetComponent<AudioSource>(); // Inicializar audio
             _tmp.ForceMeshUpdate(); // Vital para el cálculo geométrico
             UpdateOriginalText();
         }
@@ -145,6 +154,14 @@ namespace ImmersiveGraph.Interaction
                 _currentDragEnd = index;
                 _isSelecting = true;
                 RefreshVisuals();
+
+                // START AUDIO LOOP
+                if (_audioSource != null && highlightLoopSound != null)
+                {
+                    _audioSource.clip = highlightLoopSound;
+                    _audioSource.loop = true;
+                    _audioSource.Play();
+                }
             }
         }
 
@@ -162,6 +179,15 @@ namespace ImmersiveGraph.Interaction
 
         public void OnPointerUp(PointerEventData eventData)
         {
+
+            // STOP AUDIO LOOP SIEMPRE
+            if (_audioSource != null)
+            {
+                _audioSource.Stop();
+                _audioSource.loop = false; // Reset
+            }
+
+
             if (!_isSelecting) return;
             _isSelecting = false;
 
@@ -190,6 +216,15 @@ namespace ImmersiveGraph.Interaction
         // --- LÓGICA DE SPAWN FASE 3 (HÍBRIDA) ---
         void SpawnToken(string text, string id, PointerEventData eventData)
         {
+
+            // --- SONIDO DE ÉXITO (POP) ---
+            if (_audioSource != null && tokenSpawnSound != null)
+            {
+                _audioSource.PlayOneShot(tokenSpawnSound);
+            }
+            // -----------------------------
+
+
             // Cálculo de posición visual
             Vector3 spawnPos = eventData.pointerCurrentRaycast.worldPosition;
             if (spawnPos == Vector3.zero) spawnPos = transform.position;
