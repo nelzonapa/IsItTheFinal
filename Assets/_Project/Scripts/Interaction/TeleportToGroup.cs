@@ -3,28 +3,40 @@ using ImmersiveGraph.Data;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Interactables; // XR Toolkit nuevo
 
 namespace ImmersiveGraph.Network
 {
     [RequireComponent(typeof(XRSimpleInteractable))]
+    [RequireComponent(typeof(AudioSource))] // <--- Nuevo: Necesita AudioSource
     public class TeleportToGroup : MonoBehaviour
     {
         private XROrigin _xrOrigin;
         private NetworkRunner _runner;
+        private AudioSource _audioSource; // Referencia al audio
 
-        // REFERENCIA AL MIGRATION MANAGER
+        [Header("Configuración")]
         public MigrationManager migrator;
+        public AudioClip teleportSound; // <--- Arrastra el sonido aquí
 
         void Start()
         {
             _xrOrigin = FindFirstObjectByType<XROrigin>();
+            _audioSource = GetComponent<AudioSource>(); // Inicializar
+
             var interactable = GetComponent<XRSimpleInteractable>();
             interactable.selectEntered.AddListener(OnButtonPressed);
         }
 
         public void OnButtonPressed(SelectEnterEventArgs args)
         {
+            // 1. REPRODUCIR SONIDO
+            if (_audioSource != null && teleportSound != null)
+            {
+                // PlayOneShot permite que el sonido suene aunque nos movamos rápido (si el AudioListener viaja con nosotros)
+                _audioSource.PlayOneShot(teleportSound);
+            }
+
             if (_runner == null) _runner = FindFirstObjectByType<NetworkRunner>();
 
             if (GroupTableManager.Instance == null || _runner == null)
@@ -33,7 +45,7 @@ namespace ImmersiveGraph.Network
                 return;
             }
 
-            // --- PASO 1: EJECUTAR LA MIGRACIÓN ---
+            // 2. MIGRACIÓN
             if (migrator != null)
             {
                 migrator.ExecuteMigration();
@@ -42,10 +54,8 @@ namespace ImmersiveGraph.Network
             {
                 Debug.LogWarning("No hay MigrationManager asignado, viajando sin cosas...");
             }
-            // -------------------------------------
 
-
-            // --- METRICA 4: REGISTRO DE TRANSICIÓN ---
+            // 3. LOGS
             if (ExperimentDataLogger.Instance != null)
             {
                 ExperimentDataLogger.Instance.LogEvent(
@@ -55,8 +65,8 @@ namespace ImmersiveGraph.Network
                     transform.position
                 );
             }
-            // -----------------------------------------
 
+            // 4. TELETRANSPORTE FÍSICO
             Debug.Log("Teletransportando al punto de spawn asignado...");
             Transform targetSpawn = GroupTableManager.Instance.GetSpawnPointForPlayer(_runner.LocalPlayer);
 
