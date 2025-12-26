@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace ImmersiveGraph.Network
 {
-    [RequireComponent(typeof(AudioSource))] // <-- Asegura que haya audio
+    [RequireComponent(typeof(AudioSource))] 
     public class NetworkConnector : MonoBehaviour
     {
         [Header("Configuración de Sala")]
@@ -21,12 +21,12 @@ namespace ImmersiveGraph.Network
         [Header("Configuración UX")]
         public float uiDistance = 1.5f;
         public float uiSmoothSpeed = 10f;
-        public AudioClip successSound; // <--- ARRASTRA TU MP3 DE ÉXITO AQUÍ
+        public AudioClip successSound; // audio
 
         private NetworkRunner _runner;
         private bool _isFollowingUser = false;
         private Transform _mainCameraTransform;
-        private AudioSource _audioSource; // <--- Referencia al audio
+        private AudioSource _audioSource; // Referencia al audio
 
         private void Start()
         {

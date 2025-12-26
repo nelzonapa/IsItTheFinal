@@ -397,6 +397,7 @@ MonoBehaviour:
   loaderCanvas: {fileID: 1126611092217463171}
   docPanelPrefab: {fileID: 277650233639824129, guid: 58ae48e99ee857442a18027a682993e6, type: 3}
   openPanelSound: {fileID: 8300000, guid: 5425ccc68c0bc0b4f9e782e18fcd8148, type: 3}
+  errorSound: {fileID: 8300000, guid: c4a7ffbf4eb037840b2fe90545358122, type: 3}
   _ActivePanelId:
     Raw: 0
 --- !u!82 &7775676120776397181

@@ -8,7 +8,7 @@ namespace ImmersiveGraph.Network
 {
     [RequireComponent(typeof(XRGrabInteractable))]
 
-    [RequireComponent(typeof(AudioSource))] // <--- Nuevo requisito
+    [RequireComponent(typeof(AudioSource))] 
     public class NetworkTokenInteraction : NetworkBehaviour
     {
         [Header("Configuración")]
@@ -20,11 +20,13 @@ namespace ImmersiveGraph.Network
         public Canvas loaderCanvas;
         public NetworkObject docPanelPrefab;
         public AudioClip openPanelSound; // mi sonido
+        public AudioClip errorSound; // mi sonido
 
         private NetworkTokenSync _tokenSync;
         private XRGrabInteractable _interactable;
 
-        private AudioSource _audioSource; // <--- Referencia audio
+        private AudioSource _audioSource; //audios
+
 
         [Networked] public NetworkId ActivePanelId { get; set; }
         // -----------------------------------------------
@@ -37,7 +39,7 @@ namespace ImmersiveGraph.Network
             _tokenSync = GetComponent<NetworkTokenSync>();
             _interactable = GetComponent<XRGrabInteractable>();
 
-            _audioSource = GetComponent<AudioSource>(); // <--- Inicializar audio
+            _audioSource = GetComponent<AudioSource>();
 
             if (loaderCanvas != null) loaderCanvas.enabled = false;
         }
@@ -114,6 +116,13 @@ namespace ImmersiveGraph.Network
                 {
                     // CASO A: Ya existe -> Hacerlo parpadear
                     Debug.Log("Panel ya existe. Parpadeando...");
+
+                    // --- SONIDO DE ERROR ---
+                    if (_audioSource != null && errorSound != null)
+                    {
+                        _audioSource.PlayOneShot(errorSound);
+                    }
+
                     var viewer = existingPanel.GetComponent<NetworkDocViewer>();
                     if (viewer != null) viewer.Rpc_FlashError(); // Llamada RPC
                     return;
