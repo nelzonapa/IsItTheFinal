@@ -10,8 +10,9 @@ namespace ImmersiveGraph.Visual
     public class InteractableFeedback : MonoBehaviour
     {
         [Header("Configuración de Brillo")]
-        public Color hoverGlowColor = new Color(0.3f, 0.3f, 0.3f); // Brillo blanco suave
-        public Color grabGlowColor = new Color(0.5f, 0.5f, 0.5f);  // Brillo más intenso
+        private Color hoverGlowColor = new Color(0.05f, 0.05f, 0.05f); // Brillo apenas perceptible
+        private Color grabGlowColor = new Color(0.12f, 0.12f, 0.12f); // Brillo activo pero calmado
+
 
         private Renderer _renderer;
         private Material _material;

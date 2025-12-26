@@ -868,6 +868,7 @@ GameObject:
   - component: {fileID: 525170731983431308}
   - component: {fileID: 5779289886195097638}
   - component: {fileID: 4277995489900044386}
+  - component: {fileID: 6707689157392680625}
   m_Layer: 0
   m_Name: Zone5_Shared
   m_TagString: Untagged
@@ -1089,6 +1090,19 @@ MonoBehaviour:
   netPostItPrefab: {fileID: -4726014317425667089, guid: 4b71672d9a0fd10489fd04e530722b55, type: 3}
   netTokenPrefab: {fileID: 7503669862345325201, guid: 1b6b188c3f65f0246ba8a2875fed9901, type: 3}
   netLinePrefab: {fileID: 5356999450506748193, guid: 396de9a506d2d594f9a8ca1c51914b09, type: 3}
+--- !u!114 &6707689157392680625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2242100136102775865}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b932576a2de4144458bbd3d733eb5806, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.MigrationZoneVisuals
+  zoneReadyColor: {r: 0, g: 0.7509433, b: 0, a: 1}
 --- !u!1 &2592376226361987160
 GameObject:
   m_ObjectHideFlags: 0
