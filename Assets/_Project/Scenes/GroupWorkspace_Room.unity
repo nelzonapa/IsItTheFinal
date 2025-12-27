@@ -583,7 +583,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6598815579406187037, guid: 18ddb545287c546e19cc77dc9fbb2189, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2312,9 +2312,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3514586407596527429, guid: 3a71b8d8dc8e08f46b14b4a6cd7e49a6, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3919216422384507700, guid: 3a71b8d8dc8e08f46b14b4a6cd7e49a6, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4346746227212210497, guid: 3a71b8d8dc8e08f46b14b4a6cd7e49a6, type: 3}
       propertyPath: m_IgnoreReversedGraphics
@@ -2486,6 +2490,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1208957830}
   - component: {fileID: 1208957831}
+  - component: {fileID: 1208957832}
   m_Layer: 0
   m_Name: PC_Hand_Interactor
   m_TagString: Untagged
@@ -2833,6 +2838,18 @@ MonoBehaviour:
     m_InputActionReference: {fileID: 0}
     m_ObjectReferenceObject: {fileID: 0}
     m_ManualValue: 0
+--- !u!114 &1208957832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1208957829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9821f32956d9d1645abde0c65c984940, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Core.PCManualSelector
 --- !u!1 &1242975068
 GameObject:
   m_ObjectHideFlags: 0
@@ -3426,7 +3443,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b95b6e01a15ac944958ba1df087c55c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Core.PlatformManager
-  editorMode: 1
+  editorMode: 2
   vrRig: {fileID: 280106987}
   pcRig: {fileID: 64375610}
   pcOnlyObjects:
