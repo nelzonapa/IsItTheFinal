@@ -315,7 +315,7 @@ Transform:
   m_GameObject: {fileID: 64375610}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 100, y: 0, z: -0.362}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -334,8 +334,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b1b99ea0f7e65e42adf06d2e3db957f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Core.SimpleFPSController
-  speed: 5
-  mouseSensitivity: 2
+  speed: 3
+  mouseSensitivity: 1
   playerCamera: {fileID: 1242975069}
 --- !u!1001 &77035809
 PrefabInstance:
@@ -583,7 +583,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6598815579406187037, guid: 18ddb545287c546e19cc77dc9fbb2189, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3426,8 +3426,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b95b6e01a15ac944958ba1df087c55c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Core.PlatformManager
+  editorMode: 1
   vrRig: {fileID: 280106987}
   pcRig: {fileID: 64375610}
+  pcOnlyObjects:
+  - {fileID: 64375610}
+  - {fileID: 1181168794}
+  vrOnlyObjects: []
 --- !u!4 &1525330229
 Transform:
   m_ObjectHideFlags: 0

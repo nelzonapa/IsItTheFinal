@@ -3,7 +3,8 @@ using Fusion;
 using Fusion.Sockets;
 using System.Collections.Generic;
 using System;
-using Unity.XR.CoreUtils; // <--- NECESARIO PARA MOVER LA CÁMARA
+using Unity.XR.CoreUtils;
+using ImmersiveGraph.Core; //PARA PLATFORMMANAGER
 
 namespace ImmersiveGraph.Network
 {
@@ -28,45 +29,63 @@ namespace ImmersiveGraph.Network
             if (player == runner.LocalPlayer)
             {
                 Debug.Log("¡Entré a la sala! Creando mi avatar...");
-
                 Debug.Log($"Jugador {player.PlayerId} conectado. Buscando su oficina...");
 
-                Vector3 spawnPosition = new Vector3(0, 1, 0); // Default
-                Quaternion spawnRotation = Quaternion.identity; // Default
+                Vector3 spawnPosition = new Vector3(0, 1, 0);
+                Quaternion spawnRotation = Quaternion.identity;
 
-                // Preguntar al Manager cuál es mi escritorio
+                // Preguntar al Manager cuál es mi escritorio INDIVIDUAL
                 if (GroupTableManager.Instance != null)
                 {
                     Transform myDesk = GroupTableManager.Instance.GetIndividualDeskForPlayer(player);
                     if (myDesk != null)
                     {
                         spawnPosition = myDesk.position;
-                        spawnRotation = myDesk.rotation; // <--- NUEVO: Copiar rotación también
+                        spawnRotation = myDesk.rotation;
                     }
                 }
                 else
                 {
-                    // Si no hay Manager, usamos el 100 como backup manual
                     spawnPosition = new Vector3(100, 1, 0);
                 }
 
                 // 1. SPAWN DEL AVATAR (Lo que ven los otros)
                 runner.Spawn(playerPrefab, spawnPosition, spawnRotation, player);
 
-                // 2. MOVER LA CÁMARA REAL (Lo que ves tú) <--- IMPORTANTE
-                XROrigin origin = FindFirstObjectByType<XROrigin>();
-                if (origin != null)
+                // 2. MOVER AL JUGADOR LOCAL (PC O VR)
+                GameObject playerRig = null;
+
+                // Le preguntamos al PlatformManager quién está activo
+                if (PlatformManager.Instance != null && PlatformManager.Instance.ActiveRig != null)
                 {
-                    // Ajuste de altura (si el pivote está en el suelo)
-                    origin.transform.position = spawnPosition;
-
-                    // Ajuste de rotación (solo eje Y para no marear)
-                    origin.transform.rotation = Quaternion.Euler(0, spawnRotation.eulerAngles.y, 0);
-
-                    Debug.Log("Cámara movida al escritorio individual.");
+                    playerRig = PlatformManager.Instance.ActiveRig;
+                }
+                else
+                {
+                    // Fallback para VR antiguo
+                    var legacyOrigin = FindFirstObjectByType<XROrigin>();
+                    if (legacyOrigin != null) playerRig = legacyOrigin.gameObject;
                 }
 
-                // NUEVO: Entregar herramientas en la mesa grupal (para que estén listas cuando viajes)
+                if (playerRig != null)
+                {
+                    // Mover Físicamente
+                    playerRig.transform.position = spawnPosition;
+
+                    // Ajuste de rotación (solo eje Y para no marear)
+                    playerRig.transform.rotation = Quaternion.Euler(0, spawnRotation.eulerAngles.y, 0);
+
+                    // Importante para PC: Sincronizar físicas si usas CharacterController
+                    Physics.SyncTransforms();
+
+                    Debug.Log($"[Spawner] Jugador movido a escritorio individual. Rig: {playerRig.name}");
+                }
+                else
+                {
+                    Debug.LogError("[Spawner] No se encontró un Rig activo para mover.");
+                }
+
+                // Entregar herramientas
                 if (GroupTableManager.Instance != null)
                 {
                     GroupTableManager.Instance.SpawnToolsForPlayer(runner, player);
@@ -74,8 +93,7 @@ namespace ImmersiveGraph.Network
             }
         }
 
-        // --- CALLBACKS OBLIGATORIOS ---
-        // (El resto déjalo igual, solo los vacíos)
+        // --- CALLBACKS VACÍOS (Déjalos igual) ---
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
         public void OnInput(NetworkRunner runner, NetworkInput input) { }
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }

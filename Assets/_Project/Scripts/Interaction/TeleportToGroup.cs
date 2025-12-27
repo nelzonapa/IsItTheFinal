@@ -1,41 +1,34 @@
 using Fusion;
 using ImmersiveGraph.Data;
-using Unity.XR.CoreUtils;
+using ImmersiveGraph.Core; // <--- NECESARIO
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactables; // XR Toolkit nuevo
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace ImmersiveGraph.Network
 {
     [RequireComponent(typeof(XRSimpleInteractable))]
-    [RequireComponent(typeof(AudioSource))] // <--- Nuevo: Necesita AudioSource
+    [RequireComponent(typeof(AudioSource))]
     public class TeleportToGroup : MonoBehaviour
     {
-        private XROrigin _xrOrigin;
         private NetworkRunner _runner;
-        private AudioSource _audioSource; // Referencia al audio
+        private AudioSource _audioSource;
 
         [Header("Configuración")]
         public MigrationManager migrator;
-        public AudioClip teleportSound; // <--- Arrastra el sonido aquí
+        public AudioClip teleportSound;
 
         void Start()
         {
-            _xrOrigin = FindFirstObjectByType<XROrigin>();
-            _audioSource = GetComponent<AudioSource>(); // Inicializar
-
+            _audioSource = GetComponent<AudioSource>();
             var interactable = GetComponent<XRSimpleInteractable>();
             interactable.selectEntered.AddListener(OnButtonPressed);
         }
 
         public void OnButtonPressed(SelectEnterEventArgs args)
         {
-            // 1. REPRODUCIR SONIDO
-            if (_audioSource != null && teleportSound != null)
-            {
-                // PlayOneShot permite que el sonido suene aunque nos movamos rápido (si el AudioListener viaja con nosotros)
-                _audioSource.PlayOneShot(teleportSound);
-            }
+            // 1. SONIDO
+            if (_audioSource != null && teleportSound != null) _audioSource.PlayOneShot(teleportSound);
 
             if (_runner == null) _runner = FindFirstObjectByType<NetworkRunner>();
 
@@ -46,35 +39,49 @@ namespace ImmersiveGraph.Network
             }
 
             // 2. MIGRACIÓN
-            if (migrator != null)
-            {
-                migrator.ExecuteMigration();
-            }
-            else
-            {
-                Debug.LogWarning("No hay MigrationManager asignado, viajando sin cosas...");
-            }
+            if (migrator != null) migrator.ExecuteMigration();
+            else Debug.LogWarning("Viajando sin migración...");
 
             // 3. LOGS
             if (ExperimentDataLogger.Instance != null)
             {
-                ExperimentDataLogger.Instance.LogEvent(
-                    "TRANSITION",
-                    "Workspace Change",
-                    "User Teleported to Group Table",
-                    transform.position
-                );
+                ExperimentDataLogger.Instance.LogEvent("TRANSITION", "Workspace Change", "User Teleported", transform.position);
             }
 
-            // 4. TELETRANSPORTE FÍSICO
-            Debug.Log("Teletransportando al punto de spawn asignado...");
+            Debug.Log("Teletransportando...");
+
+            // 4. MOVER AL JUGADOR (PC O VR) 
+            GameObject playerToMove = null;
+
+            if (PlatformManager.Instance != null && PlatformManager.Instance.ActiveRig != null)
+            {
+                playerToMove = PlatformManager.Instance.ActiveRig;
+            }
+            else
+            {
+                // Fallback de seguridad
+                var legacyOrigin = FindFirstObjectByType<Unity.XR.CoreUtils.XROrigin>();
+                if (legacyOrigin != null) playerToMove = legacyOrigin.gameObject;
+            }
+
+            // Obtener punto de spawn GRUPAL
             Transform targetSpawn = GroupTableManager.Instance.GetSpawnPointForPlayer(_runner.LocalPlayer);
 
-            if (_xrOrigin != null && targetSpawn != null)
+            if (playerToMove != null && targetSpawn != null)
             {
-                _xrOrigin.transform.position = targetSpawn.position + new Vector3(0, 0.05f, 0);
+                // Mover
+                playerToMove.transform.position = targetSpawn.position + new Vector3(0, 0.05f, 0);
+
+                // Rotar
                 Vector3 targetRotation = targetSpawn.rotation.eulerAngles;
-                _xrOrigin.transform.rotation = Quaternion.Euler(0, targetRotation.y, 0);
+                playerToMove.transform.rotation = Quaternion.Euler(0, targetRotation.y, 0);
+
+                // Sincronizar Físicas
+                Physics.SyncTransforms();
+            }
+            else
+            {
+                Debug.LogError("No se pudo teletransportar: Falta PlayerRig o SpawnPoint.");
             }
         }
     }
