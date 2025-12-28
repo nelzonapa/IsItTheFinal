@@ -28,8 +28,7 @@ namespace ImmersiveGraph.Core
         [Tooltip("Distancia máxima (en metros)")]
         public float maxDistance = 5.0f;
 
-        // Para recordar la distancia original
-        private float _currentDistance;
+        private float _currentDistance;
 
         void Start()
         {
@@ -40,50 +39,43 @@ namespace ImmersiveGraph.Core
             else
                 _manager = FindFirstObjectByType<XRInteractionManager>();
 
-            // Inicializar distancia por defecto (si ya hay un AttachTransform puesto)
-            if (_rayInteractor.attachTransform != null)
+            if (_rayInteractor.attachTransform != null)
                 _currentDistance = _rayInteractor.attachTransform.localPosition.z;
             else
-                _currentDistance = 2.0f; // Valor seguro por defecto
-        }
+                _currentDistance = 2.0f;
+        }
 
         void Update()
         {
-            // --- NUEVO: LÓGICA DE ACERCAR/ALEJAR (SCROLL) ---
-            HandleObjectPushPull();
-            // ------------------------------------------------
+            HandleObjectPushPull();
 
-            if (_manager == null || _rayInteractor == null) return;
+            if (_manager == null || _rayInteractor == null) return;
 
-            // --- FASE 1: CLICK DOWN ---
-            if (Mouse.current.leftButton.wasPressedThisFrame)
+            // --- CLICK DERECHO (ACTIVAR / DISPARAR) ---
+            HandleRightClickActivation();
+            // ------------------------------------------
+
+            // FASE 1: CLICK IZQUIERDO (AGARRAR)
+            if (Mouse.current.leftButton.wasPressedThisFrame)
             {
-                // 1. Prioridad: Agarrar 3D
-                if (TryGrabXRI())
+                if (TryGrabXRI())
                 {
-                    // Al agarrar, reseteamos la distancia al valor actual del AttachPoint
-                    // Opcional: Podríamos calcular la distancia al objeto real para que no salte
-                    if (_rayInteractor.attachTransform != null)
+                    if (_rayInteractor.attachTransform != null)
                         _currentDistance = _rayInteractor.attachTransform.localPosition.z;
-
                     return;
                 }
-
-                // 2. Verificar bloqueo físico
-                if (IsPhysicalObjectBlockingUI()) return;
-
-                // 3. UI
-                HandleUIPress();
+                if (IsPhysicalObjectBlockingUI()) return;
+                HandleUIPress();
             }
 
-            // --- FASE 2: ARRASTRAR ---
-            if (Mouse.current.leftButton.isPressed)
+            // FASE 2: ARRASTRAR
+            if (Mouse.current.leftButton.isPressed)
             {
                 if (_currentUIPressed != null) HandleUIDrag();
             }
 
-            // --- FASE 3: SOLTAR ---
-            if (Mouse.current.leftButton.wasReleasedThisFrame)
+            // FASE 3: SOLTAR
+            if (Mouse.current.leftButton.wasReleasedThisFrame)
             {
                 if (_rayInteractor.hasSelection)
                 {
@@ -91,84 +83,82 @@ namespace ImmersiveGraph.Core
                     var interactor = _rayInteractor as IXRSelectInteractor;
                     if (interactable != null && interactor != null)
                         _manager.SelectExit(interactor, interactable);
-
-                    // Opcional: Resetear la distancia al soltar para que el rayo no se quede corto/largo
-                    // ResetAttachDistance(); 
-                }
+                }
 
                 if (_currentUIPressed != null) HandleUIRelease();
             }
         }
 
-        // --- LÓGICA DE MOVIMIENTO DE OBJETO ---
-        // --- LÓGICA DE MOVIMIENTO DE OBJETO MEJORADA ---
-        void HandleObjectPushPull()
+        // --- SOLUCIÓN AL ERROR DE COMPILACIÓN ---
+        void HandleRightClickActivation()
         {
-            // Solo funciona si tenemos algo agarrado (hasSelection)
+            // Solo si tenemos algo agarrado
             if (_rayInteractor.hasSelection)
             {
-                // Leemos el valor crudo del scroll
-                float rawScroll = Mouse.current.scroll.ReadValue().y;
+                // Obtenemos el objeto agarrado
+                var interactableObject = _rayInteractor.interactablesSelected[0];
 
-                // Verificamos si hay movimiento (usamos un umbral muy bajo por si tu mouse es sensible)
-                if (Mathf.Abs(rawScroll) > 0.001f)
+                // Verificamos si es "Activable" (IXRActivateInteractable)
+                var activatable = interactableObject as IXRActivateInteractable;
+
+                if (activatable != null)
                 {
-                    // DEBUG: Descomenta esto para ver si Unity recibe señal
-                    // Debug.Log($"[PC] Scroll detectado: {rawScroll}");
-
-                    // Usamos Mathf.Sign para obtener solo la dirección (1 o -1)
-                    // Esto arregla el problema de si tu mouse manda 120 o manda 1.
-                    float direction = Mathf.Sign(rawScroll);
-
-                    // Calculamos el movimiento
-                    // Aumenté el multiplicador a 2.0f para que se note más
-                    float moveAmount = direction * scrollSpeed * Time.deltaTime * 20.0f;
-
-                    _currentDistance += moveAmount;
-
-                    // Limitamos la distancia
-                    _currentDistance = Mathf.Clamp(_currentDistance, minDistance, maxDistance);
-
-                    // APLICACIÓN AL TRANSFORM
-                    if (_rayInteractor.attachTransform != null)
+                    // 1. PRESIONAR CLIC DERECHO -> ACTIVAR
+                    if (Mouse.current.rightButton.wasPressedThisFrame)
                     {
-                        Vector3 newPos = _rayInteractor.attachTransform.localPosition;
-
-                        // IMPORTANTE: Aseguramos que solo movemos Z, manteniendo X e Y en 0
-                        newPos.x = 0;
-                        newPos.y = 0;
-                        newPos.z = _currentDistance;
-
-                        _rayInteractor.attachTransform.localPosition = newPos;
+                        // Creamos los argumentos del evento manualmente
+                        var args = new ActivateEventArgs
+                        {
+                            interactorObject = _rayInteractor,
+                            interactableObject = activatable
+                        };
+                        // Disparamos el evento directamente en el objeto
+                        activatable.OnActivated(args);
                     }
-                    else
+
+                    // 2. SOLTAR CLIC DERECHO -> DESACTIVAR
+                    if (Mouse.current.rightButton.wasReleasedThisFrame)
                     {
-                        Debug.LogError("[PC] ¡Error! Attach Transform no está asignado en el Inspector.");
+                        var args = new DeactivateEventArgs
+                        {
+                            interactorObject = _rayInteractor,
+                            interactableObject = activatable
+                        };
+                        activatable.OnDeactivated(args);
                     }
                 }
             }
-            // Si no hay selección, reseteamos la distancia lógica para que no se desincronice
+        }
+
+        // --- FUNCIONES EXISTENTES (SIN CAMBIOS) ---
+        void HandleObjectPushPull()
+        {
+            if (_rayInteractor.hasSelection)
+            {
+                float rawScroll = Mouse.current.scroll.ReadValue().y;
+                if (Mathf.Abs(rawScroll) > 0.001f)
+                {
+                    float direction = Mathf.Sign(rawScroll);
+                    float moveAmount = direction * scrollSpeed * Time.deltaTime * 20.0f;
+
+                    _currentDistance += moveAmount;
+                    _currentDistance = Mathf.Clamp(_currentDistance, minDistance, maxDistance);
+
+                    if (_rayInteractor.attachTransform != null)
+                    {
+                        Vector3 newPos = _rayInteractor.attachTransform.localPosition;
+                        newPos.x = 0; newPos.y = 0; newPos.z = _currentDistance;
+                        _rayInteractor.attachTransform.localPosition = newPos;
+                    }
+                }
+            }
             else if (_rayInteractor.attachTransform != null)
             {
-                // Actualizamos la variable interna a la posición real del AttachPoint
                 _currentDistance = _rayInteractor.attachTransform.localPosition.z;
             }
         }
 
-        // (Opcional) Resetea el rayo a una distancia cómoda
-        void ResetAttachDistance()
-        {
-            _currentDistance = 2.0f; // Distancia default
-            if (_rayInteractor.attachTransform != null)
-            {
-                Vector3 newPos = _rayInteractor.attachTransform.localPosition;
-                newPos.z = _currentDistance;
-                _rayInteractor.attachTransform.localPosition = newPos;
-            }
-        }
-
-        // --- RESTO DE FUNCIONES (IGUAL QUE ANTES) ---
-        bool TryGrabXRI()
+        bool TryGrabXRI()
         {
             if (_rayInteractor.interactablesHovered.Count > 0)
             {
@@ -193,12 +183,10 @@ namespace ImmersiveGraph.Core
             if (Physics.SphereCast(ray, radius, out hit, 100f, physicalBlockers))
             {
                 if (hit.collider.isTrigger) return false;
-
                 PointerEventData pe = new PointerEventData(EventSystem.current);
                 pe.position = Mouse.current.position.ReadValue();
                 List<RaycastResult> uiRes = new List<RaycastResult>();
                 EventSystem.current.RaycastAll(pe, uiRes);
-
                 if (uiRes.Count > 0)
                 {
                     if (hit.distance < uiRes[0].distance - 0.1f) return true;
@@ -219,7 +207,6 @@ namespace ImmersiveGraph.Core
                 GameObject target = results[0].gameObject;
                 _pointerData.pointerCurrentRaycast = results[0];
                 _pointerData.position = results[0].screenPosition;
-
                 ExecuteEvents.Execute(target, _pointerData, ExecuteEvents.pointerDownHandler);
                 _currentUIPressed = target;
                 ExecuteEvents.Execute(target, _pointerData, ExecuteEvents.initializePotentialDrag);
@@ -232,7 +219,6 @@ namespace ImmersiveGraph.Core
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(_pointerData, results);
             if (results.Count > 0) _pointerData.pointerCurrentRaycast = results[0];
-
             ExecuteEvents.Execute(_currentUIPressed, _pointerData, ExecuteEvents.dragHandler);
         }
 
@@ -242,10 +228,8 @@ namespace ImmersiveGraph.Core
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(_pointerData, results);
             if (results.Count > 0) _pointerData.pointerCurrentRaycast = results[0];
-
             ExecuteEvents.Execute(_currentUIPressed, _pointerData, ExecuteEvents.pointerUpHandler);
             ExecuteEvents.Execute(_currentUIPressed, _pointerData, ExecuteEvents.pointerClickHandler);
-
             _currentUIPressed = null;
             _pointerData = null;
         }
