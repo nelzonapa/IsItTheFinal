@@ -2885,6 +2885,9 @@ MonoBehaviour:
   physicalBlockers:
     serializedVersion: 2
     m_Bits: 4294967295
+  scrollSpeed: 0.5
+  minDistance: 0.5
+  maxDistance: 5
 --- !u!1 &1242975068
 GameObject:
   m_ObjectHideFlags: 0
@@ -3478,7 +3481,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b95b6e01a15ac944958ba1df087c55c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Core.PlatformManager
-  editorMode: 1
+  editorMode: 2
   vrRig: {fileID: 280106987}
   pcRig: {fileID: 64375610}
   pcOnlyObjects:

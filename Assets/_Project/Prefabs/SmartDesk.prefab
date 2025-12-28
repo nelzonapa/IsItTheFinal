@@ -541,8 +541,8 @@ Transform:
   m_GameObject: {fileID: 1267679762273092151}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.16, y: 0.6682, z: 0.6606}
-  m_LocalScale: {x: 3.5132477, y: 0.16541998, z: 1.3643707}
+  m_LocalPosition: {x: -0.491, y: 0.6682, z: 0.6606}
+  m_LocalScale: {x: 4.175279, y: 0.16541998, z: 1.3643707}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9013347094446411954}
@@ -2865,7 +2865,7 @@ Transform:
   m_GameObject: {fileID: 7811330940087541257}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.3505, y: 1.253, z: 0.6614}
+  m_LocalPosition: {x: -1.694, y: 1.855, z: 0.6614}
   m_LocalScale: {x: 1.1365541, y: 1, z: 1.3171774}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2886,7 +2886,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7811330940087541257}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2945,7 +2945,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -3058,7 +3058,7 @@ MonoBehaviour:
   reviewedMarkerPrefab: {fileID: 1102540967185720030, guid: cc31e57de48da5c4786d65f3671f37ae, type: 3}
   markerOffset: {x: 0.36, y: 0.49, z: 0}
   markerScale: {x: 0.5, y: 0.5, z: 0.5}
-  communityOrbitRadius: 5
+  communityOrbitRadius: 10
   fileOrbitRadius: 5
   lineMaterial: {fileID: 2100000, guid: 0fcf4715c091eda4f97e84803e479e04, type: 2}
   lineWidth: 0.005
