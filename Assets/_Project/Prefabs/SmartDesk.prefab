@@ -2342,6 +2342,7 @@ GameObject:
   - component: {fileID: 7529284366308622933}
   - component: {fileID: 1713510425057211677}
   - component: {fileID: 8550082689745800963}
+  - component: {fileID: 4097563821376787539}
   m_Layer: 0
   m_Name: Zone3_UI_Canvas
   m_TagString: Untagged
@@ -2467,6 +2468,23 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RaycastTriggerInteraction: 1
+--- !u!114 &4097563821376787539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6353233621545117233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 2
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &6759387350663880436
 GameObject:
   m_ObjectHideFlags: 0

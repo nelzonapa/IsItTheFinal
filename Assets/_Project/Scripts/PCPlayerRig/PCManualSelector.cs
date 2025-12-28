@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems; // <--- NECESARIO PARA UI
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
@@ -14,10 +14,17 @@ namespace ImmersiveGraph.Core
         private XRRayInteractor _rayInteractor;
         private XRInteractionManager _manager;
 
+        private GameObject _currentUIPressed;
+        private PointerEventData _pointerData;
+
+        [Header("Configuración de Bloqueo")]
+        public LayerMask physicalBlockers = ~0; // Todo
+
         void Start()
         {
             _rayInteractor = GetComponent<XRRayInteractor>();
 
+            // Búsqueda a prueba de fallos del Manager
             if (_rayInteractor.interactionManager != null)
                 _manager = _rayInteractor.interactionManager;
             else
@@ -26,73 +33,140 @@ namespace ImmersiveGraph.Core
 
         void Update()
         {
-            // --- PARTE A: CLIC EN UI (WelcomeCanvas, Botones 2D) ---
-            if (Mouse.current.leftButton.wasPressedThisFrame)
-            {
-                // 1. Preguntamos al EventSystem si el mouse está sobre algo de UI
-                if (IsPointerOverUI())
-                {
-                    // Si estamos sobre UI, no hacemos nada más aquí, dejamos que Unity lo maneje 
-                    // PERO, si Unity no lo maneja porque el Input Module está raro en PC, lo forzamos:
-                    ForceUIClick();
-                    return; // Importante: Si tocamos UI, no intentamos agarrar Tokens a la vez
-                }
-            }
-
             if (_manager == null || _rayInteractor == null) return;
 
-            // --- PARTE B: AGARRE DE OBJETOS 3D (Tokens, Nodos) ---
-            // (Esta es la parte que ya te funcionaba)
+            // --- FASE 1: CLICK DOWN ---
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
-                if (_rayInteractor.interactablesHovered.Count > 0)
+                // 1. Prioridad ABSOLUTA: Agarrar objeto 3D
+                if (TryGrabXRI())
                 {
-                    var target = _rayInteractor.interactablesHovered[0] as IXRSelectInteractable;
-                    if (target != null)
-                    {
-                        _manager.SelectEnter(_rayInteractor as IXRSelectInteractor, target);
-                    }
+                    Debug.Log("[PC] Objeto 3D agarrado. UI Bloqueada.");
+                    return;
                 }
+
+                // 2. Si no agarramos nada, revisamos si un objeto físico nos bloquea la visión
+                // (Por si el XRI falló en detectarlo pero está ahí visualmente)
+                if (IsPhysicalObjectBlockingUI())
+                {
+                    Debug.Log("[PC] Clic UI cancelado: Objeto físico enfrente.");
+                    return;
+                }
+
+                // 3. Si llegamos aquí, está libre para tocar UI
+                HandleUIPress();
             }
 
+            // --- FASE 2: ARRASTRAR ---
+            if (Mouse.current.leftButton.isPressed)
+            {
+                if (_currentUIPressed != null) HandleUIDrag();
+            }
+
+            // --- FASE 3: SOLTAR ---
             if (Mouse.current.leftButton.wasReleasedThisFrame)
             {
+                // Soltar 3D
                 if (_rayInteractor.hasSelection)
                 {
-                    var target = _rayInteractor.interactablesSelected[0];
-                    _manager.SelectExit(_rayInteractor as IXRSelectInteractor, target);
+                    var interactable = _rayInteractor.interactablesSelected[0] as IXRSelectInteractable;
+                    var interactor = _rayInteractor as IXRSelectInteractor;
+                    if (interactable != null && interactor != null)
+                        _manager.SelectExit(interactor, interactable);
                 }
+
+                // Soltar UI
+                if (_currentUIPressed != null) HandleUIRelease();
             }
         }
 
-        // --- FUNCIONES MÁGICAS PARA UI ---
-        private bool IsPointerOverUI()
+        bool TryGrabXRI()
         {
-            // Método estándar para saber si el mouse toca un Canvas
-            return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
-        }
-
-        private void ForceUIClick()
-        {
-            // Creamos un evento de puntero falso en la posición del mouse
-            PointerEventData pointerData = new PointerEventData(EventSystem.current);
-            pointerData.position = Mouse.current.position.ReadValue();
-
-            // Lanzamos un rayo de UI
-            List<RaycastResult> results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointerData, results);
-
-            foreach (RaycastResult result in results)
+            if (_rayInteractor.interactablesHovered.Count > 0)
             {
-                // Buscamos si tocamos un botón y le hacemos CLICK forzado
-                var button = result.gameObject.GetComponentInParent<UnityEngine.UI.Button>();
-                if (button != null && button.interactable)
+                var interactable = _rayInteractor.interactablesHovered[0] as IXRSelectInteractable;
+                var interactor = _rayInteractor as IXRSelectInteractor;
+
+                if (interactable != null && interactor != null)
                 {
-                    button.onClick.Invoke(); // <--- ¡HACER CLICK AHORA!
-                    Debug.Log($"[PC] Click forzado en botón UI: {button.name}");
-                    break; // Solo un botón a la vez
+                    _manager.SelectEnter(interactor, interactable);
+                    return true;
                 }
             }
+            return false;
+        }
+
+        bool IsPhysicalObjectBlockingUI()
+        {
+            // Usamos SphereCast (Rayo Gordo) para detectar mejor los objetos finos
+            Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+            RaycastHit hit;
+            float radius = 0.05f; // Radio de 5cm (como un dedo)
+
+            if (Physics.SphereCast(ray, radius, out hit, 100f, physicalBlockers))
+            {
+                // Ignorar Triggers (Zonas)
+                if (hit.collider.isTrigger) return false;
+
+                // Verificar distancia a la UI
+                // Lanzamos un raycast UI para saber a qué distancia está el canvas
+                PointerEventData pe = new PointerEventData(EventSystem.current);
+                pe.position = Mouse.current.position.ReadValue();
+                List<RaycastResult> uiRes = new List<RaycastResult>();
+                EventSystem.current.RaycastAll(pe, uiRes);
+
+                if (uiRes.Count > 0)
+                {
+                    // Si el objeto físico está más cerca que la UI... ¡BLOQUEO!
+                    if (hit.distance < uiRes[0].distance - 0.1f) // Margen de 10cm
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        void HandleUIPress()
+        {
+            _pointerData = new PointerEventData(EventSystem.current);
+            _pointerData.position = Mouse.current.position.ReadValue();
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(_pointerData, results);
+
+            if (results.Count > 0)
+            {
+                GameObject target = results[0].gameObject;
+                _pointerData.pointerCurrentRaycast = results[0];
+                _pointerData.position = results[0].screenPosition;
+
+                ExecuteEvents.Execute(target, _pointerData, ExecuteEvents.pointerDownHandler);
+                _currentUIPressed = target;
+                ExecuteEvents.Execute(target, _pointerData, ExecuteEvents.initializePotentialDrag);
+            }
+        }
+
+        void HandleUIDrag()
+        {
+            _pointerData.position = Mouse.current.position.ReadValue();
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(_pointerData, results);
+            if (results.Count > 0) _pointerData.pointerCurrentRaycast = results[0];
+
+            ExecuteEvents.Execute(_currentUIPressed, _pointerData, ExecuteEvents.dragHandler);
+        }
+
+        void HandleUIRelease()
+        {
+            _pointerData.position = Mouse.current.position.ReadValue();
+            // Recalcular raycast final es importante para eventos Click
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(_pointerData, results);
+            if (results.Count > 0) _pointerData.pointerCurrentRaycast = results[0];
+
+            ExecuteEvents.Execute(_currentUIPressed, _pointerData, ExecuteEvents.pointerUpHandler);
+            ExecuteEvents.Execute(_currentUIPressed, _pointerData, ExecuteEvents.pointerClickHandler);
+
+            _currentUIPressed = null;
+            _pointerData = null;
         }
     }
 }
