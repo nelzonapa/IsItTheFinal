@@ -16,16 +16,14 @@ namespace ImmersiveGraph.Core
 
         private GameObject _currentUIPressed;
         private PointerEventData _pointerData;
+        private Camera _mainCamera; // <--- Cacheamos la cámara para evitar errores
 
         [Header("Configuración de Bloqueo")]
         public LayerMask physicalBlockers = ~0;
 
         [Header("Configuración de Distancia")]
-        [Tooltip("Velocidad al acercar/alejar con la rueda")]
         public float scrollSpeed = 0.5f;
-        [Tooltip("Distancia mínima al ojo (en metros)")]
         public float minDistance = 0.5f;
-        [Tooltip("Distancia máxima (en metros)")]
         public float maxDistance = 5.0f;
 
         private float _currentDistance;
@@ -34,11 +32,25 @@ namespace ImmersiveGraph.Core
         {
             _rayInteractor = GetComponent<XRRayInteractor>();
 
+            // 1. BUSCAR MANAGER DE FORMA SEGURA
             if (_rayInteractor.interactionManager != null)
                 _manager = _rayInteractor.interactionManager;
             else
                 _manager = FindFirstObjectByType<XRInteractionManager>();
 
+            if (_manager == null) Debug.LogError("[PCManualSelector] CRÍTICO: No se encontró XRInteractionManager.");
+
+            // 2. BUSCAR CÁMARA DE FORMA SEGURA
+            _mainCamera = Camera.main;
+            if (_mainCamera == null)
+            {
+                // Si falla Camera.main, buscamos en los padres (el FPS Controller tiene cámara)
+                _mainCamera = GetComponentInParent<Camera>();
+            }
+
+            if (_mainCamera == null) Debug.LogError("[PCManualSelector] CRÍTICO: No se encontró la Cámara Principal. Asegúrate de etiquetarla como 'MainCamera'.");
+
+            // 3. INICIALIZAR DISTANCIA
             if (_rayInteractor.attachTransform != null)
                 _currentDistance = _rayInteractor.attachTransform.localPosition.z;
             else
@@ -47,13 +59,13 @@ namespace ImmersiveGraph.Core
 
         void Update()
         {
+            // Protecciones básicas: Si falta algo vital, no hacemos nada
+            if (_manager == null || _rayInteractor == null || _mainCamera == null || Mouse.current == null) return;
+
             HandleObjectPushPull();
 
-            if (_manager == null || _rayInteractor == null) return;
-
-            // --- CLICK DERECHO (ACTIVAR / DISPARAR) ---
+            // --- CLICK DERECHO (ACTIVAR) ---
             HandleRightClickActivation();
-            // ------------------------------------------
 
             // FASE 1: CLICK IZQUIERDO (AGARRAR)
             if (Mouse.current.leftButton.wasPressedThisFrame)
@@ -79,62 +91,26 @@ namespace ImmersiveGraph.Core
             {
                 if (_rayInteractor.hasSelection)
                 {
-                    var interactable = _rayInteractor.interactablesSelected[0] as IXRSelectInteractable;
-                    var interactor = _rayInteractor as IXRSelectInteractor;
-                    if (interactable != null && interactor != null)
-                        _manager.SelectExit(interactor, interactable);
+                    // Protección extra al castear
+                    if (_rayInteractor.interactablesSelected.Count > 0)
+                    {
+                        var interactable = _rayInteractor.interactablesSelected[0] as IXRSelectInteractable;
+                        var interactor = _rayInteractor as IXRSelectInteractor;
+                        if (interactable != null && interactor != null)
+                            _manager.SelectExit(interactor, interactable);
+                    }
                 }
 
                 if (_currentUIPressed != null) HandleUIRelease();
             }
         }
 
-        // --- SOLUCIÓN AL ERROR DE COMPILACIÓN ---
-        void HandleRightClickActivation()
-        {
-            // Solo si tenemos algo agarrado
-            if (_rayInteractor.hasSelection)
-            {
-                // Obtenemos el objeto agarrado
-                var interactableObject = _rayInteractor.interactablesSelected[0];
-
-                // Verificamos si es "Activable" (IXRActivateInteractable)
-                var activatable = interactableObject as IXRActivateInteractable;
-
-                if (activatable != null)
-                {
-                    // 1. PRESIONAR CLIC DERECHO -> ACTIVAR
-                    if (Mouse.current.rightButton.wasPressedThisFrame)
-                    {
-                        // Creamos los argumentos del evento manualmente
-                        var args = new ActivateEventArgs
-                        {
-                            interactorObject = _rayInteractor,
-                            interactableObject = activatable
-                        };
-                        // Disparamos el evento directamente en el objeto
-                        activatable.OnActivated(args);
-                    }
-
-                    // 2. SOLTAR CLIC DERECHO -> DESACTIVAR
-                    if (Mouse.current.rightButton.wasReleasedThisFrame)
-                    {
-                        var args = new DeactivateEventArgs
-                        {
-                            interactorObject = _rayInteractor,
-                            interactableObject = activatable
-                        };
-                        activatable.OnDeactivated(args);
-                    }
-                }
-            }
-        }
-
-        // --- FUNCIONES EXISTENTES (SIN CAMBIOS) ---
+        // --- LÓGICA DE SCROLL SEGURA ---
         void HandleObjectPushPull()
         {
             if (_rayInteractor.hasSelection)
             {
+                // Leer scroll de forma segura
                 float rawScroll = Mouse.current.scroll.ReadValue().y;
                 if (Mathf.Abs(rawScroll) > 0.001f)
                 {
@@ -160,33 +136,81 @@ namespace ImmersiveGraph.Core
 
         bool TryGrabXRI()
         {
+            // CHEQUEO 1: ¿La lista es nula?
+            if (_rayInteractor.interactablesHovered == null)
+            {
+                Debug.LogError("[PC ERROR] La lista interactablesHovered es NULA.");
+                return false;
+            }
+
+            // CHEQUEO 2: ¿Hay elementos?
             if (_rayInteractor.interactablesHovered.Count > 0)
             {
-                var interactable = _rayInteractor.interactablesHovered[0] as IXRSelectInteractable;
+                // CHEQUEO 3: ¿El primer elemento es nulo?
+                var rawObject = _rayInteractor.interactablesHovered[0];
+                if (rawObject == null)
+                {
+                    Debug.LogError("[PC ERROR] El objeto Hovered[0] es NULL. (Referencia perdida)");
+                    return false;
+                }
+
+                Debug.Log($"[PC INFO] Intentando agarrar: {rawObject.transform.name}");
+
+                // Cast seguro
+                var interactable = rawObject as IXRSelectInteractable;
                 var interactor = _rayInteractor as IXRSelectInteractor;
+
+                // CHEQUEO 4: ¿Falló el cast de interfaces?
+                if (interactable == null) Debug.LogError($"[PC ERROR] El objeto {rawObject.transform.name} no tiene IXRSelectInteractable.");
+                if (interactor == null) Debug.LogError("[PC ERROR] El RayInteractor no es un IXRSelectInteractor (Imposible pero chequeamos).");
 
                 if (interactable != null && interactor != null)
                 {
-                    _manager.SelectEnter(interactor, interactable);
-                    return true;
+                    // CHEQUEO 5: ¿El Manager existe?
+                    if (_manager == null)
+                    {
+                        Debug.LogError("[PC ERROR] ¡El XRInteractionManager es NULL justo antes de seleccionar!");
+                        return false;
+                    }
+
+                    try
+                    {
+                        Debug.Log("[PC INFO] Llamando a SelectEnter...");
+                        _manager.SelectEnter(interactor, interactable);
+                        return true;
+                    }
+                    catch (System.Exception e)
+                    {
+                        // AQUÍ ATRAPAMOS EL ERROR REAL
+                        Debug.LogError($"[PC CRITICAL FAIL] Excepción DENTRO de SelectEnter: {e.Message}\nStack: {e.StackTrace}");
+                        return false;
+                    }
                 }
             }
             return false;
         }
 
+        // --- PROTECCIÓN FÍSICA USANDO EL CENTRO DE LA PANTALLA ---
         bool IsPhysicalObjectBlockingUI()
         {
-            Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+            // USAMOS EL CENTRO DE LA PANTALLA (0.5, 0.5) EN LUGAR DEL MOUSE
+            Ray ray = _mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
             RaycastHit hit;
             float radius = 0.05f;
 
             if (Physics.SphereCast(ray, radius, out hit, 100f, physicalBlockers))
             {
                 if (hit.collider.isTrigger) return false;
+
+                if (EventSystem.current == null) return false; // Protección contra EventSystem nulo
+
                 PointerEventData pe = new PointerEventData(EventSystem.current);
-                pe.position = Mouse.current.position.ReadValue();
+                // USAMOS EL CENTRO DE LA PANTALLA EN PIXELES
+                pe.position = new Vector2(Screen.width / 2f, Screen.height / 2f);
+
                 List<RaycastResult> uiRes = new List<RaycastResult>();
                 EventSystem.current.RaycastAll(pe, uiRes);
+
                 if (uiRes.Count > 0)
                 {
                     if (hit.distance < uiRes[0].distance - 0.1f) return true;
@@ -195,10 +219,15 @@ namespace ImmersiveGraph.Core
             return false;
         }
 
+        // --- MANEJO DE UI USANDO EL CENTRO DE LA PANTALLA ---
         void HandleUIPress()
         {
+            if (EventSystem.current == null) return;
+
             _pointerData = new PointerEventData(EventSystem.current);
-            _pointerData.position = Mouse.current.position.ReadValue();
+            // CENTRO DE LA PANTALLA
+            _pointerData.position = new Vector2(Screen.width / 2f, Screen.height / 2f);
+
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(_pointerData, results);
 
@@ -215,7 +244,11 @@ namespace ImmersiveGraph.Core
 
         void HandleUIDrag()
         {
-            _pointerData.position = Mouse.current.position.ReadValue();
+            if (EventSystem.current == null) return;
+
+            // CENTRO DE LA PANTALLA
+            _pointerData.position = new Vector2(Screen.width / 2f, Screen.height / 2f);
+
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(_pointerData, results);
             if (results.Count > 0) _pointerData.pointerCurrentRaycast = results[0];
@@ -224,7 +257,11 @@ namespace ImmersiveGraph.Core
 
         void HandleUIRelease()
         {
-            _pointerData.position = Mouse.current.position.ReadValue();
+            if (EventSystem.current == null) return;
+
+            // CENTRO DE LA PANTALLA
+            _pointerData.position = new Vector2(Screen.width / 2f, Screen.height / 2f);
+
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(_pointerData, results);
             if (results.Count > 0) _pointerData.pointerCurrentRaycast = results[0];
@@ -232,6 +269,30 @@ namespace ImmersiveGraph.Core
             ExecuteEvents.Execute(_currentUIPressed, _pointerData, ExecuteEvents.pointerClickHandler);
             _currentUIPressed = null;
             _pointerData = null;
+        }
+
+        // --- LÓGICA DE ACTIVACIÓN ---
+        void HandleRightClickActivation()
+        {
+            if (_rayInteractor.hasSelection && _rayInteractor.interactablesSelected.Count > 0)
+            {
+                var interactableObject = _rayInteractor.interactablesSelected[0];
+                var activatable = interactableObject as IXRActivateInteractable;
+
+                if (activatable != null)
+                {
+                    if (Mouse.current.rightButton.wasPressedThisFrame)
+                    {
+                        var args = new ActivateEventArgs { interactorObject = _rayInteractor, interactableObject = activatable };
+                        activatable.OnActivated(args);
+                    }
+                    if (Mouse.current.rightButton.wasReleasedThisFrame)
+                    {
+                        var args = new DeactivateEventArgs { interactorObject = _rayInteractor, interactableObject = activatable };
+                        activatable.OnDeactivated(args);
+                    }
+                }
+            }
         }
     }
 }
