@@ -18,69 +18,157 @@ namespace ImmersiveGraph.Core
         private PointerEventData _pointerData;
 
         [Header("Configuración de Bloqueo")]
-        public LayerMask physicalBlockers = ~0; // Todo
+        public LayerMask physicalBlockers = ~0;
+
+        [Header("Configuración de Distancia")]
+        [Tooltip("Velocidad al acercar/alejar con la rueda")]
+        public float scrollSpeed = 0.5f;
+        [Tooltip("Distancia mínima al ojo (en metros)")]
+        public float minDistance = 0.5f;
+        [Tooltip("Distancia máxima (en metros)")]
+        public float maxDistance = 5.0f;
+
+        // Para recordar la distancia original
+        private float _currentDistance;
 
         void Start()
         {
             _rayInteractor = GetComponent<XRRayInteractor>();
 
-            // Búsqueda a prueba de fallos del Manager
             if (_rayInteractor.interactionManager != null)
                 _manager = _rayInteractor.interactionManager;
             else
                 _manager = FindFirstObjectByType<XRInteractionManager>();
-        }
+
+            // Inicializar distancia por defecto (si ya hay un AttachTransform puesto)
+            if (_rayInteractor.attachTransform != null)
+                _currentDistance = _rayInteractor.attachTransform.localPosition.z;
+            else
+                _currentDistance = 2.0f; // Valor seguro por defecto
+        }
 
         void Update()
         {
-            if (_manager == null || _rayInteractor == null) return;
+            // --- NUEVO: LÓGICA DE ACERCAR/ALEJAR (SCROLL) ---
+            HandleObjectPushPull();
+            // ------------------------------------------------
 
-            // --- FASE 1: CLICK DOWN ---
-            if (Mouse.current.leftButton.wasPressedThisFrame)
+            if (_manager == null || _rayInteractor == null) return;
+
+            // --- FASE 1: CLICK DOWN ---
+            if (Mouse.current.leftButton.wasPressedThisFrame)
             {
-                // 1. Prioridad ABSOLUTA: Agarrar objeto 3D
-                if (TryGrabXRI())
+                // 1. Prioridad: Agarrar 3D
+                if (TryGrabXRI())
                 {
-                    Debug.Log("[PC] Objeto 3D agarrado. UI Bloqueada.");
+                    // Al agarrar, reseteamos la distancia al valor actual del AttachPoint
+                    // Opcional: Podríamos calcular la distancia al objeto real para que no salte
+                    if (_rayInteractor.attachTransform != null)
+                        _currentDistance = _rayInteractor.attachTransform.localPosition.z;
+
                     return;
                 }
 
-                // 2. Si no agarramos nada, revisamos si un objeto físico nos bloquea la visión
-                // (Por si el XRI falló en detectarlo pero está ahí visualmente)
-                if (IsPhysicalObjectBlockingUI())
-                {
-                    Debug.Log("[PC] Clic UI cancelado: Objeto físico enfrente.");
-                    return;
-                }
+                // 2. Verificar bloqueo físico
+                if (IsPhysicalObjectBlockingUI()) return;
 
-                // 3. Si llegamos aquí, está libre para tocar UI
-                HandleUIPress();
+                // 3. UI
+                HandleUIPress();
             }
 
-            // --- FASE 2: ARRASTRAR ---
-            if (Mouse.current.leftButton.isPressed)
+            // --- FASE 2: ARRASTRAR ---
+            if (Mouse.current.leftButton.isPressed)
             {
                 if (_currentUIPressed != null) HandleUIDrag();
             }
 
-            // --- FASE 3: SOLTAR ---
-            if (Mouse.current.leftButton.wasReleasedThisFrame)
+            // --- FASE 3: SOLTAR ---
+            if (Mouse.current.leftButton.wasReleasedThisFrame)
             {
-                // Soltar 3D
                 if (_rayInteractor.hasSelection)
                 {
                     var interactable = _rayInteractor.interactablesSelected[0] as IXRSelectInteractable;
                     var interactor = _rayInteractor as IXRSelectInteractor;
                     if (interactable != null && interactor != null)
                         _manager.SelectExit(interactor, interactable);
-                }
 
-                // Soltar UI
+                    // Opcional: Resetear la distancia al soltar para que el rayo no se quede corto/largo
+                    // ResetAttachDistance(); 
+                }
+
                 if (_currentUIPressed != null) HandleUIRelease();
             }
         }
 
-        bool TryGrabXRI()
+        // --- LÓGICA DE MOVIMIENTO DE OBJETO ---
+        // --- LÓGICA DE MOVIMIENTO DE OBJETO MEJORADA ---
+        void HandleObjectPushPull()
+        {
+            // Solo funciona si tenemos algo agarrado (hasSelection)
+            if (_rayInteractor.hasSelection)
+            {
+                // Leemos el valor crudo del scroll
+                float rawScroll = Mouse.current.scroll.ReadValue().y;
+
+                // Verificamos si hay movimiento (usamos un umbral muy bajo por si tu mouse es sensible)
+                if (Mathf.Abs(rawScroll) > 0.001f)
+                {
+                    // DEBUG: Descomenta esto para ver si Unity recibe señal
+                    // Debug.Log($"[PC] Scroll detectado: {rawScroll}");
+
+                    // Usamos Mathf.Sign para obtener solo la dirección (1 o -1)
+                    // Esto arregla el problema de si tu mouse manda 120 o manda 1.
+                    float direction = Mathf.Sign(rawScroll);
+
+                    // Calculamos el movimiento
+                    // Aumenté el multiplicador a 2.0f para que se note más
+                    float moveAmount = direction * scrollSpeed * Time.deltaTime * 20.0f;
+
+                    _currentDistance += moveAmount;
+
+                    // Limitamos la distancia
+                    _currentDistance = Mathf.Clamp(_currentDistance, minDistance, maxDistance);
+
+                    // APLICACIÓN AL TRANSFORM
+                    if (_rayInteractor.attachTransform != null)
+                    {
+                        Vector3 newPos = _rayInteractor.attachTransform.localPosition;
+
+                        // IMPORTANTE: Aseguramos que solo movemos Z, manteniendo X e Y en 0
+                        newPos.x = 0;
+                        newPos.y = 0;
+                        newPos.z = _currentDistance;
+
+                        _rayInteractor.attachTransform.localPosition = newPos;
+                    }
+                    else
+                    {
+                        Debug.LogError("[PC] ¡Error! Attach Transform no está asignado en el Inspector.");
+                    }
+                }
+            }
+            // Si no hay selección, reseteamos la distancia lógica para que no se desincronice
+            else if (_rayInteractor.attachTransform != null)
+            {
+                // Actualizamos la variable interna a la posición real del AttachPoint
+                _currentDistance = _rayInteractor.attachTransform.localPosition.z;
+            }
+        }
+
+        // (Opcional) Resetea el rayo a una distancia cómoda
+        void ResetAttachDistance()
+        {
+            _currentDistance = 2.0f; // Distancia default
+            if (_rayInteractor.attachTransform != null)
+            {
+                Vector3 newPos = _rayInteractor.attachTransform.localPosition;
+                newPos.z = _currentDistance;
+                _rayInteractor.attachTransform.localPosition = newPos;
+            }
+        }
+
+        // --- RESTO DE FUNCIONES (IGUAL QUE ANTES) ---
+        bool TryGrabXRI()
         {
             if (_rayInteractor.interactablesHovered.Count > 0)
             {
@@ -98,18 +186,14 @@ namespace ImmersiveGraph.Core
 
         bool IsPhysicalObjectBlockingUI()
         {
-            // Usamos SphereCast (Rayo Gordo) para detectar mejor los objetos finos
             Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
             RaycastHit hit;
-            float radius = 0.05f; // Radio de 5cm (como un dedo)
+            float radius = 0.05f;
 
             if (Physics.SphereCast(ray, radius, out hit, 100f, physicalBlockers))
             {
-                // Ignorar Triggers (Zonas)
                 if (hit.collider.isTrigger) return false;
 
-                // Verificar distancia a la UI
-                // Lanzamos un raycast UI para saber a qué distancia está el canvas
                 PointerEventData pe = new PointerEventData(EventSystem.current);
                 pe.position = Mouse.current.position.ReadValue();
                 List<RaycastResult> uiRes = new List<RaycastResult>();
@@ -117,9 +201,7 @@ namespace ImmersiveGraph.Core
 
                 if (uiRes.Count > 0)
                 {
-                    // Si el objeto físico está más cerca que la UI... ¡BLOQUEO!
-                    if (hit.distance < uiRes[0].distance - 0.1f) // Margen de 10cm
-                        return true;
+                    if (hit.distance < uiRes[0].distance - 0.1f) return true;
                 }
             }
             return false;
@@ -157,7 +239,6 @@ namespace ImmersiveGraph.Core
         void HandleUIRelease()
         {
             _pointerData.position = Mouse.current.position.ReadValue();
-            // Recalcular raycast final es importante para eventos Click
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(_pointerData, results);
             if (results.Count > 0) _pointerData.pointerCurrentRaycast = results[0];
