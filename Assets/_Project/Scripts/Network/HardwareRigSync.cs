@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using Fusion;
-using Unity.XR.CoreUtils; // Necesario para encontrar el hardware
+using Unity.XR.CoreUtils;
+using ImmersiveGraph.Core; // <--- NECESARIO PARA PLATFORMMANAGER
+using UnityEngine.XR.Interaction.Toolkit.Interactors; // Para buscar el Rayo
 
 namespace ImmersiveGraph.Network
 {
@@ -12,10 +14,9 @@ namespace ImmersiveGraph.Network
         public Transform rightHandTransform;
 
         [Header("Visuales para Ocultar localmente")]
-        public Renderer[] bodyRenderers; // Arrastra aquí los MeshRenderers de Cabeza y Manos
+        public Renderer[] bodyRenderers;
 
-        // --- VARIABLES DE RED (La "Verdad" sincronizada) ---
-        // Sincronizamos Posición y Rotación de cada parte
+        // --- VARIABLES DE RED ---
         [Networked] public Vector3 HeadPos { get; set; }
         [Networked] public Quaternion HeadRot { get; set; }
 
@@ -25,83 +26,131 @@ namespace ImmersiveGraph.Network
         [Networked] public Vector3 RightHandPos { get; set; }
         [Networked] public Quaternion RightHandRot { get; set; }
 
-        // Referencias al Hardware Local (Tu casco real)
+        // Referencias al Hardware Local
         private Transform _hardwareHead;
         private Transform _hardwareLeftHand;
         private Transform _hardwareRightHand;
-        private XROrigin _xrOrigin;
 
         public override void Spawned()
         {
-            // 1. Ocultar mi propio cuerpo para no ver una esfera en mi cara
+            // 1. Ocultar mi propio cuerpo localmente
             if (Object.HasInputAuthority)
             {
                 foreach (var r in bodyRenderers)
-                    if (r != null) r.enabled = false; // Solo apago el render, el objeto sigue ahí para la lógica
+                    if (r != null) r.enabled = false;
+
+                // 2. BUSCAR HARDWARE (Lógica Híbrida)
+                FindLocalHardware();
+            }
+        }
+
+        void FindLocalHardware()
+        {
+            // Usamos el PlatformManager para saber qué Rig está activo
+            GameObject activeRig = null;
+
+            if (PlatformManager.Instance != null && PlatformManager.Instance.ActiveRig != null)
+            {
+                activeRig = PlatformManager.Instance.ActiveRig;
+            }
+            else
+            {
+                // Fallback por si acaso
+                var xrOrig = FindFirstObjectByType<XROrigin>();
+                if (xrOrig) activeRig = xrOrig.gameObject;
             }
 
-            // 2. Buscar el Hardware Local (Solo si soy el dueño)
-            if (Object.HasInputAuthority)
+            if (activeRig == null)
             {
-                _xrOrigin = FindFirstObjectByType<XROrigin>();
-                if (_xrOrigin != null)
+                Debug.LogError("[HardwareRigSync] No se encontró ningún Rig activo.");
+                return;
+            }
+
+            // --- CASO A: ES EL RIG DE PC ---
+            // (Sabemos que es PC si tiene el componente SimpleFPSController)
+            if (activeRig.GetComponent<SimpleFPSController>() != null)
+            {
+                Debug.Log("[HardwareSync] Configurando para PC...");
+
+                // Cabeza = La Cámara del PC
+                _hardwareHead = activeRig.GetComponentInChildren<Camera>().transform;
+
+                // Mano Derecha = El Ray Interactor
+                var rayInteractor = activeRig.GetComponentInChildren<XRRayInteractor>();
+                if (rayInteractor != null)
                 {
-                    _hardwareHead = _xrOrigin.Camera.transform;
+                    _hardwareRightHand = rayInteractor.transform;
+                }
 
-                    // Buscar mandos (asumiendo nombres estándar de Unity XR)
-                    // Un truco seguro es buscar por componentes o nombres comunes
-                    var hands = _xrOrigin.GetComponentsInChildren<UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInputInteractor>(true);
+                // Mano Izquierda = No existe en PC (La dejamos null o la pegamos al cuerpo)
+                _hardwareLeftHand = null;
+            }
+            // --- CASO B: ES EL RIG DE VR ---
+            else
+            {
+                Debug.Log("[HardwareSync] Configurando para VR...");
 
-                    // Búsqueda manual robusta en la jerarquía del XROrigin
-                    foreach (var t in _xrOrigin.GetComponentsInChildren<Transform>())
+                // Intentamos obtener el XROrigin del objeto activo
+                XROrigin xrOrigin = activeRig.GetComponent<XROrigin>();
+                if (xrOrigin == null) xrOrigin = activeRig.GetComponentInChildren<XROrigin>();
+
+                if (xrOrigin != null)
+                {
+                    _hardwareHead = xrOrigin.Camera.transform;
+
+                    // Búsqueda de manos VR
+                    foreach (var t in xrOrigin.GetComponentsInChildren<Transform>())
                     {
+                        // Nombres comunes en Unity XR Grid
                         if (t.name.Contains("Left") && t.name.Contains("Controller")) _hardwareLeftHand = t;
                         if (t.name.Contains("Right") && t.name.Contains("Controller")) _hardwareRightHand = t;
                     }
-
-                    // Si no los encuentra por nombre, asigna la cámara como fallback para que no crashee
-                    if (_hardwareLeftHand == null) _hardwareLeftHand = _hardwareHead;
-                    if (_hardwareRightHand == null) _hardwareRightHand = _hardwareHead;
                 }
             }
         }
 
         public override void FixedUpdateNetwork()
         {
-            // ESCRIBIR DATOS: Si soy yo, leo mi hardware y lo subo a la red
+            // ESCRIBIR DATOS (Solo el dueño)
             if (Object.HasInputAuthority && _hardwareHead != null)
             {
-                // Usamos LocalPosition respecto al XROrigin si el NetworkPlayer está en (0,0,0)
-                // O usamos WorldPosition si el NetworkTransform mueve el root.
-
-                // MEJOR ESTRATEGIA: Sincronizar coordenadas LOCALES relativas al "Playspace"
-                // Asumimos que el NetworkPlayer Root ya está en la posición correcta (Escritorio) gracias al Spawner.
-                // Entonces sincronizamos la posición local del hardware.
-
-                // Cabeza
+                // Sincronizar Cabeza
                 HeadPos = _hardwareHead.position;
                 HeadRot = _hardwareHead.rotation;
 
-                // Manos
+                // Sincronizar Mano Derecha
+                if (_hardwareRightHand != null)
+                {
+                    RightHandPos = _hardwareRightHand.position;
+                    RightHandRot = _hardwareRightHand.rotation;
+                }
+                else
+                {
+                    // Si no hay mano derecha (raro), la pegamos al cuerpo
+                    RightHandPos = HeadPos + new Vector3(0.2f, -0.2f, 0.2f);
+                    RightHandRot = Quaternion.identity;
+                }
+
+                // Sincronizar Mano Izquierda
                 if (_hardwareLeftHand != null)
                 {
                     LeftHandPos = _hardwareLeftHand.position;
                     LeftHandRot = _hardwareLeftHand.rotation;
                 }
-
-                if (_hardwareRightHand != null)
+                else
                 {
-                    RightHandPos = _hardwareRightHand.position;
-                    RightHandRot = _hardwareRightHand.rotation;
+                    // EN PC: Como no hay mano izquierda, la escondemos dentro del cuerpo o la ponemos abajo
+                    // Para que no flote sola en el (0,0,0)
+                    LeftHandPos = HeadPos + new Vector3(-0.2f, -0.5f, 0); // Un poco abajo a la izquierda
+                    LeftHandRot = Quaternion.identity;
                 }
             }
         }
 
         public override void Render()
         {
-            // LEER DATOS: Todos (incluido yo para suavizado) aplicamos los datos de red a los huesos visuales
-
-            // Interpolación para que se vea suave (Lerp)
+            // LEER DATOS (Todos los clientes)
+            // Esto no cambia, interpolamos lo que recibimos de la red
             if (headTransform != null)
             {
                 headTransform.position = Vector3.Lerp(headTransform.position, HeadPos, Time.deltaTime * 20);
