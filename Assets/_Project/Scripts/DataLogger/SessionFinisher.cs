@@ -66,6 +66,13 @@ namespace ImmersiveGraph.Data
                 return; // Si falla el logger, quizás no debamos mostrar éxito
             }
 
+            // 2. BORRAR EL BACKUP LOCAL (Nuevo)
+            // Porque si terminaron bien, no necesitan restaurar nada la próxima vez.
+            if (LocalWorkspaceSaver.Instance != null)
+            {
+                LocalWorkspaceSaver.Instance.DeleteBackupFile();
+            }
+
             // 2. FEEDBACK VISUAL Y AUDITIVO
             PerformSuccessFeedback();
         }
