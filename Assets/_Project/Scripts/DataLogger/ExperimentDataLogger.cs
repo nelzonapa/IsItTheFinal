@@ -34,15 +34,33 @@ namespace ImmersiveGraph.Data
             _startTime = Time.time;
             _isLogging = true;
 
-            // Nombre del archivo CSV
             string filename = $"Events_Log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv";
             _csvFilePath = Path.Combine(Application.persistentDataPath, filename);
 
-            // Cabecera del Excel (Columnas)
+            // Cabecera del Excel
             _csvContent.AppendLine("Timestamp(s),Event_Type,Details,Position_X,Position_Y,Position_Z");
 
-            // Log de inicio
-            LogEvent("SYSTEM", "SESSION_START", "Inicio del Experimento", Vector3.zero);
+            // --- NUEVO: DETECTAR PLATAFORMA ---
+            string platformType = "UNKNOWN";
+
+            // Verificamos si estamos usando el XR Origin o el PC Rig
+            if (ImmersiveGraph.Core.PlatformManager.Instance != null)
+            {
+                var rig = ImmersiveGraph.Core.PlatformManager.Instance.ActiveRig;
+                if (rig != null)
+                {
+                    // Si el rig tiene el script de FPS, es PC. Si no, es VR.
+                    if (rig.GetComponent<ImmersiveGraph.Core.SimpleFPSController>() != null)
+                        platformType = "PC_DESKTOP";
+                    else
+                        platformType = "VR_HEADSET";
+                }
+            }
+            // ----------------------------------
+
+            // Log de inicio con el TIPO DE DISPOSITIVO
+            LogEvent("SYSTEM", "SESSION_START", $"Inicio Experimento - Platform: {platformType}", Vector3.zero);
+
             Debug.Log($"[LOGGER] Guardando eventos en: {_csvFilePath}");
         }
 
