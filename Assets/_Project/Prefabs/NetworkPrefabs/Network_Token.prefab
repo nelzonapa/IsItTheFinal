@@ -510,8 +510,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d557b363d20e2814faa2e171478f65ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Visual.InteractableFeedback
-  hoverGlowColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
-  grabGlowColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &4225723662839757495
 GameObject:
   m_ObjectHideFlags: 0
