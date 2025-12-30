@@ -541,8 +541,8 @@ Transform:
   m_GameObject: {fileID: 1267679762273092151}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.491, y: 0.6682, z: 0.6606}
-  m_LocalScale: {x: 4.175279, y: 0.16541998, z: 1.3643707}
+  m_LocalPosition: {x: -0.095, y: 0.6682, z: 0.7829}
+  m_LocalScale: {x: 4.9673295, y: 0.16541998, z: 1.6090024}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9013347094446411954}
@@ -885,8 +885,8 @@ Transform:
   m_GameObject: {fileID: 2242100136102775865}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.1169, y: 1.26, z: 0.6578}
-  m_LocalScale: {x: 0.95707905, y: 1, z: 1.3229072}
+  m_LocalPosition: {x: 1.5115, y: 1.777, z: 0.787}
+  m_LocalScale: {x: 1.7463821, y: 2.0339, z: 1.5814033}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9013347094446411954}
@@ -1083,7 +1083,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MigrationManager
   zoneCenter: {fileID: 3920732527639097152}
-  zoneSize: {x: 0.95, y: 1, z: 1.33}
+  zoneSize: {x: 1.74, y: 2.03, z: 1.59}
   scanLayer:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -2865,8 +2865,8 @@ Transform:
   m_GameObject: {fileID: 7811330940087541257}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.694, y: 1.855, z: 0.6614}
-  m_LocalScale: {x: 1.1365541, y: 1, z: 1.3171774}
+  m_LocalPosition: {x: -1.8378, y: 1.855, z: 0.7835}
+  m_LocalScale: {x: 1.424216, y: 1, z: 1.5613822}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9013347094446411954}
@@ -3098,7 +3098,7 @@ Transform:
   m_GameObject: {fileID: 7913309574898258690}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.47, y: 0.6929, z: -0.121}
+  m_LocalPosition: {x: 2.39, y: 0.6929, z: -0.121}
   m_LocalScale: {x: 0.24970974, y: 0.21405835, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3744,7 +3744,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8938481160725371547, guid: 1e52d0661b65db74a80ee0714917dff3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.933
+      value: 2.73
       objectReference: {fileID: 0}
     - target: {fileID: 8938481160725371547, guid: 1e52d0661b65db74a80ee0714917dff3, type: 3}
       propertyPath: m_LocalPosition.y
