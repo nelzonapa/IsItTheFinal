@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Interactables; // Asegúrate de tener esto si usas Unity 6
 using System.Collections.Generic;
 using ImmersiveGraph.Data;
 using ImmersiveGraph.Visual;
@@ -10,7 +10,7 @@ namespace ImmersiveGraph.Interaction
 {
     [RequireComponent(typeof(XRGrabInteractable))]
     [RequireComponent(typeof(SphereCollider))]
-    [RequireComponent(typeof(AudioSource))] 
+    [RequireComponent(typeof(AudioSource))]
     public class GraphNode : MonoBehaviour
     {
         [Header("Datos")]
@@ -25,16 +25,18 @@ namespace ImmersiveGraph.Interaction
 
         [Header("Referencias Externas")]
         public Zone3Manager localZone3Manager;
+        public GraphInteractionManager interactionManager; // <--- NUEVO
 
         [Header("Referencias UI")]
-        public NodeUIController infoUI;
         public NodeLoaderController loaderUI;
 
         // --- VARIABLES PÚBLICAS PARA RECIBIR CONFIGURACIÓN ---
         public GameObject reviewedMarkerPrefab;
         public Vector3 markerLocalOffset;
         public Vector3 markerLocalScale;
-        // ----------------------------------------------------
+
+        // --- MEMORIA DE POSICIÓN (NUEVO) ---
+        [HideInInspector] public Vector3 originalLocalPosition; // Para saber volver a casa
 
         // Lógica Interna
         private XRGrabInteractable _interactable;
@@ -44,26 +46,21 @@ namespace ImmersiveGraph.Interaction
 
         private bool _isGrabbing = false;
         private float _holdTimer = 0f;
-        private float _activationTime = 4.0f;
+        private float _activationTime = 4.0f; // 4 segundos para activar la animación
         private bool _hasActivated = false;
         private bool _isExpanded = false;
 
         private bool _isReviewed = false;
 
-        // --- AUDIO ---
-        public AudioClip expandSound; // Recibido desde el Spawner
+        public AudioClip expandSound;
         private AudioSource _audioSource;
 
         void Awake()
         {
-
             _audioSource = GetComponent<AudioSource>();
             if (_audioSource == null) _audioSource = gameObject.AddComponent<AudioSource>();
-
-            // Configuración 3D para que el sonido venga del nodo
             _audioSource.spatialBlend = 1.0f;
             _audioSource.playOnAwake = false;
-
 
             _interactable = GetComponent<XRGrabInteractable>();
             _renderer = GetComponent<Renderer>();
@@ -73,17 +70,25 @@ namespace ImmersiveGraph.Interaction
             rb.useGravity = false;
             rb.isKinematic = true;
 
-            _interactable.movementType = XRBaseInteractable.MovementType.Kinematic;
+            // Importante para XR Toolkit moderno
+            if (_interactable != null) _interactable.movementType = XRBaseInteractable.MovementType.Kinematic;
         }
 
         void OnEnable()
         {
             if (_interactable != null)
             {
-                _interactable.selectEntered.AddListener(OnGrabStart);
-                _interactable.selectExited.AddListener(OnGrabEnd);
+                // Usamos "Select" para el Click/Grab
+                _interactable.selectEntered.AddListener(OnSelectStart);
+                _interactable.selectExited.AddListener(OnSelectEnd);
+
+                // Hover para color
                 _interactable.hoverEntered.AddListener(OnHoverEnter);
                 _interactable.hoverExited.AddListener(OnHoverExit);
+
+                // --- NUEVO: ACTIVAR DETALLES AL HACER CLICK (SELECT) ---
+                // XR Toolkit lanza "SelectEntered" cuando presionas el gatillo.
+                // Usaremos eso para mostrar detalles inmediatamente.
             }
         }
 
@@ -91,8 +96,8 @@ namespace ImmersiveGraph.Interaction
         {
             if (_interactable != null)
             {
-                _interactable.selectEntered.RemoveListener(OnGrabStart);
-                _interactable.selectExited.RemoveListener(OnGrabEnd);
+                _interactable.selectEntered.RemoveListener(OnSelectStart);
+                _interactable.selectExited.RemoveListener(OnSelectEnd);
                 _interactable.hoverEntered.RemoveListener(OnHoverEnter);
                 _interactable.hoverExited.RemoveListener(OnHoverExit);
             }
@@ -102,6 +107,9 @@ namespace ImmersiveGraph.Interaction
         {
             parentNodeTransform = parent;
             incomingLine = lineFromParent;
+
+            // Guardamos la posición inicial para la animación de retorno
+            originalLocalPosition = transform.localPosition;
 
             if (_renderer != null)
             {
@@ -118,12 +126,15 @@ namespace ImmersiveGraph.Interaction
 
         void Update()
         {
+            // Actualizar línea constantemente (Vital para la animación donde el padre se mueve)
             if (incomingLine != null && parentNodeTransform != null)
             {
+                // Convertimos a World Space porque el LineRenderer usa World Space
                 incomingLine.SetPosition(0, parentNodeTransform.position);
                 incomingLine.SetPosition(1, transform.position);
             }
 
+            // Lógica del HOLD (4 Segundos)
             if (_isGrabbing && !_hasActivated)
             {
                 _holdTimer += Time.deltaTime;
@@ -133,81 +144,80 @@ namespace ImmersiveGraph.Interaction
 
                 if (_holdTimer >= _activationTime)
                 {
-                    ExecuteActivation();
+                    ExecuteHoldAction(); // Se cumplieron los 4 segundos
                 }
             }
         }
 
-        void OnGrabStart(SelectEnterEventArgs args)
+        void OnSelectStart(SelectEnterEventArgs args)
         {
             _isGrabbing = true;
             _holdTimer = 0f;
             _hasActivated = false;
+
+            // --- ACCIÓN INMEDIATA: MOSTRAR DETALLES (CLICK) ---
+            // Esto cumple tu requerimiento: "Click sobre cualquier nodo muestra info"
+            SendToZone3();
         }
 
-        void OnGrabEnd(SelectExitEventArgs args)
+        void OnSelectEnd(SelectExitEventArgs args)
         {
             _isGrabbing = false;
             _holdTimer = 0f;
             if (loaderUI != null) loaderUI.SetProgress(0);
         }
 
-        void ExecuteActivation()
+        // Esta función se llama a los 4 segundos de mantener presionado
+        void ExecuteHoldAction()
         {
             _hasActivated = true;
             if (loaderUI != null) loaderUI.SetProgress(1f);
 
-            // --- INSTANCIAR CHINCHETA ---
+            // 1. Poner Chincheta (Marcado como Visto)
             if (!_isReviewed && reviewedMarkerPrefab != null)
             {
-                Debug.Log($"Activando chincheta en {name}");
-
                 GameObject marker = Instantiate(reviewedMarkerPrefab, transform);
-
-                // Usamos las variables que nos pasó el Spawner
                 marker.transform.localPosition = markerLocalOffset;
                 marker.transform.localScale = markerLocalScale;
-
-                // Aseguramos rotación cero relativa
                 marker.transform.localRotation = Quaternion.identity;
-
                 _isReviewed = true;
             }
-            else if (reviewedMarkerPrefab == null)
-            {
-                Debug.LogWarning("No aparece la chincheta porque 'reviewedMarkerPrefab' es NULL en el GraphNode.");
-            }
-            // -----------------------------
 
+            // 2. Lógica Especial por Tipo
             if (nodeType == "community")
             {
-                _isExpanded = !_isExpanded;
-                SetChildrenVisibility(_isExpanded);
-                SendToZone3();
+                // Aquí llamamos al MANAGER para la animación del cielo
+                if (interactionManager != null)
+                {
+                    interactionManager.OnCommunityHoldActivated(this);
+                }
+                else
+                {
+                    // Fallback si no hay manager: Solo expandir hijos localmente
+                    ForceExpand(!_isExpanded);
+                }
             }
-            else if (nodeType == "file")
+            // Para "file" o "root", el Hold solo pone la chincheta (ya mostramos detalles al click)
+        }
+
+        // Función pública llamada por el Manager
+        public void ForceExpand(bool state)
+        {
+            _isExpanded = state;
+            SetChildrenVisibility(state);
+
+            if (state && _audioSource != null && expandSound != null)
             {
-                SendToZone3();
-            }
-            else if (nodeType == "root")
-            {
-                SendToZone3();
+                _audioSource.PlayOneShot(expandSound);
             }
         }
 
         void SendToZone3()
         {
-            Debug.Log($"--> ENVIANDO {myData.title} A ZONE 3");
             if (localZone3Manager != null)
             {
                 localZone3Manager.ShowNodeDetails(myData);
-                // --- SONIDO DE APERTURA ---
-                if (_audioSource != null && expandSound != null)
-                {
-                    _audioSource.PlayOneShot(expandSound);
-                }
             }
-            else Debug.LogError($"El nodo {name} no tiene asignado un Zone3Manager local.");
         }
 
         void SetChildrenVisibility(bool state)
@@ -218,30 +228,18 @@ namespace ImmersiveGraph.Interaction
 
         // Variables para evitar spam de logs
         private float _lastHoverLogTime = 0f;
-        private float _logCooldown = 1.0f; // Solo registrar una mirada cada 1 segundo al mismo nodo
+        private float _logCooldown = 1.0f;
 
         void OnHoverEnter(HoverEnterEventArgs args)
         {
             if (_renderer != null) _renderer.material.color = _hoverColor;
 
-            // --- METRICA 3: REGISTRO DE ATENCIÓN (DEÍCTICA) ---
-            if (ExperimentDataLogger.Instance != null)
+            // Métrica de Atención (Igual que antes)
+            if (ExperimentDataLogger.Instance != null && Time.time - _lastHoverLogTime > _logCooldown)
             {
-                // Solo logueamos si ha pasado tiempo suficiente para no saturar
-                if (Time.time - _lastHoverLogTime > _logCooldown)
-                {
-                    _lastHoverLogTime = Time.time;
-
-                    // Registramos: QUÉ miró y DÓNDE está
-                    ExperimentDataLogger.Instance.LogEvent(
-                        "ATTENTION",         // Tipo Evento
-                        "Gaze/Hover",        // Categoría
-                        $"Node: {myData.title} ({nodeType})", // Detalle
-                        transform.position   // Posición
-                    );
-                }
+                _lastHoverLogTime = Time.time;
+                ExperimentDataLogger.Instance.LogEvent("ATTENTION", "Gaze/Hover", $"Node: {myData.title}", transform.position);
             }
-            // --------------------------------------------------
         }
         void OnHoverExit(HoverExitEventArgs args) { if (_renderer != null) _renderer.material.color = _originalColor; }
     }

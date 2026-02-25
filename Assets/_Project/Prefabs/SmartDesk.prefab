@@ -1064,7 +1064,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2242100136102775865}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc4deb4564f04ea40bccab3e2f3bf336, type: 3}
   m_Name: 
@@ -2848,6 +2848,7 @@ GameObject:
   - component: {fileID: 8759895591307329085}
   - component: {fileID: 8134263450916050270}
   - component: {fileID: 4390552089730368357}
+  - component: {fileID: 2203637493933622396}
   - component: {fileID: 3727908263082871224}
   m_Layer: 0
   m_Name: Zone2_Data
@@ -2956,7 +2957,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7811330940087541257}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 543851801f57faf49986c5d061009ad8, type: 3}
   m_Name: 
@@ -3037,6 +3038,23 @@ MonoBehaviour:
   m_StartingInteractionStrengthFilters: []
   m_AutoFindParentInteractableInHierarchy: 0
   m_ParentInteractableObject: {fileID: 0}
+--- !u!114 &2203637493933622396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7811330940087541257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94d2947455fef744abd6f4b4ff0a1b42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.GraphInteractionManager
+  skyPositionOffset: {x: 0, y: 1.5, z: 1}
+  skyScale: 3
+  horizonArcRadius: 5
+  tableFocusPosition: {x: -0.381, y: -7, z: -1.927}
+  animationDuration: 1.5
 --- !u!114 &3727908263082871224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3049,6 +3067,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce65fd876122bee4eaec4c644074bcc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Visual.H3GraphSpawner
+  interactionManager: {fileID: 2203637493933622396}
   jsonFileName: hierarchy_complete.json
   rootPrefab: {fileID: 4340233853336565958, guid: a6eb265f994fc2e428e52d294d2e9528, type: 3}
   communityPrefab: {fileID: 4340233853336565958, guid: 131ad21c6029d2548b59065db8d67796, type: 3}
