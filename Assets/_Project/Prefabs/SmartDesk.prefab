@@ -3050,6 +3050,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d2947455fef744abd6f4b4ff0a1b42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.GraphInteractionManager
+  controlPlatePrefab: {fileID: 5139002756919424254, guid: d52454f5c6a8f5f4c9493f85faabd576, type: 3}
   skyPositionOffset: {x: 0, y: 1.5, z: 1}
   skyScale: 3
   horizonArcRadius: 5
