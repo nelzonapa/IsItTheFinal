@@ -108,7 +108,7 @@ namespace ImmersiveGraph.Network
                 if (riskText != null) riskText.text = "Riesgo: " + (data.risk_level ?? "-");
                 if (contentText != null)
                 {
-                    if (data.data != null) contentText.text = data.data.full_text;
+                    if (data.data != null) contentText.text = data.data.texto_full;
                     else contentText.text = "(Sin contenido de texto)";
                     var selectable = contentText.GetComponent<Interaction.SelectableText>();
                     if (selectable != null)

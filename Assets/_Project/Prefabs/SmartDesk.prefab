@@ -2866,7 +2866,7 @@ Transform:
   m_GameObject: {fileID: 7811330940087541257}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.8378, y: 1.855, z: 0.7835}
+  m_LocalPosition: {x: -1.8378, y: 1.294, z: 0.7835}
   m_LocalScale: {x: 1.424216, y: 1, z: 1.5613822}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3050,11 +3050,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d2947455fef744abd6f4b4ff0a1b42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.GraphInteractionManager
-  controlPlatePrefab: {fileID: 5139002756919424254, guid: d52454f5c6a8f5f4c9493f85faabd576, type: 3}
   skyPositionOffset: {x: 0, y: 1.5, z: 1}
   skyScale: 3
   horizonArcRadius: 5
-  tableFocusPosition: {x: -0.381, y: -7, z: -1.927}
+  tableFocusPosition: {x: -0.381, y: -5, z: -1.927}
   animationDuration: 1.5
 --- !u!114 &3727908263082871224
 MonoBehaviour:
@@ -3078,7 +3077,7 @@ MonoBehaviour:
   reviewedMarkerPrefab: {fileID: 1102540967185720030, guid: cc31e57de48da5c4786d65f3671f37ae, type: 3}
   markerOffset: {x: 0.36, y: 0.49, z: 0}
   markerScale: {x: 0.5, y: 0.5, z: 0.5}
-  communityOrbitRadius: 10
+  communityOrbitRadius: 5
   fileOrbitRadius: 5
   lineMaterial: {fileID: 2100000, guid: 0fcf4715c091eda4f97e84803e479e04, type: 2}
   lineWidth: 0.005
@@ -3764,7 +3763,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8938481160725371547, guid: 1e52d0661b65db74a80ee0714917dff3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.73
+      value: 0.115
       objectReference: {fileID: 0}
     - target: {fileID: 8938481160725371547, guid: 1e52d0661b65db74a80ee0714917dff3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3772,7 +3771,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8938481160725371547, guid: 1e52d0661b65db74a80ee0714917dff3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.131
+      value: 0.144
       objectReference: {fileID: 0}
     - target: {fileID: 8938481160725371547, guid: 1e52d0661b65db74a80ee0714917dff3, type: 3}
       propertyPath: m_LocalRotation.w

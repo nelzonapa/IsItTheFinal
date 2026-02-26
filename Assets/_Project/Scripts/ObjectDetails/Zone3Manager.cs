@@ -55,8 +55,18 @@ namespace ImmersiveGraph.Core
         {
             // 1. Datos Comunes
             titleText.text = data.title;
-            summaryText.text = data.summary;
             typeLabel.text = data.type.ToUpper();
+
+            // Lógica para mostrar Keywords o Resumen
+            if (data.type == "community" && !string.IsNullOrEmpty(data.keywords))
+            {
+                // Agregamos las keywords al resumen visualmente
+                summaryText.text = $"<color=yellow>Keywords:</color> {data.keywords}\n\n{data.summary}";
+            }
+            else
+            {
+                summaryText.text = data.summary;
+            }
 
             // 2. Apagar todo
             rootPanel.SetActive(false);
@@ -77,45 +87,29 @@ namespace ImmersiveGraph.Core
                     break;
             }
 
-            // --- METRICA 4: ESTRATEGIA INDIVIDUAL ---
+            // --- METRICA ---
             if (ExperimentDataLogger.Instance != null)
             {
-                ExperimentDataLogger.Instance.LogEvent(
-                    "STRATEGY",
-                    "Individual Analysis",
-                    $"Reading Details of: {data.title}",
-                    Vector3.zero
-                );
+                ExperimentDataLogger.Instance.LogEvent("STRATEGY", "Individual Analysis", $"Reading: {data.title}", Vector3.zero);
             }
-            // ----------------------------------------
         }
 
-
-        // --- AGREGA ESTA FUNCIÓN AUXILIAR AL FINAL ---
         void UpdateSelectableContext(GameObject panel, string nodeID)
         {
-            // Busca todos los scripts SelectableText dentro del panel activo
             var selectables = panel.GetComponentsInChildren<Interaction.SelectableText>(true);
-            foreach (var sel in selectables)
-            {
-                sel.currentContextNodeID = nodeID;
-            }
+            foreach (var sel in selectables) sel.currentContextNodeID = nodeID;
         }
-        // ---------------------------------------------
+
         void ShowRootDetails(NodeData data)
         {
             rootPanel.SetActive(true);
 
-            // Usamos data.details directamente
             if (data.details != null)
             {
                 string focosStr = (data.details.focos != null) ? string.Join("\n• ", data.details.focos) : "Ninguno";
                 rootFocosText.text = "Focos: \n• " + focosStr;
-
-                rootConclusionText.text = "Conclusión: \n" + data.details.conclusion ?? "Sin conclusión";
+                rootConclusionText.text = "Conclusión: \n" + (data.details.conclusion ?? "Sin conclusión");
             }
-
-            // NUEVO: Inyectar ID
             UpdateSelectableContext(rootPanel, data.id);
         }
 
@@ -125,23 +119,18 @@ namespace ImmersiveGraph.Core
 
             if (data.details != null)
             {
-                // Entidades
-                string entStr = (data.details.entidades != null) ? string.Join(", ", data.details.entidades) : "-";
-                commEntidadesText.text = "Entidades: \n" + entStr;
+                // CORRECCIÓN: Usamos entidades_frecuentes (nuevo nombre en GraphData)
+                string entStr = (data.details.entidades_frecuentes != null) ? string.Join(", ", data.details.entidades_frecuentes) : "-";
+                commEntidadesText.text = "Entidades Frecuentes: \n" + entStr;
 
-                // Fechas (Ahora es string directo, no array)
-                commFechasText.text = "Fechas: \n" +  data.details.fechas ?? "-";
+                commFechasText.text = "Fechas: \n" + (data.details.fechas ?? "-");
 
-                // Amenaza
-                commAmenazaText.text = "Nivel posible de amenaza: \n" + data.details.amenaza ?? "Desconocida";
+                commAmenazaText.text = "Amenaza: " + (data.details.amenaza ?? "Desconocida");
 
-                // Color condicional
-                if (commAmenazaText.text == "Alta") commAmenazaText.color = Color.red;
-                else if (commAmenazaText.text == "Medio") commAmenazaText.color = Color.yellow;
+                if (commAmenazaText.text.Contains("Alto")) commAmenazaText.color = Color.red;
+                else if (commAmenazaText.text.Contains("Medio")) commAmenazaText.color = Color.yellow;
                 else commAmenazaText.color = Color.white;
             }
-
-            // NUEVO: Inyectar ID
             UpdateSelectableContext(communityPanel, data.id);
         }
 
@@ -149,26 +138,43 @@ namespace ImmersiveGraph.Core
         {
             filePanel.SetActive(true);
 
-            fileRiskText.text = "Riesgo: " + (data.risk_level ?? "N/A");
+            // --- MOSTRAR METADATOS EXTRA (Source, Date, Entidades) ---
+            // Como no tienes TextMeshPro dedicados para Source y Date, los agregamos al bloque de Riesgo o Título
 
-            // Color Riesgo
+            string metaInfo = "";
+            if (data.data != null)
+            {
+                if (!string.IsNullOrEmpty(data.data.source)) metaInfo += $"Fuente: {data.data.source} | ";
+                if (!string.IsNullOrEmpty(data.data.date)) metaInfo += $"Fecha: {data.data.date}";
+            }
+
+            // Riesgo + Metadatos
+            fileRiskText.text = $"Riesgo: {data.risk_level ?? "N/A"}\n<size=70%>{metaInfo}</size>";
+
             if (data.risk_level == "Alto") fileRiskText.color = Color.red;
             else if (data.risk_level == "Medio") fileRiskText.color = Color.yellow;
             else fileRiskText.color = Color.green;
 
+            // --- MOSTRAR TEXTO COMPLETO ---
             if (data.data != null)
             {
-                fileFullText.text = data.data.full_text;
+                // CORRECCIÓN: Usamos texto_full (nuevo nombre en GraphData)
+                string fullContent = data.data.texto_full;
 
-                // Forzamos la actualización inmediata del layout para que TMP calcule los caracteres
-                Canvas.ForceUpdateCanvases();
-
-                var selectable = fileFullText.GetComponent<Interaction.SelectableText>();
-                if (selectable != null)
+                // Si el archivo tiene Entidades (Nivel nodo), las mostramos al inicio del texto
+                if (data.entidades != null && data.entidades.Length > 0)
                 {
-                    selectable.UpdateOriginalText();
+                    string entStr = string.Join(", ", data.entidades);
+                    fullContent = $"<color=#ADD8E6><b>Entidades Mencionadas:</b> {entStr}</color>\n\n" + fullContent;
                 }
 
+                fileFullText.text = fullContent;
+
+                Canvas.ForceUpdateCanvases();
+                var selectable = fileFullText.GetComponent<Interaction.SelectableText>();
+                if (selectable != null) selectable.UpdateOriginalText();
+
+                // Imágenes
                 if (data.data.images != null && data.data.images.Length > 0)
                 {
                     StartCoroutine(LoadImageFromDisk(data.data.images[0]));
@@ -176,11 +182,9 @@ namespace ImmersiveGraph.Core
                 else
                 {
                     fileImageViewer.sprite = null;
-                    fileImageViewer.color = Color.red;
+                    fileImageViewer.color = new Color(0, 0, 0, 0); // Transparente si no hay imagen
                 }
             }
-
-            // NUEVO: Inyectar ID
             UpdateSelectableContext(filePanel, data.id);
         }
 
@@ -189,9 +193,8 @@ namespace ImmersiveGraph.Core
             if (imageLoadingSpinner != null) imageLoadingSpinner.SetActive(true);
 
             string fileName = Path.GetFileName(jsonPath);
+            // Lógica de carpetas ajustada a tu estructura probable
             string folderName = "Images_Processed";
-
-            // Detección simple de carpeta
             if (jsonPath.Contains("News")) folderName = "News_Cleaned";
             else if (jsonPath.Contains("Blogs")) folderName = "Blogs_Cleaned";
             else if (jsonPath.Contains("Databases")) folderName = "Databases_Cleaned";
@@ -206,18 +209,18 @@ namespace ImmersiveGraph.Core
                 if (uwr.result == UnityWebRequest.Result.Success)
                 {
                     Texture2D texture = DownloadHandlerTexture.GetContent(uwr);
-                    Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-                    fileImageViewer.sprite = sprite;
-                    fileImageViewer.color = Color.white;
+                    if (texture != null)
+                    {
+                        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                        fileImageViewer.sprite = sprite;
+                        fileImageViewer.color = Color.white;
+                    }
                 }
                 else
                 {
-                    // Si falla, quizás la imagen no está o la ruta falló. 
-                    // Debug.LogWarning("Imagen no encontrada: " + url);
-                    fileImageViewer.color = new Color(0, 0, 0, 0.5f);
+                    fileImageViewer.color = new Color(0, 0, 0, 0.2f); // Gris oscuro si falla
                 }
             }
-
             if (imageLoadingSpinner != null) imageLoadingSpinner.SetActive(false);
         }
     }
