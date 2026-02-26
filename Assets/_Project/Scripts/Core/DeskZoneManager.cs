@@ -11,7 +11,8 @@ namespace ImmersiveGraph.Core
         Zone4_Mural,
         Zone5_Shared,
         Zone6_Notes,
-        TrashCan
+        TrashCan,
+        Zone7_MiniWorld // <--- NUEVA ZONA AÑADIDA
     }
 
     // Requiere que el objeto tenga un componente Interactable
