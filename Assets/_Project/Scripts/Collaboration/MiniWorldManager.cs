@@ -43,7 +43,6 @@ namespace ImmersiveGraph.Collaboration
             public MeshRenderer gazeConeRenderer;
             public Transform gazeConeTransform;
 
-            // --- NUEVO: Memoria del nodo que este jugador está leyendo ---
             public string currentHighlightedNodeId = "";
         }
 
@@ -181,7 +180,7 @@ namespace ImmersiveGraph.Collaboration
                 head = head.transform,
                 gazeConeRenderer = coneRenderer,
                 gazeConeTransform = gazeObj.transform,
-                currentHighlightedNodeId = "" // Inicializado vacío
+                currentHighlightedNodeId = ""
             });
         }
 
@@ -219,19 +218,36 @@ namespace ImmersiveGraph.Collaboration
         {
             if (!_miniAvatars.TryGetValue(playerId, out MiniAvatarData avatar)) return;
 
-            // 1. ESPACIAL
-            Vector3 relativePos = syncData.HeadPos - _realGraphCenter;
+            // Para evitar errores si el jugador local aún no está listo
+            if (HardwareRigSync.Local == null) return;
+
+            // --- CORRECCIÓN MAGISTRAL: ESPACIO LOCAL POR ESCRITORIO ---
+            // 1. Calculamos el "offset" de dónde aparece el grafo en la mesa (Ej: Y + 0.3)
+            Vector3 myGraphLocalOffset = HardwareRigSync.Local.transform.InverseTransformPoint(_realGraphCenter);
+
+            // 2. Calculamos dónde está la cabeza del OTRO jugador respecto a SU mesa
+            Vector3 theirHeadLocalPos = syncData.transform.InverseTransformPoint(syncData.HeadPos);
+
+            // 3. Posición relativa final para el minimundo
+            Vector3 relativePos = theirHeadLocalPos - myGraphLocalOffset;
             avatar.root.transform.localPosition = relativePos * avatarDistanceMultiplier;
-            avatar.head.localRotation = syncData.HeadRot;
 
-            // 2. CONO DE VISIÓN INTELIGENTE
+            // 4. Rotación relativa a su propia mesa
+            Quaternion theirHeadLocalRot = Quaternion.Inverse(syncData.transform.rotation) * syncData.HeadRot;
+            avatar.head.localRotation = theirHeadLocalRot;
+
+            // --- CORRECCIÓN DEL LÁSER: DETECCIÓN SOBRE EL GRAFO DEL OPONENTE ---
+            // Tenemos que calcular el centro del grafo EN LA MESA DEL OTRO JUGADOR
+            Vector3 theirGraphCenterGlobal = syncData.transform.TransformPoint(myGraphLocalOffset);
+
             bool isLookingAtGraphArea = false;
-            Vector3 toGraphCenter = _realGraphCenter - syncData.HeadPos;
-            Vector3 lookDirection = syncData.HeadRot * Vector3.forward;
+            Vector3 toTheirGraphCenter = theirGraphCenterGlobal - syncData.HeadPos;
+            Vector3 theirLookDirection = syncData.HeadRot * Vector3.forward;
 
-            if (Vector3.Dot(toGraphCenter.normalized, lookDirection) > 0)
+            // Si el otro jugador mira hacia SU grafo, prendemos su láser en NUESTRO minimundo
+            if (Vector3.Dot(toTheirGraphCenter.normalized, theirLookDirection) > 0)
             {
-                float distanceToRay = Vector3.Cross(lookDirection, toGraphCenter).magnitude;
+                float distanceToRay = Vector3.Cross(theirLookDirection, toTheirGraphCenter).magnitude;
                 if (distanceToRay <= graphDetectionRadius) isLookingAtGraphArea = true;
             }
 
@@ -247,19 +263,15 @@ namespace ImmersiveGraph.Collaboration
             // --- FASE 4: SINCRONIZACIÓN DE SELECCIÓN (EL RESALTADO) ---
             string networkNodeId = syncData.SelectedNodeId.ToString();
 
-            // ¿El jugador en la red seleccionó un nodo distinto al que teníamos guardado?
             if (avatar.currentHighlightedNodeId != networkNodeId)
             {
-                // 1. Apagamos el nodo viejo (Volver a su color original)
                 if (!string.IsNullOrEmpty(avatar.currentHighlightedNodeId))
                 {
                     ResetNodeVisuals(avatar.currentHighlightedNodeId);
                 }
 
-                // 2. Actualizamos la memoria del avatar
                 avatar.currentHighlightedNodeId = networkNodeId;
 
-                // 3. Encendemos el nuevo nodo con el color del jugador
                 if (!string.IsNullOrEmpty(networkNodeId))
                 {
                     HighlightNodeVisuals(networkNodeId, UserColorPalette.GetColor(playerId));
@@ -273,7 +285,7 @@ namespace ImmersiveGraph.Collaboration
             if (miniNodesMap.TryGetValue(nodeId, out GameObject node))
             {
                 node.GetComponent<Renderer>().material.color = highlightColor;
-                node.transform.localScale = Vector3.one * 2.5f; // Lo hacemos más grande
+                node.transform.localScale = Vector3.one * 2.5f;
             }
         }
 
@@ -281,19 +293,17 @@ namespace ImmersiveGraph.Collaboration
         {
             if (miniNodesMap.TryGetValue(nodeId, out GameObject node))
             {
-                // Buscamos cuál era el color azulito/blanco original del dataset
                 if (originalColorsMap.TryGetValue(nodeId, out Color ogColor))
                 {
                     node.GetComponent<Renderer>().material.color = ogColor;
                 }
 
-                // Si es Root era 1.5, si es Comunidad era 1.0
                 float resetSize = (node.name.Contains("ROOT")) ? 1.5f : 1.0f;
                 node.transform.localScale = Vector3.one * resetSize;
             }
         }
 
-        // --- FALLBACK PARA CUANDO PRUEBAS SOLO (SIN CONECTAR A LA SALA FUSION) ---
+        // --- FALLBACK OFFLINE ---
         private string _offlineHighlightedNode = "";
 
         public void HighlightNodeLocalFallback(string nodeId, Color highlightColor)
