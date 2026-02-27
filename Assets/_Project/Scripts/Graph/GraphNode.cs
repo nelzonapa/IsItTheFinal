@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using ImmersiveGraph.Data;
 using ImmersiveGraph.Visual;
 using ImmersiveGraph.Core;
+using ImmersiveGraph.Network; // <-- NUEVO: Para encontrar al HardwareRigSync
 
 namespace ImmersiveGraph.Interaction
 {
@@ -26,8 +27,6 @@ namespace ImmersiveGraph.Interaction
         [Header("Referencias Externas")]
         public Zone3Manager localZone3Manager;
         public GraphInteractionManager interactionManager;
-
-        [Header("Referencias UI")]
         public NodeLoaderController loaderUI;
 
         [Header("Colaboración")]
@@ -128,10 +127,7 @@ namespace ImmersiveGraph.Interaction
 
                 if (loaderUI != null) loaderUI.SetProgress(progress);
 
-                if (_holdTimer >= _activationTime)
-                {
-                    ExecuteHoldAction();
-                }
+                if (_holdTimer >= _activationTime) ExecuteHoldAction();
             }
         }
 
@@ -143,12 +139,19 @@ namespace ImmersiveGraph.Interaction
 
             SendToZone3();
 
-            // --- CORRECCIÓN: RESALTAR AL SELECCIONAR (CLIC) ---
-            if (miniWorldManager != null && (nodeType == "community" || nodeType == "root"))
+            // --- FASE 4: SINCRONIZACIÓN EN RED DE LA SELECCIÓN ---
+            if (nodeType == "community" || nodeType == "root")
             {
-                // Obtenemos tu color real como jugador
-                Color myColor = UserColorPalette.GetLocalPlayerColor();
-                miniWorldManager.HighlightNode(myData.id, myColor);
+                if (HardwareRigSync.Local != null)
+                {
+                    // Estamos online: Le aviso a mi avatar en la red que seleccioné esto
+                    HardwareRigSync.Local.SetSelectedNode(myData.id);
+                }
+                else if (miniWorldManager != null)
+                {
+                    // Fallback Offline: Lo resalto solo localmente
+                    miniWorldManager.HighlightNodeLocalFallback(myData.id, UserColorPalette.GetLocalPlayerColor());
+                }
             }
         }
 
@@ -185,18 +188,12 @@ namespace ImmersiveGraph.Interaction
             _isExpanded = state;
             SetChildrenVisibility(state);
 
-            if (state && _audioSource != null && expandSound != null)
-            {
-                _audioSource.PlayOneShot(expandSound);
-            }
+            if (state && _audioSource != null && expandSound != null) _audioSource.PlayOneShot(expandSound);
         }
 
         void SendToZone3()
         {
-            if (localZone3Manager != null)
-            {
-                localZone3Manager.ShowNodeDetails(myData);
-            }
+            if (localZone3Manager != null) localZone3Manager.ShowNodeDetails(myData);
         }
 
         void SetChildrenVisibility(bool state)
@@ -212,8 +209,6 @@ namespace ImmersiveGraph.Interaction
         {
             if (_renderer != null) _renderer.material.color = _hoverColor;
 
-            // ELIMINADO: Ya no resaltamos el minimundo por simplemente apuntar (Hover).
-
             if (ExperimentDataLogger.Instance != null && Time.time - _lastHoverLogTime > _logCooldown)
             {
                 _lastHoverLogTime = Time.time;
@@ -224,8 +219,6 @@ namespace ImmersiveGraph.Interaction
         void OnHoverExit(HoverExitEventArgs args)
         {
             if (_renderer != null) _renderer.material.color = _originalColor;
-
-            // ELIMINADO: El resaltado ahora se queda encendido hasta que selecciones OTRO nodo.
         }
     }
 }

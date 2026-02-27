@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using Fusion;
 using Unity.XR.CoreUtils;
-using ImmersiveGraph.Core; // <--- NECESARIO PARA PLATFORMMANAGER
-using UnityEngine.XR.Interaction.Toolkit.Interactors; // Para buscar el Rayo
+using ImmersiveGraph.Core;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 namespace ImmersiveGraph.Network
 {
     public class HardwareRigSync : NetworkBehaviour
     {
-        [Header("Partes del Avatar (Arrastra los hijos del Prefab)")]
+        [Header("Partes del Avatar")]
         public Transform headTransform;
         public Transform leftHandTransform;
         public Transform rightHandTransform;
@@ -16,7 +16,7 @@ namespace ImmersiveGraph.Network
         [Header("Visuales para Ocultar localmente")]
         public Renderer[] bodyRenderers;
 
-        // --- VARIABLES DE RED ---
+        // --- VARIABLES DE RED ESPACIALES ---
         [Networked] public Vector3 HeadPos { get; set; }
         [Networked] public Quaternion HeadRot { get; set; }
 
@@ -26,6 +26,13 @@ namespace ImmersiveGraph.Network
         [Networked] public Vector3 RightHandPos { get; set; }
         [Networked] public Quaternion RightHandRot { get; set; }
 
+        // --- NUEVO: VARIABLE DE RED PARA ATENCIÓN (FASE 4) ---
+        // NetworkString<_64> permite guardar un texto (el ID del nodo) sincronizado en red
+        [Networked] public NetworkString<_64> SelectedNodeId { get; set; }
+
+        // Acceso rápido a MÍ propio avatar local
+        public static HardwareRigSync Local { get; private set; }
+
         // Referencias al Hardware Local
         private Transform _hardwareHead;
         private Transform _hardwareLeftHand;
@@ -33,75 +40,58 @@ namespace ImmersiveGraph.Network
 
         public override void Spawned()
         {
-            // 1. Ocultar mi propio cuerpo localmente
-            if (Object.HasInputAuthority)
+            // Si yo soy el dueño de este avatar, me asigno como el "Local"
+            if (Object.HasStateAuthority || Object.HasInputAuthority)
             {
+                Local = this;
+
                 foreach (var r in bodyRenderers)
                     if (r != null) r.enabled = false;
 
-                // 2. BUSCAR HARDWARE (Lógica Híbrida)
                 FindLocalHardware();
+            }
+        }
+
+        // --- NUEVO: FUNCIÓN PARA CAMBIAR EL NODO SELECCIONADO ---
+        public void SetSelectedNode(string nodeId)
+        {
+            if (Object.HasStateAuthority || Object.HasInputAuthority)
+            {
+                SelectedNodeId = nodeId;
             }
         }
 
         void FindLocalHardware()
         {
-            // Usamos el PlatformManager para saber qué Rig está activo
             GameObject activeRig = null;
 
             if (PlatformManager.Instance != null && PlatformManager.Instance.ActiveRig != null)
-            {
                 activeRig = PlatformManager.Instance.ActiveRig;
-            }
             else
             {
-                // Fallback por si acaso
                 var xrOrig = FindFirstObjectByType<XROrigin>();
                 if (xrOrig) activeRig = xrOrig.gameObject;
             }
 
-            if (activeRig == null)
-            {
-                Debug.LogError("[HardwareRigSync] No se encontró ningún Rig activo.");
-                return;
-            }
+            if (activeRig == null) return;
 
-            // --- CASO A: ES EL RIG DE PC ---
-            // (Sabemos que es PC si tiene el componente SimpleFPSController)
             if (activeRig.GetComponent<SimpleFPSController>() != null)
             {
-                Debug.Log("[HardwareSync] Configurando para PC...");
-
-                // Cabeza = La Cámara del PC
                 _hardwareHead = activeRig.GetComponentInChildren<Camera>().transform;
-
-                // Mano Derecha = El Ray Interactor
                 var rayInteractor = activeRig.GetComponentInChildren<XRRayInteractor>();
-                if (rayInteractor != null)
-                {
-                    _hardwareRightHand = rayInteractor.transform;
-                }
-
-                // Mano Izquierda = No existe en PC (La dejamos null o la pegamos al cuerpo)
+                if (rayInteractor != null) _hardwareRightHand = rayInteractor.transform;
                 _hardwareLeftHand = null;
             }
-            // --- CASO B: ES EL RIG DE VR ---
             else
             {
-                Debug.Log("[HardwareSync] Configurando para VR...");
-
-                // Intentamos obtener el XROrigin del objeto activo
                 XROrigin xrOrigin = activeRig.GetComponent<XROrigin>();
                 if (xrOrigin == null) xrOrigin = activeRig.GetComponentInChildren<XROrigin>();
 
                 if (xrOrigin != null)
                 {
                     _hardwareHead = xrOrigin.Camera.transform;
-
-                    // Búsqueda de manos VR
                     foreach (var t in xrOrigin.GetComponentsInChildren<Transform>())
                     {
-                        // Nombres comunes en Unity XR Grid
                         if (t.name.Contains("Left") && t.name.Contains("Controller")) _hardwareLeftHand = t;
                         if (t.name.Contains("Right") && t.name.Contains("Controller")) _hardwareRightHand = t;
                     }
@@ -111,14 +101,11 @@ namespace ImmersiveGraph.Network
 
         public override void FixedUpdateNetwork()
         {
-            // ESCRIBIR DATOS (Solo el dueño)
-            if (Object.HasInputAuthority && _hardwareHead != null)
+            if ((Object.HasStateAuthority || Object.HasInputAuthority) && _hardwareHead != null)
             {
-                // Sincronizar Cabeza
                 HeadPos = _hardwareHead.position;
                 HeadRot = _hardwareHead.rotation;
 
-                // Sincronizar Mano Derecha
                 if (_hardwareRightHand != null)
                 {
                     RightHandPos = _hardwareRightHand.position;
@@ -126,12 +113,10 @@ namespace ImmersiveGraph.Network
                 }
                 else
                 {
-                    // Si no hay mano derecha (raro), la pegamos al cuerpo
                     RightHandPos = HeadPos + new Vector3(0.2f, -0.2f, 0.2f);
                     RightHandRot = Quaternion.identity;
                 }
 
-                // Sincronizar Mano Izquierda
                 if (_hardwareLeftHand != null)
                 {
                     LeftHandPos = _hardwareLeftHand.position;
@@ -139,9 +124,7 @@ namespace ImmersiveGraph.Network
                 }
                 else
                 {
-                    // EN PC: Como no hay mano izquierda, la escondemos dentro del cuerpo o la ponemos abajo
-                    // Para que no flote sola en el (0,0,0)
-                    LeftHandPos = HeadPos + new Vector3(-0.2f, -0.5f, 0); // Un poco abajo a la izquierda
+                    LeftHandPos = HeadPos + new Vector3(-0.2f, -0.5f, 0);
                     LeftHandRot = Quaternion.identity;
                 }
             }
@@ -149,8 +132,6 @@ namespace ImmersiveGraph.Network
 
         public override void Render()
         {
-            // LEER DATOS (Todos los clientes)
-            // Esto no cambia, interpolamos lo que recibimos de la red
             if (headTransform != null)
             {
                 headTransform.position = Vector3.Lerp(headTransform.position, HeadPos, Time.deltaTime * 20);

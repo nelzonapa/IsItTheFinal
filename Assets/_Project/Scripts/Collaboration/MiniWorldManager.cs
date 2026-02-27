@@ -13,34 +13,25 @@ namespace ImmersiveGraph.Collaboration
         public float scaleFactor = 0.05f;
 
         [Header("Controles del Mini-Avatar")]
-        [Tooltip("Multiplicador de distancia para que el avatar no esté pegado al grafo (ej. 1.5 - 2.5)")]
         public float avatarDistanceMultiplier = 1.5f;
 
         [Header("Detección de Mirada (Área del Grafo)")]
-        [Tooltip("Radio de la 'burbuja invisible' alrededor del grafo real. Si el usuario mira hacia esta burbuja, el cono se activa.")]
         public float graphDetectionRadius = 1.5f;
 
         [Header("Visualización del Cono 3D")]
-        [Tooltip("Largo máximo del cono en el minimundo.")]
         public float gazeConeMaxLength = 6.0f;
-        [Tooltip("Anchura de la base del cono (qué tan abierto es).")]
         public float gazeConeBaseRadius = 1.0f;
-
-        [Tooltip("¿Usar el color del jugador para el cono? Si es falso, usará el color personalizado de abajo.")]
         public bool usePlayerColorForCone = true;
         public Color customConeColor = Color.yellow;
-        [Range(0f, 1f)] public float gazeConeAlpha = 0.3f; // Transparencia del cono
+        [Range(0f, 1f)] public float gazeConeAlpha = 0.3f;
 
         [Header("Estilo Visual Base")]
         public Material hologramMaterial;
         public float miniLineWidth = 0.02f;
 
-        // --- DICCIONARIOS DEL GRAFO ---
         public Dictionary<string, GameObject> miniNodesMap = new Dictionary<string, GameObject>();
         private Dictionary<string, Color> originalColorsMap = new Dictionary<string, Color>();
-        private GameObject _highlightedNode = null;
 
-        // --- VARIABLES DE SINCRONIZACIÓN ESPACIAL ---
         private Transform _realGraphRoot;
         private Vector3 _realGraphCenter;
         private bool _isBuilt = false;
@@ -51,13 +42,13 @@ namespace ImmersiveGraph.Collaboration
             public Transform head;
             public MeshRenderer gazeConeRenderer;
             public Transform gazeConeTransform;
+
+            // --- NUEVO: Memoria del nodo que este jugador está leyendo ---
+            public string currentHighlightedNodeId = "";
         }
 
         private Dictionary<int, MiniAvatarData> _miniAvatars = new Dictionary<int, MiniAvatarData>();
 
-        // =========================================================
-        // 1. CONSTRUCCIÓN DEL GRAFO
-        // =========================================================
         public void BuildMiniatureFromRealGraph(Transform realRoot, List<GraphNode> realCommunities)
         {
             if (miniWorldRoot == null) return;
@@ -91,9 +82,7 @@ namespace ImmersiveGraph.Collaboration
             }
 
             miniWorldRoot.localScale = Vector3.one * scaleFactor;
-
             _isBuilt = true;
-            Debug.Log($"[MiniWorld] Holograma 3D creado. {_realGraphCenter} es el centro real.");
         }
 
         private GameObject CreateMiniNode(string id, Vector3 localPos, Color color, float sizeMult)
@@ -133,9 +122,6 @@ namespace ImmersiveGraph.Collaboration
             lr.SetPosition(1, childComm.localPosition);
         }
 
-        // =========================================================
-        // 2. SINCRONIZACIÓN ESPACIAL (Mini-Avatares y Cono 3D)
-        // =========================================================
         void Update()
         {
             if (!_isBuilt || miniWorldRoot == null) return;
@@ -146,10 +132,7 @@ namespace ImmersiveGraph.Collaboration
             {
                 int pId = p.Object.StateAuthority.PlayerId;
 
-                if (!_miniAvatars.ContainsKey(pId))
-                {
-                    CreateMiniAvatar(pId);
-                }
+                if (!_miniAvatars.ContainsKey(pId)) CreateMiniAvatar(pId);
 
                 UpdateMiniAvatar(pId, p);
             }
@@ -159,12 +142,10 @@ namespace ImmersiveGraph.Collaboration
         {
             Color playerColor = UserColorPalette.GetColor(playerId);
 
-            // 1. Contenedor
             GameObject avatarRoot = new GameObject($"MiniAvatar_P{playerId}");
             avatarRoot.transform.SetParent(miniWorldRoot);
             avatarRoot.transform.localScale = Vector3.one;
 
-            // 2. Cabeza
             GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             head.name = "Head";
             head.transform.SetParent(avatarRoot.transform);
@@ -176,26 +157,22 @@ namespace ImmersiveGraph.Collaboration
             if (hologramMaterial != null) headRenderer.material = hologramMaterial;
             headRenderer.material.color = playerColor;
 
-            // 3. CONO 3D REAL (Generado por código)
             GameObject gazeObj = new GameObject("GazeCone3D");
             gazeObj.transform.SetParent(head.transform);
             gazeObj.transform.localPosition = Vector3.zero;
             gazeObj.transform.localRotation = Quaternion.identity;
 
             MeshFilter meshFilter = gazeObj.AddComponent<MeshFilter>();
-            meshFilter.mesh = GenerateConeMesh(16); // 16 segmentos = un cono suave
+            meshFilter.mesh = GenerateConeMesh(16);
 
             MeshRenderer coneRenderer = gazeObj.AddComponent<MeshRenderer>();
-
-            // Asignar material y color personalizado o del jugador
-            if (hologramMaterial != null) coneRenderer.material = new Material(hologramMaterial); // Instancia única para poder cambiarle la transparencia
+            if (hologramMaterial != null) coneRenderer.material = new Material(hologramMaterial);
             else coneRenderer.material = new Material(Shader.Find("Standard"));
 
             Color coneColor = usePlayerColorForCone ? playerColor : customConeColor;
-            coneColor.a = gazeConeAlpha; // Aplicar transparencia
+            coneColor.a = gazeConeAlpha;
             coneRenderer.material.color = coneColor;
 
-            // Modificamos el tamaño del cono según el inspector
             gazeObj.transform.localScale = new Vector3(gazeConeBaseRadius, gazeConeBaseRadius, gazeConeMaxLength);
 
             _miniAvatars.Add(playerId, new MiniAvatarData
@@ -203,19 +180,19 @@ namespace ImmersiveGraph.Collaboration
                 root = avatarRoot,
                 head = head.transform,
                 gazeConeRenderer = coneRenderer,
-                gazeConeTransform = gazeObj.transform
+                gazeConeTransform = gazeObj.transform,
+                currentHighlightedNodeId = "" // Inicializado vacío
             });
         }
 
-        // Generador de Malla 3D para un Cono perfecto
         private Mesh GenerateConeMesh(int segments)
         {
             Mesh mesh = new Mesh();
             Vector3[] vertices = new Vector3[segments + 2];
             int[] triangles = new int[segments * 3];
 
-            vertices[0] = Vector3.zero; // Punta del cono en el ojo (Origen)
-            vertices[segments + 1] = new Vector3(0, 0, 1f); // Centro de la base (Largo = 1 normalizado)
+            vertices[0] = Vector3.zero;
+            vertices[segments + 1] = new Vector3(0, 0, 1f);
 
             for (int i = 0; i < segments; i++)
             {
@@ -242,81 +219,89 @@ namespace ImmersiveGraph.Collaboration
         {
             if (!_miniAvatars.TryGetValue(playerId, out MiniAvatarData avatar)) return;
 
-            // 1. POSICIÓN MULTIPLICADA (Para empujar el avatar hacia afuera)
+            // 1. ESPACIAL
             Vector3 relativePos = syncData.HeadPos - _realGraphCenter;
             avatar.root.transform.localPosition = relativePos * avatarDistanceMultiplier;
             avatar.head.localRotation = syncData.HeadRot;
 
-            // 2. DETECCIÓN DE ÁREA MATEMÁTICA (No depende de físicas ni colliders)
+            // 2. CONO DE VISIÓN INTELIGENTE
             bool isLookingAtGraphArea = false;
-
-            // Vector desde la cabeza del usuario hasta el centro del grafo real
             Vector3 toGraphCenter = _realGraphCenter - syncData.HeadPos;
             Vector3 lookDirection = syncData.HeadRot * Vector3.forward;
 
-            // Verificamos si está mirando "hacia adelante" en dirección al grafo (Producto Punto)
             if (Vector3.Dot(toGraphCenter.normalized, lookDirection) > 0)
             {
-                // Calculamos la distancia de separación entre la línea de visión y el centro del grafo (Producto Cruz)
                 float distanceToRay = Vector3.Cross(lookDirection, toGraphCenter).magnitude;
-
-                // Si la línea de visión pasa a una distancia menor al radio de la "burbuja", lo está mirando
-                if (distanceToRay <= graphDetectionRadius)
-                {
-                    isLookingAtGraphArea = true;
-                }
+                if (distanceToRay <= graphDetectionRadius) isLookingAtGraphArea = true;
             }
 
-            // Apagamos o prendemos el cono 3D
             avatar.gazeConeRenderer.enabled = isLookingAtGraphArea;
-
-            // Actualizamos en tiempo real las dimensiones del cono por si las cambiaste en el Inspector
             if (isLookingAtGraphArea)
             {
                 avatar.gazeConeTransform.localScale = new Vector3(gazeConeBaseRadius, gazeConeBaseRadius, gazeConeMaxLength);
-
-                // Actualizar color/transparencia dinámicamente
                 Color coneColor = usePlayerColorForCone ? UserColorPalette.GetColor(playerId) : customConeColor;
                 coneColor.a = gazeConeAlpha;
                 avatar.gazeConeRenderer.material.color = coneColor;
             }
+
+            // --- FASE 4: SINCRONIZACIÓN DE SELECCIÓN (EL RESALTADO) ---
+            string networkNodeId = syncData.SelectedNodeId.ToString();
+
+            // ¿El jugador en la red seleccionó un nodo distinto al que teníamos guardado?
+            if (avatar.currentHighlightedNodeId != networkNodeId)
+            {
+                // 1. Apagamos el nodo viejo (Volver a su color original)
+                if (!string.IsNullOrEmpty(avatar.currentHighlightedNodeId))
+                {
+                    ResetNodeVisuals(avatar.currentHighlightedNodeId);
+                }
+
+                // 2. Actualizamos la memoria del avatar
+                avatar.currentHighlightedNodeId = networkNodeId;
+
+                // 3. Encendemos el nuevo nodo con el color del jugador
+                if (!string.IsNullOrEmpty(networkNodeId))
+                {
+                    HighlightNodeVisuals(networkNodeId, UserColorPalette.GetColor(playerId));
+                }
+            }
         }
 
-        // =========================================================
-        // 3. ATENCIÓN COLABORATIVA 
-        // =========================================================
-        public void HighlightNode(string nodeId, Color highlightColor)
+        // --- FUNCIONES VISUALES PURAS ---
+        private void HighlightNodeVisuals(string nodeId, Color highlightColor)
         {
             if (miniNodesMap.TryGetValue(nodeId, out GameObject node))
             {
-                ResetCurrentHighlight();
-
-                _highlightedNode = node;
-                _highlightedNode.GetComponent<Renderer>().material.color = highlightColor;
-                _highlightedNode.transform.localScale *= 2.0f;
+                node.GetComponent<Renderer>().material.color = highlightColor;
+                node.transform.localScale = Vector3.one * 2.5f; // Lo hacemos más grande
             }
         }
 
-        public void ResetHighlight(string nodeId)
+        private void ResetNodeVisuals(string nodeId)
         {
-            if (_highlightedNode != null && _highlightedNode.name == $"Mini_{nodeId}")
+            if (miniNodesMap.TryGetValue(nodeId, out GameObject node))
             {
-                ResetCurrentHighlight();
-            }
-        }
-
-        private void ResetCurrentHighlight()
-        {
-            if (_highlightedNode != null)
-            {
-                string id = _highlightedNode.name.Replace("Mini_", "");
-                if (originalColorsMap.TryGetValue(id, out Color ogColor))
+                // Buscamos cuál era el color azulito/blanco original del dataset
+                if (originalColorsMap.TryGetValue(nodeId, out Color ogColor))
                 {
-                    _highlightedNode.GetComponent<Renderer>().material.color = ogColor;
+                    node.GetComponent<Renderer>().material.color = ogColor;
                 }
-                _highlightedNode.transform.localScale /= 2.0f;
-                _highlightedNode = null;
+
+                // Si es Root era 1.5, si es Comunidad era 1.0
+                float resetSize = (node.name.Contains("ROOT")) ? 1.5f : 1.0f;
+                node.transform.localScale = Vector3.one * resetSize;
             }
+        }
+
+        // --- FALLBACK PARA CUANDO PRUEBAS SOLO (SIN CONECTAR A LA SALA FUSION) ---
+        private string _offlineHighlightedNode = "";
+
+        public void HighlightNodeLocalFallback(string nodeId, Color highlightColor)
+        {
+            if (!string.IsNullOrEmpty(_offlineHighlightedNode)) ResetNodeVisuals(_offlineHighlightedNode);
+
+            _offlineHighlightedNode = nodeId;
+            HighlightNodeVisuals(nodeId, highlightColor);
         }
     }
 }
