@@ -168,8 +168,8 @@ Transform:
   m_GameObject: {fileID: 144407537680031910}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.02, z: 0.6}
+  m_LocalPosition: {x: 0, y: -0.782, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2534936418959269404}
@@ -190,7 +190,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 144407537680031910}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -357,6 +357,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Collaboration.MiniWorldManager
   miniWorldRoot: {fileID: 2534936418959269404}
   scaleFactor: 0.05
+  avatarDistanceMultiplier: 3
+  gazeConeMaxLength: 4
   hologramMaterial: {fileID: 2100000, guid: ce31e88767174154d85658826679b29d, type: 2}
   miniLineWidth: 0.005
 --- !u!1 &255112686737182852
@@ -1923,7 +1925,7 @@ Transform:
   m_GameObject: {fileID: 3663433614703408737}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.185, y: 0.778, z: -1}
+  m_LocalPosition: {x: -2.185, y: 1.023, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

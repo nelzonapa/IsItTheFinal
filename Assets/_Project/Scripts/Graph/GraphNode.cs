@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactables; // Asegúrate de tener esto si usas Unity 6
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using System.Collections.Generic;
 using ImmersiveGraph.Data;
 using ImmersiveGraph.Visual;
@@ -25,7 +25,7 @@ namespace ImmersiveGraph.Interaction
 
         [Header("Referencias Externas")]
         public Zone3Manager localZone3Manager;
-        public GraphInteractionManager interactionManager; // <--- NUEVO
+        public GraphInteractionManager interactionManager;
 
         [Header("Referencias UI")]
         public NodeLoaderController loaderUI;
@@ -33,15 +33,12 @@ namespace ImmersiveGraph.Interaction
         [Header("Colaboración")]
         public ImmersiveGraph.Collaboration.MiniWorldManager miniWorldManager;
 
-        // --- VARIABLES PÚBLICAS PARA RECIBIR CONFIGURACIÓN ---
         public GameObject reviewedMarkerPrefab;
         public Vector3 markerLocalOffset;
         public Vector3 markerLocalScale;
 
-        // --- MEMORIA DE POSICIÓN (NUEVO) ---
-        [HideInInspector] public Vector3 originalLocalPosition; // Para saber volver a casa
+        [HideInInspector] public Vector3 originalLocalPosition;
 
-        // Lógica Interna
         private XRGrabInteractable _interactable;
         private Renderer _renderer;
         private Color _originalColor;
@@ -49,10 +46,9 @@ namespace ImmersiveGraph.Interaction
 
         private bool _isGrabbing = false;
         private float _holdTimer = 0f;
-        private float _activationTime = 4.0f; // 4 segundos para activar la animación
+        private float _activationTime = 4.0f;
         private bool _hasActivated = false;
         private bool _isExpanded = false;
-
         private bool _isReviewed = false;
 
         public AudioClip expandSound;
@@ -73,7 +69,6 @@ namespace ImmersiveGraph.Interaction
             rb.useGravity = false;
             rb.isKinematic = true;
 
-            // Importante para XR Toolkit moderno
             if (_interactable != null) _interactable.movementType = XRBaseInteractable.MovementType.Kinematic;
         }
 
@@ -81,17 +76,10 @@ namespace ImmersiveGraph.Interaction
         {
             if (_interactable != null)
             {
-                // Usamos "Select" para el Click/Grab
                 _interactable.selectEntered.AddListener(OnSelectStart);
                 _interactable.selectExited.AddListener(OnSelectEnd);
-
-                // Hover para color
                 _interactable.hoverEntered.AddListener(OnHoverEnter);
                 _interactable.hoverExited.AddListener(OnHoverExit);
-
-                // --- NUEVO: ACTIVAR DETALLES AL HACER CLICK (SELECT) ---
-                // XR Toolkit lanza "SelectEntered" cuando presionas el gatillo.
-                // Usaremos eso para mostrar detalles inmediatamente.
             }
         }
 
@@ -110,8 +98,6 @@ namespace ImmersiveGraph.Interaction
         {
             parentNodeTransform = parent;
             incomingLine = lineFromParent;
-
-            // Guardamos la posición inicial para la animación de retorno
             originalLocalPosition = transform.localPosition;
 
             if (_renderer != null)
@@ -129,15 +115,12 @@ namespace ImmersiveGraph.Interaction
 
         void Update()
         {
-            // Actualizar línea constantemente (Vital para la animación donde el padre se mueve)
             if (incomingLine != null && parentNodeTransform != null)
             {
-                // Convertimos a World Space porque el LineRenderer usa World Space
                 incomingLine.SetPosition(0, parentNodeTransform.position);
                 incomingLine.SetPosition(1, transform.position);
             }
 
-            // Lógica del HOLD (4 Segundos)
             if (_isGrabbing && !_hasActivated)
             {
                 _holdTimer += Time.deltaTime;
@@ -147,7 +130,7 @@ namespace ImmersiveGraph.Interaction
 
                 if (_holdTimer >= _activationTime)
                 {
-                    ExecuteHoldAction(); // Se cumplieron los 4 segundos
+                    ExecuteHoldAction();
                 }
             }
         }
@@ -158,9 +141,15 @@ namespace ImmersiveGraph.Interaction
             _holdTimer = 0f;
             _hasActivated = false;
 
-            // --- ACCIÓN INMEDIATA: MOSTRAR DETALLES (CLICK) ---
-            // Esto cumple tu requerimiento: "Click sobre cualquier nodo muestra info"
             SendToZone3();
+
+            // --- CORRECCIÓN: RESALTAR AL SELECCIONAR (CLIC) ---
+            if (miniWorldManager != null && (nodeType == "community" || nodeType == "root"))
+            {
+                // Obtenemos tu color real como jugador
+                Color myColor = UserColorPalette.GetLocalPlayerColor();
+                miniWorldManager.HighlightNode(myData.id, myColor);
+            }
         }
 
         void OnSelectEnd(SelectExitEventArgs args)
@@ -170,13 +159,11 @@ namespace ImmersiveGraph.Interaction
             if (loaderUI != null) loaderUI.SetProgress(0);
         }
 
-        // Esta función se llama a los 4 segundos de mantener presionado
         void ExecuteHoldAction()
         {
             _hasActivated = true;
             if (loaderUI != null) loaderUI.SetProgress(1f);
 
-            // 1. Poner Chincheta (Marcado como Visto)
             if (!_isReviewed && reviewedMarkerPrefab != null)
             {
                 GameObject marker = Instantiate(reviewedMarkerPrefab, transform);
@@ -186,24 +173,13 @@ namespace ImmersiveGraph.Interaction
                 _isReviewed = true;
             }
 
-            // 2. Lógica Especial por Tipo
             if (nodeType == "community")
             {
-                // Aquí llamamos al MANAGER para la animación del cielo
-                if (interactionManager != null)
-                {
-                    interactionManager.OnCommunityHoldActivated(this);
-                }
-                else
-                {
-                    // Fallback si no hay manager: Solo expandir hijos localmente
-                    ForceExpand(!_isExpanded);
-                }
+                if (interactionManager != null) interactionManager.OnCommunityHoldActivated(this);
+                else ForceExpand(!_isExpanded);
             }
-            // Para "file" o "root", el Hold solo pone la chincheta (ya mostramos detalles al click)
         }
 
-        // Función pública llamada por el Manager
         public void ForceExpand(bool state)
         {
             _isExpanded = state;
@@ -229,7 +205,6 @@ namespace ImmersiveGraph.Interaction
             foreach (var line in childConnectionLines) if (line != null) line.SetActive(state);
         }
 
-        // Variables para evitar spam de logs
         private float _lastHoverLogTime = 0f;
         private float _logCooldown = 1.0f;
 
@@ -237,30 +212,20 @@ namespace ImmersiveGraph.Interaction
         {
             if (_renderer != null) _renderer.material.color = _hoverColor;
 
-            // --- NUEVO: AVISAR AL MINIMUNDO QUE ESTOY MIRANDO ESTO ---
-            if (miniWorldManager != null && (nodeType == "community" || nodeType == "root"))
-            {
-                // Usamos amarillo/blanco para indicar "Mi atención" por ahora
-                miniWorldManager.HighlightNode(myData.id, Color.yellow);
-            }
+            // ELIMINADO: Ya no resaltamos el minimundo por simplemente apuntar (Hover).
 
-
-            // Métrica de Atención (Igual que antes)
             if (ExperimentDataLogger.Instance != null && Time.time - _lastHoverLogTime > _logCooldown)
             {
                 _lastHoverLogTime = Time.time;
                 ExperimentDataLogger.Instance.LogEvent("ATTENTION", "Gaze/Hover", $"Node: {myData.title}", transform.position);
             }
         }
+
         void OnHoverExit(HoverExitEventArgs args)
         {
             if (_renderer != null) _renderer.material.color = _originalColor;
 
-            // --- NUEVO: APAGAR EL RESALTADO EN EL MINIMUNDO ---
-            if (miniWorldManager != null && (nodeType == "community" || nodeType == "root"))
-            {
-                miniWorldManager.ResetHighlight(myData.id);
-            }
+            // ELIMINADO: El resaltado ahora se queda encendido hasta que selecciones OTRO nodo.
         }
     }
 }
