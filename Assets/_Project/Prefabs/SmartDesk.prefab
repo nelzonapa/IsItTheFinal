@@ -168,12 +168,12 @@ Transform:
   m_GameObject: {fileID: 144407537680031910}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.185, y: 0.778, z: -1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.6, y: 0.02, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2534936418959269404}
-  m_Father: {fileID: 9013347094446411954}
+  m_Father: {fileID: 2364989591469545260}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6544170167861858420
 MeshFilter:
@@ -357,6 +357,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Collaboration.MiniWorldManager
   miniWorldRoot: {fileID: 2534936418959269404}
   scaleFactor: 0.05
+  hologramMaterial: {fileID: 2100000, guid: ce31e88767174154d85658826679b29d, type: 2}
+  miniLineWidth: 0.005
 --- !u!1 &255112686737182852
 GameObject:
   m_ObjectHideFlags: 0
@@ -904,7 +906,7 @@ Transform:
   - {fileID: 1987991738617684349}
   - {fileID: 5566134054066550939}
   - {fileID: 1589067903021199238}
-  - {fileID: 4187504857660638696}
+  - {fileID: 2364989591469545260}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &2447872933905962812
@@ -1896,6 +1898,38 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &3663433614703408737
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2364989591469545260}
+  m_Layer: 0
+  m_Name: Zone7_Area
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2364989591469545260
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3663433614703408737}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.185, y: 0.778, z: -1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4187504857660638696}
+  m_Father: {fileID: 9013347094446411954}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4046064089144608236
 GameObject:
   m_ObjectHideFlags: 0
@@ -3600,6 +3634,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Visual.H3GraphSpawner
   interactionManager: {fileID: 2203637493933622396}
+  miniWorldManager: {fileID: 3377572980140155397}
   jsonFileName: hierarchy_complete.json
   rootPrefab: {fileID: 4340233853336565958, guid: a6eb265f994fc2e428e52d294d2e9528, type: 3}
   communityPrefab: {fileID: 4340233853336565958, guid: 131ad21c6029d2548b59065db8d67796, type: 3}

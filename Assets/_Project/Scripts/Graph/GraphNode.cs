@@ -30,6 +30,9 @@ namespace ImmersiveGraph.Interaction
         [Header("Referencias UI")]
         public NodeLoaderController loaderUI;
 
+        [Header("Colaboración")]
+        public ImmersiveGraph.Collaboration.MiniWorldManager miniWorldManager;
+
         // --- VARIABLES PÚBLICAS PARA RECIBIR CONFIGURACIÓN ---
         public GameObject reviewedMarkerPrefab;
         public Vector3 markerLocalOffset;
@@ -234,6 +237,14 @@ namespace ImmersiveGraph.Interaction
         {
             if (_renderer != null) _renderer.material.color = _hoverColor;
 
+            // --- NUEVO: AVISAR AL MINIMUNDO QUE ESTOY MIRANDO ESTO ---
+            if (miniWorldManager != null && (nodeType == "community" || nodeType == "root"))
+            {
+                // Usamos amarillo/blanco para indicar "Mi atención" por ahora
+                miniWorldManager.HighlightNode(myData.id, Color.yellow);
+            }
+
+
             // Métrica de Atención (Igual que antes)
             if (ExperimentDataLogger.Instance != null && Time.time - _lastHoverLogTime > _logCooldown)
             {
@@ -241,6 +252,15 @@ namespace ImmersiveGraph.Interaction
                 ExperimentDataLogger.Instance.LogEvent("ATTENTION", "Gaze/Hover", $"Node: {myData.title}", transform.position);
             }
         }
-        void OnHoverExit(HoverExitEventArgs args) { if (_renderer != null) _renderer.material.color = _originalColor; }
+        void OnHoverExit(HoverExitEventArgs args)
+        {
+            if (_renderer != null) _renderer.material.color = _originalColor;
+
+            // --- NUEVO: APAGAR EL RESALTADO EN EL MINIMUNDO ---
+            if (miniWorldManager != null && (nodeType == "community" || nodeType == "root"))
+            {
+                miniWorldManager.ResetHighlight(myData.id);
+            }
+        }
     }
 }
