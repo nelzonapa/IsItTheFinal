@@ -357,8 +357,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Collaboration.MiniWorldManager
   miniWorldRoot: {fileID: 2534936418959269404}
   scaleFactor: 0.05
-  avatarDistanceMultiplier: 3
-  gazeConeMaxLength: 4
+  avatarDistanceMultiplier: 5
+  graphDetectionRadius: 1.5
+  gazeConeMaxLength: 5
+  gazeConeBaseRadius: 1
+  usePlayerColorForCone: 0
+  customConeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  gazeConeAlpha: 0.3
   hologramMaterial: {fileID: 2100000, guid: ce31e88767174154d85658826679b29d, type: 2}
   miniLineWidth: 0.005
 --- !u!1 &255112686737182852
