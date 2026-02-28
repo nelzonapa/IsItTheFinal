@@ -3031,8 +3031,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1fb462fe970fab488a32b23ac8a0e4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Network.ReturnToIndividual
-  spawnPointUser1: {fileID: 355704860}
-  spawnPointUser2: {fileID: 1453628343}
   audioSource: {fileID: 992846233}
   returnSound: {fileID: 8300000, guid: dfccfb0c01608d94e9925292a774878b, type: 3}
 --- !u!114 &992846232
@@ -4489,6 +4487,7 @@ GameObject:
   - component: {fileID: 1569171344}
   - component: {fileID: 1569171343}
   - component: {fileID: 1569171346}
+  - component: {fileID: 1569171347}
   m_Layer: 0
   m_Name: DeskBase
   m_TagString: Untagged
@@ -4599,6 +4598,20 @@ MonoBehaviour:
   blockSpawnPoints:
   - {fileID: 861000118}
   - {fileID: 1513715901}
+--- !u!114 &1569171347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1569171342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb16dd570ed752458f35dbeb042bd40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Collaboration.SharedWorkspaceTracker
+  collaborativeRadius: 30
+  updateRateHz: 5
 --- !u!114 &1578172535
 MonoBehaviour:
   m_ObjectHideFlags: 0
