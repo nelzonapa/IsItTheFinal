@@ -9,7 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 702800800976485380}
-  - component: {fileID: 7591235762505681889}
+  - component: {fileID: 5741110525824788376}
+  - component: {fileID: 1208462882617328693}
+  - component: {fileID: 3427618359497978532}
+  - component: {fileID: 1016551003299710003}
   m_Layer: 0
   m_Name: MapContainer
   m_TagString: Untagged
@@ -26,7 +29,7 @@ RectTransform:
   m_GameObject: {fileID: 52791384124030300}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -14.1, y: 9.55, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 505920603980144685}
@@ -34,10 +37,61 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -40}
-  m_SizeDelta: {x: -40, y: -120}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7591235762505681889
+--- !u!222 &5741110525824788376
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 52791384124030300}
+  m_CullTransparentMesh: 1
+--- !u!114 &1208462882617328693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 52791384124030300}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3427618359497978532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 52791384124030300}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
+  m_ShowMaskGraphic: 1
+--- !u!114 &1016551003299710003
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1526,12 +1580,11 @@ MonoBehaviour:
   mapCenter: {fileID: 505920603980144685}
   statusText: {fileID: 4838245752979057019}
   headerPanel: {fileID: 9217891547799803235}
-  uiNodePrefab: {fileID: 7911381514176583803, guid: fe0019103bedad942917d4dcdce07bd6, type: 3}
-  uiLinePrefab: {fileID: 1852378024154175953, guid: c285c71fb87f83d43b6424da9d8864cb, type: 3}
+  uiTokenPrefab: {fileID: 1540635903751974692, guid: 3167ebd10d9d47a41ba5cfadcffc0b33, type: 3}
+  uiPostItPrefab: {fileID: 3310051543259140861, guid: 2cfec96deb0c0c34bba90b0b283c9759, type: 3}
+  uiLinePrefab: {fileID: 6810838584263176833, guid: c285c71fb87f83d43b6424da9d8864cb, type: 3}
   padding: 50
   maxZoomScale: 250
-  updateRateHz: 5
-  nodeUISize: 40
   normalHeaderColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   alertHeaderColor: {r: 0.8, g: 0.2, b: 0.1, a: 1}
 --- !u!1 &2592376226361987160

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using ImmersiveGraph.Network;
+using Fusion; // Necesario para NetworkObject
 
 namespace ImmersiveGraph.Collaboration
 {
@@ -10,16 +11,28 @@ namespace ImmersiveGraph.Collaboration
 
         [Header("Configuración de Detección")]
         public float collaborativeRadius = 15f;
-        public float updateRateHz = 2f;
+        public float updateRateHz = 5f;
 
-        public struct TrackedToken
+        // Estructuras de datos relacionales
+        public struct TrackedNode
         {
             public string id;
+            public UIDashboardElement.ElementType type;
             public Vector3 position;
             public Color color;
+            public string originDocumentId;
         }
 
-        public List<TrackedToken> ActiveTokens { get; private set; } = new List<TrackedToken>();
+        public struct TrackedLine
+        {
+            public string id;
+            public string startNodeId;
+            public string endNodeId;
+        }
+
+        public List<TrackedNode> ActiveNodes { get; private set; } = new List<TrackedNode>();
+        public List<TrackedLine> ActiveLines { get; private set; } = new List<TrackedLine>();
+
         public Vector2 BoundingBoxCenter { get; private set; }
         public Vector2 BoundingBoxSize { get; private set; }
 
@@ -43,56 +56,69 @@ namespace ImmersiveGraph.Collaboration
 
         private void CalculateWorkspaceData()
         {
-            ActiveTokens.Clear();
+            ActiveNodes.Clear();
+            ActiveLines.Clear();
 
-            var allNetworkObjects = FindObjectsByType<NetworkObjectColor>(FindObjectsSortMode.None);
+            // 1. ESCANEO DE NODOS (Tokens y PostIts)
+            var allNetworkObjects = FindObjectsByType<NetworkObject>(FindObjectsSortMode.None);
 
             float minX = float.MaxValue, maxX = float.MinValue;
             float minZ = float.MaxValue, maxZ = float.MinValue;
             bool hasObjects = false;
 
-            int validObjectsCount = 0;
-
             foreach (var netObj in allNetworkObjects)
             {
-                if (netObj == null) continue;
+                // Ignorar objetos fuera del radio
+                if (Vector3.Distance(netObj.transform.position, transform.position) > collaborativeRadius) continue;
 
-                // --- SOLUCIÓN 1: FILTRO EXACTO ---
-                // Ignoramos todo lo que NO sea Token o PostIt (ej. Lápices, Bloques base)
-                string objName = netObj.gameObject.name;
-                if (!objName.Contains("Token") && !objName.Contains("PostIt"))
-                {
-                    continue; // Saltar al siguiente objeto
-                }
+                // Determinar el tipo de objeto
+                var tokenSync = netObj.GetComponent<NetworkTokenSync>();
+                var postItSync = netObj.GetComponent<NetworkPostItSync>();
 
-                float dist = Vector3.Distance(netObj.transform.position, transform.position);
-
-                if (dist <= collaborativeRadius)
+                if (tokenSync != null || postItSync != null)
                 {
                     hasObjects = true;
-                    validObjectsCount++;
                     Vector3 pos = netObj.transform.position;
 
+                    // Expandir Bounding Box
                     if (pos.x < minX) minX = pos.x;
                     if (pos.x > maxX) maxX = pos.x;
                     if (pos.z < minZ) minZ = pos.z;
                     if (pos.z > maxZ) maxZ = pos.z;
 
+                    // Extraer Color
                     Color objColor = Color.white;
-                    Renderer r = netObj.GetComponent<Renderer>();
+                    var r = netObj.GetComponent<Renderer>();
                     if (r != null && r.material != null) objColor = r.material.color;
 
-                    ActiveTokens.Add(new TrackedToken
+                    // Construir el Nodo
+                    ActiveNodes.Add(new TrackedNode
                     {
-                        id = netObj.gameObject.GetInstanceID().ToString(),
+                        id = netObj.Id.ToString(), // Usamos el ID oficial de la red
+                        type = tokenSync != null ? UIDashboardElement.ElementType.Token : UIDashboardElement.ElementType.PostIt,
                         position = pos,
-                        color = objColor
+                        color = objColor,
+                        originDocumentId = tokenSync != null ? tokenSync.SourceNodeID.ToString() : ""
                     });
                 }
             }
 
-            Debug.Log($"[Tracker 3D] Escaneo limpio: {validObjectsCount} Anotes/Tokens detectados en el área.");
+            // 2. ESCANEO DE LÍNEAS
+            var allLines = FindObjectsByType<NetworkConnectionLine>(FindObjectsSortMode.None);
+            foreach (var line in allLines)
+            {
+                if (line.StartNodeID.IsValid && line.EndNodeID.IsValid)
+                {
+                    ActiveLines.Add(new TrackedLine
+                    {
+                        id = line.GetComponent<NetworkObject>().Id.ToString(),
+                        startNodeId = line.StartNodeID.ToString(),
+                        endNodeId = line.EndNodeID.ToString()
+                    });
+                }
+            }
 
+            // 3. CALCULAR BOUNDING BOX
             if (hasObjects)
             {
                 BoundingBoxCenter = new Vector2((minX + maxX) / 2f, (minZ + maxZ) / 2f);
