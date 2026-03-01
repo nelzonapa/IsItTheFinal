@@ -21,6 +21,7 @@ namespace ImmersiveGraph.Collaboration
             public Vector3 position;
             public Color color;
             public string originDocumentId;
+            public string textContent; // texto
         }
 
         public struct TrackedLine
@@ -91,14 +92,20 @@ namespace ImmersiveGraph.Collaboration
                     var r = netObj.GetComponent<Renderer>();
                     if (r != null && r.material != null) objColor = r.material.color;
 
+                    // Extraer Texto
+                    string extractedText = "";
+                    if (tokenSync != null) extractedText = tokenSync.TokenLabel.ToString();
+                    else if (postItSync != null) extractedText = postItSync.NetworkContent.ToString();
+
                     // Construir el Nodo
                     ActiveNodes.Add(new TrackedNode
                     {
-                        id = netObj.Id.ToString(), // Usamos el ID oficial de la red
+                        id = netObj.Id.ToString(),
                         type = tokenSync != null ? UIDashboardElement.ElementType.Token : UIDashboardElement.ElementType.PostIt,
                         position = pos,
                         color = objColor,
-                        originDocumentId = tokenSync != null ? tokenSync.SourceNodeID.ToString() : ""
+                        originDocumentId = tokenSync != null ? tokenSync.SourceNodeID.ToString() : "",
+                        textContent = extractedText // <--- ¡AQUÍ ESTABA EL ERROR! Faltaba esta línea para guardar el texto
                     });
                 }
             }

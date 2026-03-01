@@ -17,9 +17,13 @@ namespace ImmersiveGraph.Collaboration
         public GameObject uiPostItPrefab;
         public GameObject uiLinePrefab;
 
-        [Header("Configuración de Proyección")]
+        [Header("Configuración de Proyección y Tamaños")]
         public float padding = 50f;
         public float maxZoomScale = 250f;
+        [Tooltip("Tamaño de los círculos/cuadrados en pantalla (Auméntalo si se ven pequeños)")]
+        public float nodeUISize = 120f; // <--- AUMENTADO A 120
+        [Tooltip("Grosor de las líneas de conexión")]
+        public float lineThickness = 12f; // <--- NUEVA VARIABLE PARA LÍNEAS GRUESAS
 
         [Header("Configuración de Alertas")]
         public Color normalHeaderColor = new Color(0.2f, 0.2f, 0.2f, 1f);
@@ -80,7 +84,7 @@ namespace ImmersiveGraph.Collaboration
         {
             var tracker = SharedWorkspaceTracker.Instance;
 
-            // 1. FACTOR DE ESCALA
+            // 1. FACTOR DE ESCALA MATEMÁTICO (Para las posiciones)
             float scaleX = (_canvasWidth - padding) / tracker.BoundingBoxSize.x;
             float scaleY = (_canvasHeight - padding) / tracker.BoundingBoxSize.y;
             float uniformScale = Mathf.Min(Mathf.Min(scaleX, scaleY), maxZoomScale);
@@ -106,14 +110,19 @@ namespace ImmersiveGraph.Collaboration
                 UIDashboardElement uiElement;
                 if (!_activeUINodes.TryGetValue(node.id, out uiElement))
                 {
-                    // Elegir prefab según el tipo
                     GameObject prefabToUse = node.type == UIDashboardElement.ElementType.Token ? uiTokenPrefab : uiPostItPrefab;
                     GameObject newUI = Instantiate(prefabToUse, mapCenter);
 
                     uiElement = newUI.GetComponent<UIDashboardElement>();
-                    uiElement.Setup(node.id, node.color, node.originDocumentId);
 
-                    // Forzar profundidad a 0 para que no sea invisible
+                    // Forzar anclajes al centro absoluto
+                    uiElement.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+                    uiElement.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+                    uiElement.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+
+                    // APLICAMOS EL TAMAÑO CORRECTO (Width x Height)
+                    uiElement.rectTransform.sizeDelta = new Vector2(nodeUISize, nodeUISize);
+
                     uiElement.rectTransform.anchoredPosition3D = Vector3.zero;
                     uiElement.rectTransform.localScale = Vector3.one;
                     uiElement.rectTransform.localRotation = Quaternion.identity;
@@ -121,7 +130,10 @@ namespace ImmersiveGraph.Collaboration
                     _activeUINodes.Add(node.id, uiElement);
                 }
 
-                // Calcular posición
+                // --- ACTUALIZAR DATOS CONSTANTEMENTE (Por si cambian de color o de texto) ---
+                uiElement.Setup(node.id, node.color, node.textContent, node.originDocumentId);
+
+                // Calcular posición proyectada
                 float relX = node.position.x - tracker.BoundingBoxCenter.x;
                 float relZ = node.position.z - tracker.BoundingBoxCenter.y;
 
@@ -149,12 +161,10 @@ namespace ImmersiveGraph.Collaboration
             }
             foreach (var key in lineKeysToRemove) _activeUILines.Remove(key);
 
-            // Las líneas deben estar detrás de los nodos (orden de jerarquía)
             foreach (var kvp in _activeUILines) kvp.Value.rectTransform.SetAsFirstSibling();
 
             foreach (var line in lines)
             {
-                // Si la línea intenta conectarse a nodos que no existen en la UI, la ignoramos
                 if (!_activeUINodes.ContainsKey(line.startNodeId) || !_activeUINodes.ContainsKey(line.endNodeId)) continue;
 
                 UIDashboardElement uiLine;
@@ -170,7 +180,6 @@ namespace ImmersiveGraph.Collaboration
                     _activeUILines.Add(line.id, uiLine);
                 }
 
-                // Matemáticas de la línea UI
                 Vector2 startPos = _activeUINodes[line.startNodeId].rectTransform.anchoredPosition;
                 Vector2 endPos = _activeUINodes[line.endNodeId].rectTransform.anchoredPosition;
 
@@ -178,9 +187,9 @@ namespace ImmersiveGraph.Collaboration
                 float distance = direction.magnitude;
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-                // Aplicar: Posición en el nodo de inicio, ancho igual a la distancia, y rotación
                 uiLine.rectTransform.anchoredPosition = startPos;
-                uiLine.rectTransform.sizeDelta = new Vector2(distance, uiLine.rectTransform.sizeDelta.y); // Mantener grosor original
+                // APLICAMOS LA DISTANCIA Y EL GROSOR DE LÍNEA CONFIGURABLE
+                uiLine.rectTransform.sizeDelta = new Vector2(distance, lineThickness);
                 uiLine.rectTransform.localRotation = Quaternion.Euler(0, 0, angle);
             }
         }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace ImmersiveGraph.Collaboration
 {
@@ -11,12 +12,13 @@ namespace ImmersiveGraph.Collaboration
         public ElementType type;
         public string networkId;
 
-        [Header("Datos Específicos (Solo Tokens)")]
-        public string originDocumentID; // Aquí guardaremos de qué documento salió
+        [Header("Datos Específicos")]
+        public string originDocumentID;
 
         [Header("Referencias Visuales")]
         public RectTransform rectTransform;
         public Image visualImage;
+        public TextMeshProUGUI contentText; // NUEVO: Referencia al texto
 
         private void Awake()
         {
@@ -24,8 +26,8 @@ namespace ImmersiveGraph.Collaboration
             if (visualImage == null) visualImage = GetComponent<Image>();
         }
 
-        // Función rápida para inyectar los datos cuando el Dashboard lo instancie
-        public void Setup(string netId, Color playerColor, string documentId = "")
+        // NUEVO: Ahora recibe el string 'textContent'
+        public void Setup(string netId, Color playerColor, string textContent = "", string documentId = "")
         {
             networkId = netId;
             originDocumentID = documentId;
@@ -33,6 +35,12 @@ namespace ImmersiveGraph.Collaboration
             if (visualImage != null)
             {
                 visualImage.color = playerColor;
+            }
+
+            // Aplicamos el texto si existe el componente
+            if (contentText != null)
+            {
+                contentText.text = textContent;
             }
         }
     }
