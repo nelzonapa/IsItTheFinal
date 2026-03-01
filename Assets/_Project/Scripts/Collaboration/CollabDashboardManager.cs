@@ -17,19 +17,30 @@ namespace ImmersiveGraph.Collaboration
         public GameObject uiPostItPrefab;
         public GameObject uiLinePrefab;
 
-        [Header("Configuración de Proyección y Tamaños")]
+        [Header("Configuración de Proyección")]
         public float padding = 50f;
         public float maxZoomScale = 250f;
-        [Tooltip("Tamaño de los círculos/cuadrados en pantalla (Auméntalo si se ven pequeños)")]
-        public float nodeUISize = 120f; // <--- AUMENTADO A 120
-        [Tooltip("Grosor de las líneas de conexión")]
-        public float lineThickness = 12f; // <--- NUEVA VARIABLE PARA LÍNEAS GRUESAS
+
+        [Header("Configuración de Escalado Dinámico")]
+        public float nodeSizeInMeters = 0.8f;
+        public float minNodePixelSize = 40f;
+        public float maxNodePixelSize = 300f;
+
+        public float lineThicknessInMeters = 0.08f;
+        public float minLinePixelThickness = 4f;
+        public float maxLinePixelThickness = 25f;
+
+        [Header("Algoritmo Anti-Solapamiento (Nuevo)")]
+        public bool enableAntiOverlap = true;
+        [Tooltip("Espacio extra en píxeles que tratarán de mantener entre sí.")]
+        public float repulsionPadding = 15f;
+        [Tooltip("Precisión del algoritmo. 3 o 5 es ideal.")]
+        public int relaxationSteps = 3;
 
         [Header("Configuración de Alertas")]
         public Color normalHeaderColor = new Color(0.2f, 0.2f, 0.2f, 1f);
         public Color alertHeaderColor = new Color(0.8f, 0.2f, 0.1f, 1f);
 
-        // Diccionarios separados para Nodos y Líneas
         private Dictionary<string, UIDashboardElement> _activeUINodes = new Dictionary<string, UIDashboardElement>();
         private Dictionary<string, UIDashboardElement> _activeUILines = new Dictionary<string, UIDashboardElement>();
 
@@ -84,17 +95,77 @@ namespace ImmersiveGraph.Collaboration
         {
             var tracker = SharedWorkspaceTracker.Instance;
 
-            // 1. FACTOR DE ESCALA MATEMÁTICO (Para las posiciones)
+            // 1. FACTOR DE ESCALA MATEMÁTICO
             float scaleX = (_canvasWidth - padding) / tracker.BoundingBoxSize.x;
             float scaleY = (_canvasHeight - padding) / tracker.BoundingBoxSize.y;
             float uniformScale = Mathf.Min(Mathf.Min(scaleX, scaleY), maxZoomScale);
 
-            // ==========================================
-            // 2. DIBUJAR NODOS (TOKENS Y POSTITS)
-            // ==========================================
-            var nodes = tracker.ActiveNodes;
-            List<string> nodeKeysToRemove = new List<string>();
+            float dynamicNodeSize = Mathf.Clamp(nodeSizeInMeters * uniformScale, minNodePixelSize, maxNodePixelSize);
+            float dynamicLineThickness = Mathf.Clamp(lineThicknessInMeters * uniformScale, minLinePixelThickness, maxLinePixelThickness);
 
+            var nodes = tracker.ActiveNodes;
+
+            // ==========================================
+            // NUEVO: FASE DE CÁLCULO DE POSICIONES Y RELAJACIÓN
+            // ==========================================
+            Dictionary<string, Vector2> targetPositions = new Dictionary<string, Vector2>();
+
+            // Mapeo inicial
+            foreach (var node in nodes)
+            {
+                float relX = node.position.x - tracker.BoundingBoxCenter.x;
+                float relZ = node.position.z - tracker.BoundingBoxCenter.y;
+                targetPositions[node.id] = new Vector2(relX * uniformScale, relZ * uniformScale);
+            }
+
+            // Algoritmo de Repulsión (Anti-Overlap)
+            if (enableAntiOverlap && nodes.Count > 1)
+            {
+                float minDistance = dynamicNodeSize + repulsionPadding;
+
+                for (int step = 0; step < relaxationSteps; step++)
+                {
+                    for (int i = 0; i < nodes.Count; i++)
+                    {
+                        for (int j = i + 1; j < nodes.Count; j++)
+                        {
+                            string idA = nodes[i].id;
+                            string idB = nodes[j].id;
+
+                            Vector2 posA = targetPositions[idA];
+                            Vector2 posB = targetPositions[idB];
+
+                            Vector2 diff = posA - posB;
+                            float dist = diff.magnitude;
+
+                            if (dist < minDistance)
+                            {
+                                // Evitar división por cero si están exactamente en el mismo pixel
+                                if (dist == 0)
+                                {
+                                    diff = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+                                    dist = diff.magnitude;
+                                }
+
+                                float pushForce = (minDistance - dist) / 2f;
+                                Vector2 pushVector = (diff / dist) * pushForce;
+
+                                targetPositions[idA] += pushVector;
+                                targetPositions[idB] -= pushVector;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Límites de la pantalla para que no se salgan al ser empujados
+            float limitX = (_canvasWidth / 2f) - (dynamicNodeSize / 2f);
+            float limitY = (_canvasHeight / 2f) - (dynamicNodeSize / 2f);
+
+            // ==========================================
+            // DIBUJAR NODOS
+            // ==========================================
+            List<string> nodeKeysToRemove = new List<string>();
             foreach (var kvp in _activeUINodes)
             {
                 if (!nodes.Exists(n => n.id == kvp.Key))
@@ -115,13 +186,9 @@ namespace ImmersiveGraph.Collaboration
 
                     uiElement = newUI.GetComponent<UIDashboardElement>();
 
-                    // Forzar anclajes al centro absoluto
                     uiElement.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
                     uiElement.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
                     uiElement.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-
-                    // APLICAMOS EL TAMAÑO CORRECTO (Width x Height)
-                    uiElement.rectTransform.sizeDelta = new Vector2(nodeUISize, nodeUISize);
 
                     uiElement.rectTransform.anchoredPosition3D = Vector3.zero;
                     uiElement.rectTransform.localScale = Vector3.one;
@@ -130,23 +197,19 @@ namespace ImmersiveGraph.Collaboration
                     _activeUINodes.Add(node.id, uiElement);
                 }
 
-                // --- ACTUALIZAR DATOS CONSTANTEMENTE (Por si cambian de color o de texto) ---
                 uiElement.Setup(node.id, node.color, node.textContent, node.originDocumentId);
+                uiElement.rectTransform.sizeDelta = new Vector2(dynamicNodeSize, dynamicNodeSize);
 
-                // Calcular posición proyectada
-                float relX = node.position.x - tracker.BoundingBoxCenter.x;
-                float relZ = node.position.z - tracker.BoundingBoxCenter.y;
+                // Obtener la posición calculada y relajarla dentro de los bordes
+                Vector2 finalPos = targetPositions[node.id];
+                finalPos.x = Mathf.Clamp(finalPos.x, -limitX, limitX);
+                finalPos.y = Mathf.Clamp(finalPos.y, -limitY, limitY);
 
-                float uiX = relX * uniformScale;
-                float uiY = relZ * uniformScale;
-
-                // Mover suavemente el UI
-                Vector2 targetPos = new Vector2(uiX, uiY);
-                uiElement.rectTransform.anchoredPosition = Vector2.Lerp(uiElement.rectTransform.anchoredPosition, targetPos, Time.deltaTime * 15f);
+                uiElement.rectTransform.anchoredPosition = Vector2.Lerp(uiElement.rectTransform.anchoredPosition, finalPos, Time.deltaTime * 10f);
             }
 
             // ==========================================
-            // 3. DIBUJAR LÍNEAS DE CONEXIÓN
+            // DIBUJAR LÍNEAS DE CONEXIÓN
             // ==========================================
             var lines = tracker.ActiveLines;
             List<string> lineKeysToRemove = new List<string>();
@@ -180,6 +243,7 @@ namespace ImmersiveGraph.Collaboration
                     _activeUILines.Add(line.id, uiLine);
                 }
 
+                // Las líneas usan las posiciones finales reales de la UI
                 Vector2 startPos = _activeUINodes[line.startNodeId].rectTransform.anchoredPosition;
                 Vector2 endPos = _activeUINodes[line.endNodeId].rectTransform.anchoredPosition;
 
@@ -188,8 +252,7 @@ namespace ImmersiveGraph.Collaboration
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
                 uiLine.rectTransform.anchoredPosition = startPos;
-                // APLICAMOS LA DISTANCIA Y EL GROSOR DE LÍNEA CONFIGURABLE
-                uiLine.rectTransform.sizeDelta = new Vector2(distance, lineThickness);
+                uiLine.rectTransform.sizeDelta = new Vector2(distance, dynamicLineThickness);
                 uiLine.rectTransform.localRotation = Quaternion.Euler(0, 0, angle);
             }
         }

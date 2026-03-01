@@ -5143,6 +5143,14 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7465190368876101358, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: nodeUISize
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 7465190368876101358, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: repulsionPadding
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 8801783944217628581, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
