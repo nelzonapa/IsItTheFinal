@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using ImmersiveGraph.Network;
-using Fusion; // Necesario para NetworkObject
+using Fusion;
 
 namespace ImmersiveGraph.Collaboration
 {
@@ -13,7 +13,6 @@ namespace ImmersiveGraph.Collaboration
         public float collaborativeRadius = 15f;
         public float updateRateHz = 5f;
 
-        // Estructuras de datos relacionales
         public struct TrackedNode
         {
             public string id;
@@ -21,7 +20,7 @@ namespace ImmersiveGraph.Collaboration
             public Vector3 position;
             public Color color;
             public string originDocumentId;
-            public string textContent; // texto
+            public string textContent;
         }
 
         public struct TrackedLine
@@ -36,6 +35,10 @@ namespace ImmersiveGraph.Collaboration
 
         public Vector2 BoundingBoxCenter { get; private set; }
         public Vector2 BoundingBoxSize { get; private set; }
+
+        // --- NUEVAS VARIABLES DE PRESENCIA (FASE 4) ---
+        public bool IsOccupied { get; private set; }
+        public string OccupantsNames { get; private set; }
 
         private float _timer = 0f;
 
@@ -60,19 +63,16 @@ namespace ImmersiveGraph.Collaboration
             ActiveNodes.Clear();
             ActiveLines.Clear();
 
-            // 1. ESCANEO DE NODOS (Tokens y PostIts)
+            // 1. ESCANEO DE NODOS
             var allNetworkObjects = FindObjectsByType<NetworkObject>(FindObjectsSortMode.None);
-
             float minX = float.MaxValue, maxX = float.MinValue;
             float minZ = float.MaxValue, maxZ = float.MinValue;
             bool hasObjects = false;
 
             foreach (var netObj in allNetworkObjects)
             {
-                // Ignorar objetos fuera del radio
                 if (Vector3.Distance(netObj.transform.position, transform.position) > collaborativeRadius) continue;
 
-                // Determinar el tipo de objeto
                 var tokenSync = netObj.GetComponent<NetworkTokenSync>();
                 var postItSync = netObj.GetComponent<NetworkPostItSync>();
 
@@ -81,23 +81,19 @@ namespace ImmersiveGraph.Collaboration
                     hasObjects = true;
                     Vector3 pos = netObj.transform.position;
 
-                    // Expandir Bounding Box
                     if (pos.x < minX) minX = pos.x;
                     if (pos.x > maxX) maxX = pos.x;
                     if (pos.z < minZ) minZ = pos.z;
                     if (pos.z > maxZ) maxZ = pos.z;
 
-                    // Extraer Color
                     Color objColor = Color.white;
                     var r = netObj.GetComponent<Renderer>();
                     if (r != null && r.material != null) objColor = r.material.color;
 
-                    // Extraer Texto
                     string extractedText = "";
                     if (tokenSync != null) extractedText = tokenSync.TokenLabel.ToString();
                     else if (postItSync != null) extractedText = postItSync.NetworkContent.ToString();
 
-                    // Construir el Nodo
                     ActiveNodes.Add(new TrackedNode
                     {
                         id = netObj.Id.ToString(),
@@ -105,7 +101,7 @@ namespace ImmersiveGraph.Collaboration
                         position = pos,
                         color = objColor,
                         originDocumentId = tokenSync != null ? tokenSync.SourceNodeID.ToString() : "",
-                        textContent = extractedText // <--- ¡AQUÍ ESTABA EL ERROR! Faltaba esta línea para guardar el texto
+                        textContent = extractedText
                     });
                 }
             }
@@ -136,6 +132,26 @@ namespace ImmersiveGraph.Collaboration
                 BoundingBoxCenter = new Vector2(transform.position.x, transform.position.z);
                 BoundingBoxSize = new Vector2(2f, 2f);
             }
+
+            // ==========================================
+            // 4. ESCANEO DE PRESENCIA (FASE 4)
+            // ==========================================
+            IsOccupied = false;
+            List<string> occupantList = new List<string>();
+            var allAvatars = FindObjectsByType<HardwareRigSync>(FindObjectsSortMode.None);
+
+            foreach (var avatar in allAvatars)
+            {
+                // Comparamos usando la posición de la cabeza
+                if (Vector3.Distance(avatar.HeadPos, transform.position) <= collaborativeRadius)
+                {
+                    IsOccupied = true;
+                    // Extraemos el ID del jugador
+                    int pId = avatar.Object != null && avatar.Object.IsValid ? avatar.Object.InputAuthority.PlayerId : -1;
+                    occupantList.Add("Usuario " + pId);
+                }
+            }
+            OccupantsNames = string.Join(", ", occupantList);
         }
     }
 }

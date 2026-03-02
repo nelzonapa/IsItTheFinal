@@ -1408,7 +1408,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MigrationManager
   zoneCenter: {fileID: 3920732527639097152}
-  zoneSize: {x: 1.74, y: 2.03, z: 1.59}
+  zoneSize: {x: 2.56, y: 3.44, z: 1.47}
   scanLayer:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -1540,8 +1540,15 @@ MonoBehaviour:
   uiLinePrefab: {fileID: 6810838584263176833, guid: c285c71fb87f83d43b6424da9d8864cb, type: 3}
   padding: 50
   maxZoomScale: 250
-  nodeUISize: 300
-  lineThickness: 12
+  nodeSizeInMeters: 0.8
+  minNodePixelSize: 40
+  maxNodePixelSize: 300
+  lineThicknessInMeters: 0.08
+  minLinePixelThickness: 4
+  maxLinePixelThickness: 25
+  enableAntiOverlap: 1
+  repulsionPadding: 30
+  relaxationSteps: 3
   normalHeaderColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   alertHeaderColor: {r: 0.8, g: 0.2, b: 0.1, a: 1}
 --- !u!1 &2592376226361987160

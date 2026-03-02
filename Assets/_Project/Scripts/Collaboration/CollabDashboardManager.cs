@@ -47,6 +47,10 @@ namespace ImmersiveGraph.Collaboration
         private float _canvasWidth;
         private float _canvasHeight;
 
+        // --- NUEVAS VARIABLES PARA CONTROL DE ALARMA ---
+        private bool _lastOccupiedState = false;
+        private string _lastOccupantName = "";
+
         void Start()
         {
             if (mapCenter == null) return;
@@ -64,6 +68,19 @@ namespace ImmersiveGraph.Collaboration
             if (SharedWorkspaceTracker.Instance != null)
             {
                 Render2DMap();
+
+                // --- LÓGICA DE ALERTA FASE 4 ---
+                bool currentOccupied = SharedWorkspaceTracker.Instance.IsOccupied;
+                string currentName = SharedWorkspaceTracker.Instance.OccupantsNames;
+
+                // Optimización: Solo enviamos la orden a la UI si el estado cambió
+                if (currentOccupied != _lastOccupiedState || currentName != _lastOccupantName)
+                {
+                    SetCollabAlertState(currentOccupied, currentName);
+
+                    _lastOccupiedState = currentOccupied;
+                    _lastOccupantName = currentName;
+                }
             }
         }
 
