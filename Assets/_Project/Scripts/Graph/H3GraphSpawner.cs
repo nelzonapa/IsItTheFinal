@@ -218,6 +218,26 @@ namespace ImmersiveGraph.Visual
                 logic.loaderUI = loadObj.GetComponent<NodeLoaderController>();
             }
 
+            // --- NUEVO: INSTANCIAR PANEL UI (TÍTULO) ---
+            // ==========================================
+            if (nodeUIPrefab != null)
+            {
+                GameObject uiObj = Instantiate(nodeUIPrefab, obj.transform);
+                uiObj.transform.localPosition = uiOffset;
+
+                // Aplicamos la posición debajo del nodo
+                uiObj.transform.localPosition = uiOffset;
+                uiObj.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+
+                // Inyectar la información
+                NodeUIController uiController = uiObj.GetComponent<NodeUIController>();
+                if (uiController != null)
+                {
+                    // Solo pasamos el título. El resumen va vac o porque el script lo apagar .
+                    uiController.SetupUI(data.title, "");
+                }
+            }
+
             return obj;
         }
 

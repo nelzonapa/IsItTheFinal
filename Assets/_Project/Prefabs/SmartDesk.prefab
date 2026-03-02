@@ -4068,10 +4068,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d2947455fef744abd6f4b4ff0a1b42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.GraphInteractionManager
-  skyPositionOffset: {x: 0, y: 1.5, z: 1}
+  skyPositionOffset: {x: 0, y: 2.2, z: 1}
   skyScale: 3
-  horizonArcRadius: 5
-  tableFocusPosition: {x: -0.381, y: -5, z: -1.927}
+  horizonArcRadius: 10
+  tableFocusPosition: {x: -1.4, y: -6, z: -2}
   animationDuration: 1.5
 --- !u!114 &3727908263082871224
 MonoBehaviour:
@@ -4101,7 +4101,7 @@ MonoBehaviour:
   lineMaterial: {fileID: 2100000, guid: 0fcf4715c091eda4f97e84803e479e04, type: 2}
   lineWidth: 0.005
   loaderOffset: {x: 0, y: -1, z: 0}
-  uiOffset: {x: 0, y: -3, z: 0}
+  uiOffset: {x: 0, y: -1.5, z: 0}
   linkedZone3Manager: {fileID: 1713510425057211677}
   nodeExpandSound: {fileID: 8300000, guid: 5425ccc68c0bc0b4f9e782e18fcd8148, type: 3}
 --- !u!1 &7913309574898258690
