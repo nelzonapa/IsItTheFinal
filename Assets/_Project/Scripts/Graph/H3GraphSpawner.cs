@@ -22,14 +22,10 @@ namespace ImmersiveGraph.Visual
 
         // --- BASES DE DATOS EN MEMORIA ---
         public Dictionary<string, NodeData> nodeDatabase = new Dictionary<string, NodeData>();
-
-        // NUEVO: Diccionario veloz para buscar entidades en todo el grafo
         public Dictionary<string, GlobalEntityData> globalEntityDatabase = new Dictionary<string, GlobalEntityData>();
 
         [Header("Configuración de Archivos JSON")]
-        [Tooltip("El archivo principal con el Knowledge Graph incrustado")]
         public string jsonFileName = "hierarchy_complete_KG.json";
-        [Tooltip("El archivo del índice de búsqueda rápida")]
         public string entityIndexFileName = "global_entity_index.json";
 
         [Header("Prefabs de Nodos")]
@@ -76,7 +72,6 @@ namespace ImmersiveGraph.Visual
 
         IEnumerator LoadGraphRoutine()
         {
-            // 1. CARGAR EL ÍNDICE GLOBAL DE ENTIDADES (Motor de Búsqueda)
             string indexFilePath = Path.Combine(Application.streamingAssetsPath, entityIndexFileName);
             string indexJsonContent = "";
             yield return ReadFileRoutine(indexFilePath, result => indexJsonContent = result);
@@ -87,7 +82,6 @@ namespace ImmersiveGraph.Visual
                 Debug.Log($"[KG System] Índice global cargado con {globalEntityDatabase.Count} entidades.");
             }
 
-            // 2. CARGAR LA JERARQUÍA PRINCIPAL (El Grafo Visual)
             string graphFilePath = Path.Combine(Application.streamingAssetsPath, jsonFileName);
             string graphJsonContent = "";
             yield return ReadFileRoutine(graphFilePath, result => graphJsonContent = result);
@@ -103,7 +97,6 @@ namespace ImmersiveGraph.Visual
             }
         }
 
-        // --- RUTINA AUXILIAR PARA LEER ARCHIVOS (PC o Android/Quest) ---
         IEnumerator ReadFileRoutine(string path, System.Action<string> onCompleted)
         {
             if (path.Contains("://") || path.Contains("jar:"))
@@ -120,21 +113,15 @@ namespace ImmersiveGraph.Visual
             }
         }
 
-        // =========================================================================
-        // PARSER NATIVO EN C# PARA BURLAR LA LIMITACIÓN DE DICCIONARIOS EN UNITY
-        // =========================================================================
         void ParseGlobalIndexNative(string jsonText)
         {
             globalEntityDatabase.Clear();
-
-            // Buscar la apertura del diccionario JSON global
             int startIndex = jsonText.IndexOf('{');
             if (startIndex == -1) return;
 
             int i = startIndex + 1;
             while (i < jsonText.Length)
             {
-                // Buscar la siguiente llave ("nombre_entidad")
                 int keyStart = jsonText.IndexOf('"', i);
                 if (keyStart == -1) break;
 
@@ -143,11 +130,9 @@ namespace ImmersiveGraph.Visual
 
                 string key = jsonText.Substring(keyStart + 1, keyEnd - keyStart - 1);
 
-                // Buscar el inicio del objeto asociado '{'
                 int objStart = jsonText.IndexOf('{', keyEnd + 1);
                 if (objStart == -1) break;
 
-                // Filtro de seguridad: Si hay comillas entre la llave y la llave de apertura, no era una entidad raíz
                 string inBetween = jsonText.Substring(keyEnd + 1, objStart - keyEnd - 1);
                 if (inBetween.Contains("\""))
                 {
@@ -155,7 +140,6 @@ namespace ImmersiveGraph.Visual
                     continue;
                 }
 
-                // Algoritmo de "Bracket Counting" para extraer el objeto exacto anidado
                 int braceCount = 1;
                 int objEnd = objStart + 1;
                 while (objEnd < jsonText.Length && braceCount > 0)
@@ -167,14 +151,13 @@ namespace ImmersiveGraph.Visual
 
                 string objJson = jsonText.Substring(objStart, objEnd - objStart);
 
-                // Usamos JsonUtility solo para el "pedacito" estructurado que sí entiende
                 GlobalEntityData data = JsonUtility.FromJson<GlobalEntityData>(objJson);
                 if (data != null && !string.IsNullOrEmpty(data.nombre_original))
                 {
-                    globalEntityDatabase[key] = data; // Almacenado rápido
+                    globalEntityDatabase[key] = data;
                 }
 
-                i = objEnd; // Avanzar el escáner
+                i = objEnd;
             }
         }
 
@@ -229,6 +212,21 @@ namespace ImmersiveGraph.Visual
 
             if (interactionManager != null) interactionManager.InitializeGraph(rootObj.transform);
             if (miniWorldManager != null) miniWorldManager.BuildMiniatureFromRealGraph(rootObj.transform, createdCommunities);
+
+            // ==========================================
+            // LOG DE VERIFICACIÓN GLOBAL DE GRAFOS
+            // ==========================================
+            int filesWithKG = 0;
+            int totalTriplets = 0;
+            foreach (var kvp in nodeDatabase)
+            {
+                if (kvp.Value.type == "file" && kvp.Value.knowledge_graph != null && kvp.Value.knowledge_graph.Length > 0)
+                {
+                    filesWithKG++;
+                    totalTriplets += kvp.Value.knowledge_graph.Length;
+                }
+            }
+            Debug.Log($"[KG System] Escaneo de la jerarquía completado: Encontrados {filesWithKG} archivos que contienen un Grafo de Conocimiento (Total global de {totalTriplets} relaciones).");
         }
 
         void RegisterNodeToDatabase(NodeData node)

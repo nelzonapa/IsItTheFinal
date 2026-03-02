@@ -5151,6 +5151,10 @@ PrefabInstance:
       propertyPath: repulsionPadding
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 7828329550465250663, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_Color.a
+      value: 0.8745098
+      objectReference: {fileID: 0}
     - target: {fileID: 8801783944217628581, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
