@@ -7,12 +7,8 @@ namespace ImmersiveGraph.Data
     [Serializable]
     public class GenericDetails
     {
-        // --- ROOT ---
         public string[] focos;
         public string conclusion;
-
-        // --- COMMUNITY ---
-        // CAMBIO CRÍTICO: El JSON dice "entidades_frecuentes", no "entidades"
         public string[] entidades_frecuentes;
         public string fechas;
         public string amenaza;
@@ -21,12 +17,27 @@ namespace ImmersiveGraph.Data
     [Serializable]
     public class FileDataContent
     {
-        // CAMBIO CRÍTICO: El JSON dice "texto_full", no "full_text"
         public string texto_full;
-
-        public string[] images;
         public string source;
         public string date;
+        // SE ELIMINÓ EL ARRAY DE IMÁGENES
+    }
+
+    // --- NUEVO: ESTRUCTURA PARA EL GRAFO DE CONOCIMIENTO (NIVEL ARCHIVO) ---
+    [Serializable]
+    public class KGEdge
+    {
+        public string sujeto;
+        public string relacion;
+        public string objeto;
+    }
+
+    // --- NUEVO: ESTRUCTURA PARA EL ÍNDICE GLOBAL DE ENTIDADES ---
+    [Serializable]
+    public class GlobalEntityData
+    {
+        public string nombre_original;
+        public string[] nodos; // Arreglo de IDs (Ej: "doc_045", "COMUNIDAD_3")
     }
 
     [Serializable]
@@ -36,19 +47,15 @@ namespace ImmersiveGraph.Data
         public string type;
         public string title;
         public string summary;
-
-        // --- NUEVO: Faltaba en tu estructura anterior ---
-        // "keywords" aparece en Community al nivel del nodo
-        public string keywords; // El JSON dice que es string, no array.
-
-        // "entidades" aparece en File al nivel del nodo (fuera de data)
+        public string keywords;
         public string[] entidades;
-        // -----------------------------------------------
-
         public string risk_level;
 
-        public GenericDetails details; // Para Root y Community
-        public FileDataContent data;   // Para File
+        public GenericDetails details;
+        public FileDataContent data;
+
+        // --- NUEVO: EL ARRAY DEL GRAFO DE CONOCIMIENTO ---
+        public KGEdge[] knowledge_graph;
 
         public List<NodeData> children;
     }

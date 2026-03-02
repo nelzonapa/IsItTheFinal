@@ -1,8 +1,7 @@
 using ImmersiveGraph.Core;
 using ImmersiveGraph.Data;
 using ImmersiveGraph.Interaction;
-using ImmersiveGraph.Visual;
-using ImmersiveGraph.Collaboration; // <--- Para el miniworld
+using ImmersiveGraph.Collaboration;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -17,15 +16,21 @@ namespace ImmersiveGraph.Visual
         public GraphInteractionManager interactionManager;
 
         [Header("Colaboración (WIM)")]
-        [Tooltip("Arrastra aquí el objeto Zone7_MiniWorld_Base que contiene el MiniWorldManager")]
-        public MiniWorldManager miniWorldManager; // <--- NUEVO
+        public MiniWorldManager miniWorldManager;
 
         public static H3GraphSpawner Instance;
 
+        // --- BASES DE DATOS EN MEMORIA ---
         public Dictionary<string, NodeData> nodeDatabase = new Dictionary<string, NodeData>();
 
-        [Header("Configuración de Archivo")]
-        public string jsonFileName = "hierarchy_complete.json";
+        // NUEVO: Diccionario veloz para buscar entidades en todo el grafo
+        public Dictionary<string, GlobalEntityData> globalEntityDatabase = new Dictionary<string, GlobalEntityData>();
+
+        [Header("Configuración de Archivos JSON")]
+        [Tooltip("El archivo principal con el Knowledge Graph incrustado")]
+        public string jsonFileName = "hierarchy_complete_KG.json";
+        [Tooltip("El archivo del índice de búsqueda rápida")]
+        public string entityIndexFileName = "global_entity_index.json";
 
         [Header("Prefabs de Nodos")]
         public GameObject rootPrefab;
@@ -71,32 +76,105 @@ namespace ImmersiveGraph.Visual
 
         IEnumerator LoadGraphRoutine()
         {
-            string filePath = Path.Combine(Application.streamingAssetsPath, jsonFileName);
-            string jsonContent = "";
+            // 1. CARGAR EL ÍNDICE GLOBAL DE ENTIDADES (Motor de Búsqueda)
+            string indexFilePath = Path.Combine(Application.streamingAssetsPath, entityIndexFileName);
+            string indexJsonContent = "";
+            yield return ReadFileRoutine(indexFilePath, result => indexJsonContent = result);
 
-            if (filePath.Contains("://") || filePath.Contains("jar:"))
+            if (!string.IsNullOrEmpty(indexJsonContent))
             {
-                using (UnityWebRequest www = UnityWebRequest.Get(filePath))
+                ParseGlobalIndexNative(indexJsonContent);
+                Debug.Log($"[KG System] Índice global cargado con {globalEntityDatabase.Count} entidades.");
+            }
+
+            // 2. CARGAR LA JERARQUÍA PRINCIPAL (El Grafo Visual)
+            string graphFilePath = Path.Combine(Application.streamingAssetsPath, jsonFileName);
+            string graphJsonContent = "";
+            yield return ReadFileRoutine(graphFilePath, result => graphJsonContent = result);
+
+            if (!string.IsNullOrEmpty(graphJsonContent))
+            {
+                try
+                {
+                    NodeData rootNode = JsonUtility.FromJson<NodeData>(graphJsonContent);
+                    if (rootNode != null) GenerateH3Layout(rootNode);
+                }
+                catch (System.Exception e) { Debug.LogError("[KG System] Error parseando Jerarquía: " + e.Message); }
+            }
+        }
+
+        // --- RUTINA AUXILIAR PARA LEER ARCHIVOS (PC o Android/Quest) ---
+        IEnumerator ReadFileRoutine(string path, System.Action<string> onCompleted)
+        {
+            if (path.Contains("://") || path.Contains("jar:"))
+            {
+                using (UnityWebRequest www = UnityWebRequest.Get(path))
                 {
                     yield return www.SendWebRequest();
-                    if (www.result == UnityWebRequest.Result.Success) jsonContent = www.downloadHandler.text;
-                    else yield break;
+                    if (www.result == UnityWebRequest.Result.Success) onCompleted?.Invoke(www.downloadHandler.text);
                 }
             }
             else
             {
-                if (File.Exists(filePath)) jsonContent = File.ReadAllText(filePath);
-                else yield break;
+                if (File.Exists(path)) onCompleted?.Invoke(File.ReadAllText(path));
             }
+        }
 
-            if (!string.IsNullOrEmpty(jsonContent))
+        // =========================================================================
+        // PARSER NATIVO EN C# PARA BURLAR LA LIMITACIÓN DE DICCIONARIOS EN UNITY
+        // =========================================================================
+        void ParseGlobalIndexNative(string jsonText)
+        {
+            globalEntityDatabase.Clear();
+
+            // Buscar la apertura del diccionario JSON global
+            int startIndex = jsonText.IndexOf('{');
+            if (startIndex == -1) return;
+
+            int i = startIndex + 1;
+            while (i < jsonText.Length)
             {
-                try
+                // Buscar la siguiente llave ("nombre_entidad")
+                int keyStart = jsonText.IndexOf('"', i);
+                if (keyStart == -1) break;
+
+                int keyEnd = jsonText.IndexOf('"', keyStart + 1);
+                if (keyEnd == -1) break;
+
+                string key = jsonText.Substring(keyStart + 1, keyEnd - keyStart - 1);
+
+                // Buscar el inicio del objeto asociado '{'
+                int objStart = jsonText.IndexOf('{', keyEnd + 1);
+                if (objStart == -1) break;
+
+                // Filtro de seguridad: Si hay comillas entre la llave y la llave de apertura, no era una entidad raíz
+                string inBetween = jsonText.Substring(keyEnd + 1, objStart - keyEnd - 1);
+                if (inBetween.Contains("\""))
                 {
-                    NodeData rootNode = JsonUtility.FromJson<NodeData>(jsonContent);
-                    if (rootNode != null) GenerateH3Layout(rootNode);
+                    i = keyEnd + 1;
+                    continue;
                 }
-                catch (System.Exception e) { Debug.LogError("Error parseando JSON: " + e.Message); }
+
+                // Algoritmo de "Bracket Counting" para extraer el objeto exacto anidado
+                int braceCount = 1;
+                int objEnd = objStart + 1;
+                while (objEnd < jsonText.Length && braceCount > 0)
+                {
+                    if (jsonText[objEnd] == '{') braceCount++;
+                    else if (jsonText[objEnd] == '}') braceCount--;
+                    objEnd++;
+                }
+
+                string objJson = jsonText.Substring(objStart, objEnd - objStart);
+
+                // Usamos JsonUtility solo para el "pedacito" estructurado que sí entiende
+                GlobalEntityData data = JsonUtility.FromJson<GlobalEntityData>(objJson);
+                if (data != null && !string.IsNullOrEmpty(data.nombre_original))
+                {
+                    globalEntityDatabase[key] = data; // Almacenado rápido
+                }
+
+                i = objEnd; // Avanzar el escáner
             }
         }
 
@@ -113,8 +191,6 @@ namespace ImmersiveGraph.Visual
 
             int commCount = rootData.children.Count;
             Vector3[] commPositions = HyperbolicMath.GetFibonacciSphere(commCount, communityOrbitRadius);
-
-            // Lista temporal para recolectar comunidades para el minimundo
             List<GraphNode> createdCommunities = new List<GraphNode>();
 
             for (int i = 0; i < commCount; i++)
@@ -126,7 +202,7 @@ namespace ImmersiveGraph.Visual
                 GameObject commObj = CreateNodeObject(communityPrefab, rootObj.transform, commPositions[i], commData, "community", rootObj.transform, lineToComm.GetComponent<LineRenderer>(), groupColor);
 
                 GraphNode commLogic = commObj.GetComponent<GraphNode>();
-                if (commLogic != null) createdCommunities.Add(commLogic); // Guardamos la referencia
+                if (commLogic != null) createdCommunities.Add(commLogic);
 
                 if (commData.children != null)
                 {
@@ -151,16 +227,8 @@ namespace ImmersiveGraph.Visual
                 if (commLogic != null) commLogic.InitializeNode(rootObj.transform, lineToComm.GetComponent<LineRenderer>());
             }
 
-            if (interactionManager != null)
-            {
-                interactionManager.InitializeGraph(rootObj.transform);
-            }
-
-            // --- NUEVO: EJECUTAR FASE 2 (CONSTRUIR MINIMUNDO) ---
-            if (miniWorldManager != null)
-            {
-                miniWorldManager.BuildMiniatureFromRealGraph(rootObj.transform, createdCommunities);
-            }
+            if (interactionManager != null) interactionManager.InitializeGraph(rootObj.transform);
+            if (miniWorldManager != null) miniWorldManager.BuildMiniatureFromRealGraph(rootObj.transform, createdCommunities);
         }
 
         void RegisterNodeToDatabase(NodeData node)
@@ -197,11 +265,7 @@ namespace ImmersiveGraph.Visual
             logic.myData = data;
             logic.localZone3Manager = linkedZone3Manager;
             logic.interactionManager = this.interactionManager;
-
-            // --- NUEVA LÍNEA ---
             logic.miniWorldManager = this.miniWorldManager;
-            // -------------------
-
             logic.expandSound = nodeExpandSound;
 
             logic.reviewedMarkerPrefab = reviewedMarkerPrefab;
@@ -218,24 +282,14 @@ namespace ImmersiveGraph.Visual
                 logic.loaderUI = loadObj.GetComponent<NodeLoaderController>();
             }
 
-            // --- NUEVO: INSTANCIAR PANEL UI (TÍTULO) ---
-            // ==========================================
             if (nodeUIPrefab != null)
             {
                 GameObject uiObj = Instantiate(nodeUIPrefab, obj.transform);
                 uiObj.transform.localPosition = uiOffset;
-
-                // Aplicamos la posición debajo del nodo
-                uiObj.transform.localPosition = uiOffset;
                 uiObj.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
 
-                // Inyectar la información
                 NodeUIController uiController = uiObj.GetComponent<NodeUIController>();
-                if (uiController != null)
-                {
-                    // Solo pasamos el título. El resumen va vac o porque el script lo apagar .
-                    uiController.SetupUI(data.title, "");
-                }
+                if (uiController != null) uiController.SetupUI(data.title, "");
             }
 
             return obj;
