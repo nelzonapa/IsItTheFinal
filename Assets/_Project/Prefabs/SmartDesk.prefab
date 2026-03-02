@@ -1210,7 +1210,7 @@ Transform:
   m_GameObject: {fileID: 2242100136102775865}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.8941, y: 1.777, z: 0.4609}
+  m_LocalPosition: {x: 2.07, y: 1.777, z: -0.03}
   m_LocalScale: {x: 2.5113294, y: 2.0339, z: 2.233574}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1408,7 +1408,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MigrationManager
   zoneCenter: {fileID: 3920732527639097152}
-  zoneSize: {x: 2.56, y: 3.44, z: 1.47}
+  zoneSize: {x: 5.47, y: 4.32, z: 4.43}
   scanLayer:
     serializedVersion: 2
     m_Bits: 4294967295
