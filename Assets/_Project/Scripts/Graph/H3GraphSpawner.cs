@@ -38,6 +38,13 @@ namespace ImmersiveGraph.Visual
         public GameObject loadingBarPrefab;
         public GameObject reviewedMarkerPrefab;
 
+        // --- NUEVO PUNTO 6: INDICADOR KG ---
+        [Header("Indicador Grafo de Conocimiento (Punto 6)")]
+        [Tooltip("Prefab del ícono 3D que flotará sobre los archivos con KG")]
+        public GameObject kgIndicatorPrefab;
+        public Vector3 kgIndicatorOffset = new Vector3(0, 0.35f, 0);
+        public Vector3 kgIndicatorScale = new Vector3(0.1f, 0.1f, 0.1f);
+
         [Header("Configuración Visual Chincheta")]
         public Vector3 markerOffset = new Vector3(0, 0.25f, 0);
         public Vector3 markerScale = new Vector3(0.2f, 0.2f, 0.2f);
@@ -277,7 +284,6 @@ namespace ImmersiveGraph.Visual
 
             logic.InitializeNode(parentNode, incomingLine);
 
-            // REGISTRAR EL NODO EN LA LISTA GLOBAL
             allSpawnedNodes.Add(logic);
 
             if (loadingBarPrefab != null)
@@ -296,6 +302,23 @@ namespace ImmersiveGraph.Visual
 
                 NodeUIController uiController = uiObj.GetComponent<NodeUIController>();
                 if (uiController != null) uiController.SetupUI(data.title, "");
+            }
+
+            // INDICADOR KG VISUAL ---
+            if (type == "file" && data.knowledge_graph != null && data.knowledge_graph.Length > 0)
+            {
+                if (kgIndicatorPrefab != null)
+                {
+                    GameObject kgIcon = Instantiate(kgIndicatorPrefab, obj.transform);
+                    kgIcon.transform.localPosition = kgIndicatorOffset;
+                    kgIcon.transform.localScale = kgIndicatorScale;
+
+                    // Le inyectamos la animación si no la trae el prefab por defecto
+                    if (kgIcon.GetComponent<FloatingAnim>() == null)
+                    {
+                        kgIcon.AddComponent<FloatingAnim>();
+                    }
+                }
             }
 
             return obj;
@@ -323,10 +346,9 @@ namespace ImmersiveGraph.Visual
         // --- MOTOR DE BÚSQUEDA Y RESALTE ---
         // ==========================================
 
-        // --- NUEVO: Función para saber en cuántos archivos reales está la entidad ---
         public int GetFileCountForEntity(string entityName)
         {
-            string key = entityName.ToLower(); // Convertir a minúsculas por tu estructura JSON
+            string key = entityName.ToLower();
             if (!globalEntityDatabase.ContainsKey(key)) return 0;
 
             int fileCount = 0;
@@ -334,7 +356,6 @@ namespace ImmersiveGraph.Visual
 
             foreach (string nodeId in allNodes)
             {
-                // Ignoramos los nodos de comunidad para contar solo los archivos reales
                 if (!nodeId.ToUpper().Contains("COMUNIDAD") && !nodeId.ToUpper().Contains("ROOT"))
                 {
                     fileCount++;
@@ -345,23 +366,19 @@ namespace ImmersiveGraph.Visual
 
         public void HighlightNodesByEntity(string entityName)
         {
-            string key = entityName.ToLower(); // Convertir a minúsculas para coincidir con tu JSON
+            string key = entityName.ToLower();
 
-            // 1. Verificar si la entidad existe en el diccionario global
             if (!globalEntityDatabase.ContainsKey(key)) return;
 
-            // 2. Obtener los IDs de los nodos que contienen esta entidad (Comunidades o Archivos)
             string[] targetIDs = globalEntityDatabase[key].nodos;
             HashSet<string> targetSet = new HashSet<string>(targetIDs);
 
             Debug.Log($"[KG Search] Entidad '{entityName}' encontrada en {targetSet.Count} nodos. Aplicando Ghosting y Glow...");
 
-            // 3. Iterar por TODOS los nodos 3D de la mesa
             foreach (GraphNode node in allSpawnedNodes)
             {
                 if (node == null || node.myData == null) continue;
 
-                // El nodo ROOT nunca se oculta
                 if (node.nodeType == "root") continue;
 
                 if (targetSet.Contains(node.myData.id))
