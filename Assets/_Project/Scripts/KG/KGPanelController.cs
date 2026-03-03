@@ -57,10 +57,11 @@ namespace ImmersiveGraph.Visual
         {
             if (graphContainer == null) graphContainer = GetComponent<RectTransform>();
 
-            // Vincular el botón de limpieza si existe
+            // Vincular el botón de limpieza y asegurarnos de que inicie OCULTO
             if (clearFiltersButton != null)
             {
                 clearFiltersButton.onClick.AddListener(ResetFilters);
+                clearFiltersButton.gameObject.SetActive(false);
             }
         }
 
@@ -71,16 +72,34 @@ namespace ImmersiveGraph.Visual
             {
                 H3GraphSpawner.Instance.ClearAllHighlights();
             }
+
+            // Ocultar el botón después de limpiar el filtro
+            if (clearFiltersButton != null)
+            {
+                clearFiltersButton.gameObject.SetActive(false);
+            }
         }
 
         public void ClearGraph()
         {
             foreach (Transform child in graphContainer)
             {
+                // --- CORRECCIÓN VITAL: NO DESTRUIR EL BOTÓN DE LIMPIEZA ---
+                if (clearFiltersButton != null && child == clearFiltersButton.transform)
+                {
+                    continue; // Saltar al siguiente hijo, dejando al botón vivo
+                }
+
                 Destroy(child.gameObject);
             }
             _nodes.Clear();
             _edges.Clear();
+
+            // Si cerramos el grafo o abrimos uno nuevo, el botón debe estar oculto
+            if (clearFiltersButton != null)
+            {
+                clearFiltersButton.gameObject.SetActive(false);
+            }
         }
 
         public void BuildGraph(KGEdge[] kgData)
@@ -137,9 +156,6 @@ namespace ImmersiveGraph.Visual
                     lineObj.transform.SetAsFirstSibling(); // Siempre atrás de los nodos
 
                     RectTransform lineRect = lineObj.GetComponent<RectTransform>();
-
-                    // --- CORRECCIÓN CRÍTICA DE PIVOTE ---
-                    // Obligamos a la línea a crecer desde su extremo izquierdo, no desde el centro
                     lineRect.pivot = new Vector2(0f, 0.5f);
 
                     _edges.Add(new UIEdge
@@ -170,17 +186,25 @@ namespace ImmersiveGraph.Visual
             TextMeshProUGUI textComp = nodeObj.GetComponentInChildren<TextMeshProUGUI>();
             if (textComp != null) textComp.text = entityName;
 
-
             // FASE 3: INYECTAR BOTÓN NATIVO C#
             Button btn = nodeObj.GetComponent<Button>();
             if (btn == null) btn = nodeObj.AddComponent<Button>();
 
-            // Le decimos al botón que al hacer clic, busque esta entidad en el Grafo 3D
+            // Lógica de cuando el usuario hace CLIC en el nodo Entidad
             btn.onClick.AddListener(() =>
             {
                 if (H3GraphSpawner.Instance != null)
                 {
                     H3GraphSpawner.Instance.HighlightNodesByEntity(entityName);
+                }
+
+                // --- NUEVO: MOSTRAR EL BOTÓN AL HACER CLIC EN UN FILTRO ---
+                if (clearFiltersButton != null)
+                {
+                    clearFiltersButton.gameObject.SetActive(true);
+
+                    // Nos aseguramos visualmente de que el botón quede encima de todo (líneas y nodos)
+                    clearFiltersButton.transform.SetAsLastSibling();
                 }
             });
 
@@ -201,13 +225,10 @@ namespace ImmersiveGraph.Visual
             float maxSpeed = 40f * _currentScale;
             float minSafeDistance = 20f * _currentScale;
 
-            // Incrementamos a 200 pasos para garantizar que queden perfectamente acomodados.
-            // Al no haber "yield return", esto toma apenas 1 milisegundo de procesador.
             for (int step = 0; step < 200; step++)
             {
                 List<UINode> nodeList = new List<UINode>(_nodes.Values);
 
-                // A. Repulsión
                 for (int i = 0; i < nodeList.Count; i++)
                 {
                     for (int j = i + 1; j < nodeList.Count; j++)
@@ -226,7 +247,6 @@ namespace ImmersiveGraph.Visual
                     }
                 }
 
-                // B. Atracción
                 foreach (var edge in _edges)
                 {
                     Vector2 diff = edge.target.position - edge.source.position;
@@ -235,14 +255,12 @@ namespace ImmersiveGraph.Visual
                     if (dist == 0) diff = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
 
                     float displacement = dist - _currentSpringLength;
-                    // Usamos un delta time fijo de 0.016 (60fps) porque esto ya no corre en tiempo real
                     Vector2 attraction = diff.normalized * (displacement * springForce * 0.016f);
 
                     edge.source.velocity += attraction;
                     edge.target.velocity -= attraction;
                 }
 
-                // C. Aplicar
                 foreach (var node in nodeList)
                 {
                     node.velocity = Vector2.ClampMagnitude(node.velocity, maxSpeed);
