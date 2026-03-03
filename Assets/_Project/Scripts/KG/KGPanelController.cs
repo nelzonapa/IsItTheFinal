@@ -14,12 +14,16 @@ namespace ImmersiveGraph.Visual
         public GameObject nodePrefab;
         public GameObject linePrefab;
 
-        [Header("Configuración Física (Fuerzas)")]
-        public float repulsionForce = 2000f;
-        public float springLength = 100f;
-        public float springForce = 5f;
+        [Header("Física Base (Para tamaño 1.0)")]
+        public float baseRepulsionForce = 2500f;
+        public float baseSpringLength = 150f;
+        public float springForce = 4f;
         public float damping = 0.85f;
-        public float nodeThickness = 3f;
+        public float baseNodeThickness = 3f;
+
+        [Header("Configuración de Escalado Automático")]
+        public int nodeThresholdForScaling = 8;
+        public float minScaleLimit = 0.3f;
 
         private class UINode
         {
@@ -40,7 +44,9 @@ namespace ImmersiveGraph.Visual
         private Dictionary<string, UINode> _nodes = new Dictionary<string, UINode>();
         private List<UIEdge> _edges = new List<UIEdge>();
 
-        private Coroutine _physicsCoroutine;
+        private float _currentScale = 1.0f;
+        private float _currentRepulsion;
+        private float _currentSpringLength;
 
         void Awake()
         {
@@ -49,8 +55,6 @@ namespace ImmersiveGraph.Visual
 
         public void ClearGraph()
         {
-            if (_physicsCoroutine != null) StopCoroutine(_physicsCoroutine);
-
             foreach (Transform child in graphContainer)
             {
                 Destroy(child.gameObject);
@@ -64,70 +68,112 @@ namespace ImmersiveGraph.Visual
             ClearGraph();
             if (kgData == null || kgData.Length == 0) return;
 
-            Debug.Log($"[KG Panel UI] Recibida orden de construcción. Procesando {kgData.Length} tripletas...");
-
-            // 1. Crear Nodos Únicos
+            // 1. RECOLECTAR NOMBRES ÚNICOS
+            HashSet<string> uniqueEntities = new HashSet<string>();
             foreach (var edge in kgData)
             {
-                CreateNodeIfNotExists(edge.sujeto);
-                CreateNodeIfNotExists(edge.objeto);
+                uniqueEntities.Add(edge.sujeto);
+                uniqueEntities.Add(edge.objeto);
             }
 
-            Debug.Log($"[KG Panel UI] Generación completada: Se crearon {_nodes.Count} nodos visuales únicos de las tripletas. Iniciando motor de físicas 2D...");
+            int totalNodes = uniqueEntities.Count;
+            if (totalNodes == 0) return;
 
-            // 2. Crear Conexiones (Líneas)
+            // 2. CÁLCULO DE ESCALADO INTELIGENTE
+            if (totalNodes > nodeThresholdForScaling)
+            {
+                _currentScale = (float)nodeThresholdForScaling / (float)totalNodes;
+                _currentScale = Mathf.Clamp(_currentScale, minScaleLimit, 1.0f);
+            }
+            else
+            {
+                _currentScale = 1.0f;
+            }
+
+            _currentRepulsion = baseRepulsionForce * _currentScale;
+            _currentSpringLength = baseSpringLength * _currentScale;
+
+            // 3. CREAR NODOS EN DISTRIBUCIÓN CIRCULAR (Posición Inicial)
+            int i = 0;
+            float angleStep = (Mathf.PI * 2f) / totalNodes;
+            float spawnRadius = Mathf.Min(graphContainer.rect.width, graphContainer.rect.height) * 0.25f * _currentScale;
+
+            foreach (string entityName in uniqueEntities)
+            {
+                float angle = i * angleStep;
+                Vector2 startPos = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * spawnRadius;
+
+                CreateNode(entityName, startPos);
+                i++;
+            }
+
+            // 4. CREAR CONEXIONES (Líneas)
             foreach (var edgeData in kgData)
             {
-                UINode sourceNode = _nodes[edgeData.sujeto];
-                UINode targetNode = _nodes[edgeData.objeto];
-
-                GameObject lineObj = Instantiate(linePrefab, graphContainer);
-                lineObj.transform.SetAsFirstSibling();
-
-                _edges.Add(new UIEdge
+                if (_nodes.TryGetValue(edgeData.sujeto, out UINode sourceNode) &&
+                    _nodes.TryGetValue(edgeData.objeto, out UINode targetNode))
                 {
-                    source = sourceNode,
-                    target = targetNode,
-                    relation = edgeData.relacion,
-                    lineRect = lineObj.GetComponent<RectTransform>()
-                });
+                    GameObject lineObj = Instantiate(linePrefab, graphContainer);
+                    lineObj.transform.SetAsFirstSibling(); // Siempre atrás de los nodos
+
+                    RectTransform lineRect = lineObj.GetComponent<RectTransform>();
+
+                    // --- CORRECCIÓN CRÍTICA DE PIVOTE ---
+                    // Obligamos a la línea a crecer desde su extremo izquierdo, no desde el centro
+                    lineRect.pivot = new Vector2(0f, 0.5f);
+
+                    _edges.Add(new UIEdge
+                    {
+                        source = sourceNode,
+                        target = targetNode,
+                        relation = edgeData.relacion,
+                        lineRect = lineRect
+                    });
+                }
             }
 
-            // 3. Iniciar Simulación Física (Animación suave)
-            _physicsCoroutine = StartCoroutine(RunForceDirectedLayout());
+            // 5. EJECUTAR FÍSICA INSTANTÁNEA (Sin Coroutine, pre-cálculo)
+            CalculateLayoutInstantly();
+
+            // 6. DIBUJAR RESULTADO FINAL
+            UpdateVisuals();
         }
 
-        private void CreateNodeIfNotExists(string entityName)
+        private void CreateNode(string entityName, Vector2 startPosition)
         {
-            if (!_nodes.ContainsKey(entityName))
+            GameObject nodeObj = Instantiate(nodePrefab, graphContainer);
+            RectTransform rect = nodeObj.GetComponent<RectTransform>();
+
+            rect.localScale = new Vector3(_currentScale, _currentScale, 1f);
+            rect.anchoredPosition = startPosition; // Posición temporal
+
+            TextMeshProUGUI textComp = nodeObj.GetComponentInChildren<TextMeshProUGUI>();
+            if (textComp != null) textComp.text = entityName;
+
+            _nodes.Add(entityName, new UINode
             {
-                GameObject nodeObj = Instantiate(nodePrefab, graphContainer);
-                RectTransform rect = nodeObj.GetComponent<RectTransform>();
-
-                Vector2 randomStart = new Vector2(Random.Range(-10f, 10f), Random.Range(-10f, 10f));
-                rect.anchoredPosition = randomStart;
-
-                TextMeshProUGUI textComp = nodeObj.GetComponentInChildren<TextMeshProUGUI>();
-                if (textComp != null) textComp.text = entityName;
-
-                _nodes.Add(entityName, new UINode
-                {
-                    id = entityName,
-                    rect = rect,
-                    position = randomStart,
-                    velocity = Vector2.zero
-                });
-            }
+                id = entityName,
+                rect = rect,
+                position = startPosition,
+                velocity = Vector2.zero
+            });
         }
 
-        private IEnumerator RunForceDirectedLayout()
+        private void CalculateLayoutInstantly()
         {
-            float widthLimit = graphContainer.rect.width / 2f - 60f;
-            float heightLimit = graphContainer.rect.height / 2f - 30f;
+            float safePadding = 50f * _currentScale;
+            float widthLimit = (graphContainer.rect.width / 2f) - safePadding;
+            float heightLimit = (graphContainer.rect.height / 2f) - safePadding;
+            float maxSpeed = 40f * _currentScale;
+            float minSafeDistance = 20f * _currentScale;
 
-            for (int step = 0; step < 100; step++)
+            // Incrementamos a 200 pasos para garantizar que queden perfectamente acomodados.
+            // Al no haber "yield return", esto toma apenas 1 milisegundo de procesador.
+            for (int step = 0; step < 200; step++)
             {
                 List<UINode> nodeList = new List<UINode>(_nodes.Values);
+
+                // A. Repulsión
                 for (int i = 0; i < nodeList.Count; i++)
                 {
                     for (int j = i + 1; j < nodeList.Count; j++)
@@ -137,54 +183,66 @@ namespace ImmersiveGraph.Visual
 
                         Vector2 diff = n1.position - n2.position;
                         float dist = diff.magnitude;
-                        if (dist == 0) dist = 0.1f;
 
-                        Vector2 repulsion = (diff.normalized * repulsionForce) / (dist * dist);
+                        if (dist < minSafeDistance) dist = minSafeDistance;
+
+                        Vector2 repulsion = (diff.normalized * _currentRepulsion) / (dist * dist);
                         n1.velocity += repulsion;
                         n2.velocity -= repulsion;
                     }
                 }
 
+                // B. Atracción
                 foreach (var edge in _edges)
                 {
                     Vector2 diff = edge.target.position - edge.source.position;
                     float dist = diff.magnitude;
 
-                    float displacement = dist - springLength;
-                    Vector2 attraction = diff.normalized * (displacement * springForce * Time.deltaTime);
+                    if (dist == 0) diff = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+
+                    float displacement = dist - _currentSpringLength;
+                    // Usamos un delta time fijo de 0.016 (60fps) porque esto ya no corre en tiempo real
+                    Vector2 attraction = diff.normalized * (displacement * springForce * 0.016f);
 
                     edge.source.velocity += attraction;
                     edge.target.velocity -= attraction;
                 }
 
+                // C. Aplicar
                 foreach (var node in nodeList)
                 {
-                    node.velocity = Vector2.ClampMagnitude(node.velocity, 50f);
+                    node.velocity = Vector2.ClampMagnitude(node.velocity, maxSpeed);
 
-                    node.position += node.velocity * Time.deltaTime;
+                    node.position += node.velocity * 0.016f * 60f;
                     node.velocity *= damping;
 
                     node.position.x = Mathf.Clamp(node.position.x, -widthLimit, widthLimit);
                     node.position.y = Mathf.Clamp(node.position.y, -heightLimit, heightLimit);
-
-                    node.rect.anchoredPosition = node.position;
                 }
+            }
+        }
 
-                foreach (var edge in _edges)
-                {
-                    Vector2 startPos = edge.source.position;
-                    Vector2 endPos = edge.target.position;
-                    Vector2 dir = endPos - startPos;
+        private void UpdateVisuals()
+        {
+            // Asignar las posiciones finales pre-calculadas a los Nodos
+            foreach (var node in _nodes.Values)
+            {
+                node.rect.anchoredPosition = node.position;
+            }
 
-                    float dist = dir.magnitude;
-                    float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            // Asignar tamaño y rotación correcta a las líneas
+            foreach (var edge in _edges)
+            {
+                Vector2 startPos = edge.source.position;
+                Vector2 endPos = edge.target.position;
+                Vector2 dir = endPos - startPos;
 
-                    edge.lineRect.anchoredPosition = startPos;
-                    edge.lineRect.sizeDelta = new Vector2(dist, nodeThickness);
-                    edge.lineRect.localRotation = Quaternion.Euler(0, 0, angle);
-                }
+                float dist = dir.magnitude;
+                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-                yield return null;
+                edge.lineRect.anchoredPosition = startPos;
+                edge.lineRect.sizeDelta = new Vector2(dist, baseNodeThickness * _currentScale);
+                edge.lineRect.localRotation = Quaternion.Euler(0, 0, angle);
             }
         }
     }

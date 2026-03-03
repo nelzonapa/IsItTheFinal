@@ -3680,11 +3680,13 @@ MonoBehaviour:
   graphContainer: {fileID: 0}
   nodePrefab: {fileID: 7606018330044113167, guid: fb1dc226bbea66d4bb5e123012c48919, type: 3}
   linePrefab: {fileID: 7948218715770260542, guid: 7c2485c5608cabd4ea16589c85a63180, type: 3}
-  repulsionForce: 2000
-  springLength: 100
+  baseRepulsionForce: 1500
+  baseSpringLength: 100
   springForce: 5
   damping: 0.85
-  nodeThickness: 3
+  baseNodeThickness: 3
+  nodeThresholdForScaling: 1
+  minScaleLimit: 0.3
 --- !u!1 &6925167207473806550
 GameObject:
   m_ObjectHideFlags: 0
