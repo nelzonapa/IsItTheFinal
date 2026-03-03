@@ -59,7 +59,7 @@ namespace ImmersiveGraph.Visual
         private float _currentSpringLength;
         private Coroutine _warningCoroutine;
 
-        // --- NUEVO: MEMORIA DEL FILTRO ACTIVO ---
+        // --- MEMORIA DEL FILTRO ACTIVO ---
         private string _currentActiveFilter = "";
 
         void Awake()
@@ -99,7 +99,6 @@ namespace ImmersiveGraph.Visual
             _nodes.Clear();
             _edges.Clear();
 
-            // --- CORRECCIÓN VITAL ---
             // Solo ocultamos los controles de filtro si NO hay ningún filtro activo en memoria.
             if (string.IsNullOrEmpty(_currentActiveFilter))
             {
@@ -111,21 +110,41 @@ namespace ImmersiveGraph.Visual
             if (warningText != null) warningText.gameObject.SetActive(false);
         }
 
-        public void BuildGraph(KGEdge[] kgData)
+        // --- ACTUALIZADO: AHORA RECIBE GRAFO Y ENTIDADES SUELTAS ---
+        public void BuildGraph(KGEdge[] kgData, string[] extraEntities)
         {
             ClearGraph();
-            if (kgData == null || kgData.Length == 0) return;
 
+            // El HashSet garantiza que ninguna entidad se repita.
             HashSet<string> uniqueEntities = new HashSet<string>();
-            foreach (var edge in kgData)
+
+            // 1. Añadimos primero todas las entidades que forman parte de relaciones (Grafo)
+            if (kgData != null)
             {
-                uniqueEntities.Add(edge.sujeto);
-                uniqueEntities.Add(edge.objeto);
+                foreach (var edge in kgData)
+                {
+                    uniqueEntities.Add(edge.sujeto);
+                    uniqueEntities.Add(edge.objeto);
+                }
+            }
+
+            // 2. Añadimos las entidades sueltas (Si ya existen por el paso 1, el HashSet las ignora automáticamente)
+            if (extraEntities != null)
+            {
+                foreach (string ent in extraEntities)
+                {
+                    if (!string.IsNullOrEmpty(ent))
+                    {
+                        uniqueEntities.Add(ent);
+                    }
+                }
             }
 
             int totalNodes = uniqueEntities.Count;
+            // Si el archivo no tiene nada de nada, salimos, pero el panel y el filtro quedan vivos.
             if (totalNodes == 0) return;
 
+            // Cálculo de Escala
             if (totalNodes > nodeThresholdForScaling)
             {
                 _currentScale = (float)nodeThresholdForScaling / (float)totalNodes;
@@ -143,6 +162,7 @@ namespace ImmersiveGraph.Visual
             float angleStep = (Mathf.PI * 2f) / totalNodes;
             float spawnRadius = Mathf.Min(graphContainer.rect.width, graphContainer.rect.height) * 0.25f * _currentScale;
 
+            // Instanciar todos los Nodos
             foreach (string entityName in uniqueEntities)
             {
                 float angle = i * angleStep;
@@ -153,17 +173,21 @@ namespace ImmersiveGraph.Visual
                 i++;
             }
 
-            foreach (var edgeData in kgData)
+            // Instanciar Líneas (Solo para las que vinieron en kgData)
+            if (kgData != null)
             {
-                if (_nodes.TryGetValue(edgeData.sujeto, out UINode sourceNode) &&
-                    _nodes.TryGetValue(edgeData.objeto, out UINode targetNode))
+                foreach (var edgeData in kgData)
                 {
-                    GameObject lineObj = Instantiate(linePrefab, graphContainer);
-                    lineObj.transform.SetAsFirstSibling();
-                    RectTransform lineRect = lineObj.GetComponent<RectTransform>();
-                    lineRect.pivot = new Vector2(0f, 0.5f);
+                    if (_nodes.TryGetValue(edgeData.sujeto, out UINode sourceNode) &&
+                        _nodes.TryGetValue(edgeData.objeto, out UINode targetNode))
+                    {
+                        GameObject lineObj = Instantiate(linePrefab, graphContainer);
+                        lineObj.transform.SetAsFirstSibling();
+                        RectTransform lineRect = lineObj.GetComponent<RectTransform>();
+                        lineRect.pivot = new Vector2(0f, 0.5f);
 
-                    _edges.Add(new UIEdge { source = sourceNode, target = targetNode, relation = edgeData.relacion, lineRect = lineRect });
+                        _edges.Add(new UIEdge { source = sourceNode, target = targetNode, relation = edgeData.relacion, lineRect = lineRect });
+                    }
                 }
             }
 

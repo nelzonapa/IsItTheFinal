@@ -33,7 +33,7 @@ namespace ImmersiveGraph.Core
         public TextMeshProUGUI fileRiskText;
 
         // REFERENCIA AL PANEL DEL GRAFO DE CONOCIMIENTO
-        [Header("Grafo de Conocimiento (Punto 1)")]
+        [Header("Grafo de Conocimiento")]
         public KGPanelController kgPanelController;
 
         private void Awake()
@@ -86,6 +86,36 @@ namespace ImmersiveGraph.Core
             if (ExperimentDataLogger.Instance != null)
             {
                 ExperimentDataLogger.Instance.LogEvent("STRATEGY", "Individual Analysis", $"Reading: {data.title}", Vector3.zero);
+            }
+
+            // ==========================================
+            // LOGS Y DIBUJO DEL GRAFO DE CONOCIMIENTO
+            // ==========================================
+            if (kgPanelController != null)
+            {
+                // El panel SIEMPRE se activa al mirar un nodo, para proteger la UI de filtros.
+                kgPanelController.gameObject.SetActive(true);
+
+                KGEdge[] currentKG = null;
+                string[] looseEntities = null;
+
+                // Extraemos la información según el tipo de nodo
+                if (data.type == "file")
+                {
+                    currentKG = data.knowledge_graph;
+                    looseEntities = data.entidades;
+                }
+                else if (data.type == "community" && data.details != null)
+                {
+                    looseEntities = data.details.entidades_frecuentes;
+                }
+
+                // Enviamos ambas listas al constructor del grafo
+                kgPanelController.BuildGraph(currentKG, looseEntities);
+            }
+            else
+            {
+                Debug.LogWarning("[KG System] ADVERTENCIA: Falta asignar el 'KG Panel Controller' en el inspector del Zone3Manager.");
             }
         }
 
@@ -156,33 +186,8 @@ namespace ImmersiveGraph.Core
 
                 var selectable = fileFullText.GetComponent<Interaction.SelectableText>();
                 if (selectable != null) selectable.UpdateOriginalText();
-
             }
             UpdateSelectableContext(filePanel, data.id);
-
-            // ==========================================
-            // LOGS Y DIBUJO DEL GRAFO DE CONOCIMIENTO
-            // ==========================================
-            Debug.Log($"[KG System] Interactuando con archivo: {data.title}");
-
-            if (kgPanelController != null)
-            {
-                if (data.knowledge_graph != null && data.knowledge_graph.Length > 0)
-                {
-                    Debug.Log($"[KG System] -> ¡Grafo de Conocimiento encontrado! Contiene {data.knowledge_graph.Length} relaciones/tripletas. Enviando al panel UI...");
-                    kgPanelController.gameObject.SetActive(true);
-                    kgPanelController.BuildGraph(data.knowledge_graph);
-                }
-                else
-                {
-                    Debug.Log($"[KG System] -> Este archivo no contiene un Grafo de Conocimiento válido o está vacío. Apagando panel UI.");
-                    kgPanelController.gameObject.SetActive(false);
-                }
-            }
-            else
-            {
-                Debug.LogWarning("[KG System] ADVERTENCIA: Se encontró grafo, pero falta asignar el 'KG Panel Controller' en el inspector del Zone3Manager.");
-            }
         }
     }
 }
