@@ -14,6 +14,11 @@ namespace ImmersiveGraph.Visual
         public GameObject nodePrefab;
         public GameObject linePrefab;
 
+        // BOTÓN DE LIMPIEZA
+        [Header("Controles")]
+        [Tooltip("Asigna aquí el botón de la UI para limpiar los filtros")]
+        public Button clearFiltersButton;
+
         [Header("Física Base (Para tamaño 1.0)")]
         public float baseRepulsionForce = 2500f;
         public float baseSpringLength = 150f;
@@ -51,6 +56,21 @@ namespace ImmersiveGraph.Visual
         void Awake()
         {
             if (graphContainer == null) graphContainer = GetComponent<RectTransform>();
+
+            // Vincular el botón de limpieza si existe
+            if (clearFiltersButton != null)
+            {
+                clearFiltersButton.onClick.AddListener(ResetFilters);
+            }
+        }
+
+        // FUNCIÓN PARA EL BOTÓN DE LIMPIEZA
+        public void ResetFilters()
+        {
+            if (H3GraphSpawner.Instance != null)
+            {
+                H3GraphSpawner.Instance.ClearAllHighlights();
+            }
         }
 
         public void ClearGraph()
@@ -150,6 +170,20 @@ namespace ImmersiveGraph.Visual
             TextMeshProUGUI textComp = nodeObj.GetComponentInChildren<TextMeshProUGUI>();
             if (textComp != null) textComp.text = entityName;
 
+
+            // FASE 3: INYECTAR BOTÓN NATIVO C#
+            Button btn = nodeObj.GetComponent<Button>();
+            if (btn == null) btn = nodeObj.AddComponent<Button>();
+
+            // Le decimos al botón que al hacer clic, busque esta entidad en el Grafo 3D
+            btn.onClick.AddListener(() =>
+            {
+                if (H3GraphSpawner.Instance != null)
+                {
+                    H3GraphSpawner.Instance.HighlightNodesByEntity(entityName);
+                }
+            });
+
             _nodes.Add(entityName, new UINode
             {
                 id = entityName,
@@ -224,13 +258,11 @@ namespace ImmersiveGraph.Visual
 
         private void UpdateVisuals()
         {
-            // Asignar las posiciones finales pre-calculadas a los Nodos
             foreach (var node in _nodes.Values)
             {
                 node.rect.anchoredPosition = node.position;
             }
 
-            // Asignar tamaño y rotación correcta a las líneas
             foreach (var edge in _edges)
             {
                 Vector2 startPos = edge.source.position;

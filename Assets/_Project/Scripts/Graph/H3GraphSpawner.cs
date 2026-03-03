@@ -60,6 +60,10 @@ namespace ImmersiveGraph.Visual
         [Header("Feedback de Audio")]
         public AudioClip nodeExpandSound;
 
+        // LISTA GLOBAL DE TODOS LOS NODOS 3D INSTANCIADOS
+        [HideInInspector]
+        public List<GraphNode> allSpawnedNodes = new List<GraphNode>();
+
         void Awake()
         {
             if (Instance == null) Instance = this;
@@ -164,6 +168,7 @@ namespace ImmersiveGraph.Visual
         void GenerateH3Layout(NodeData rootData)
         {
             nodeDatabase.Clear();
+            allSpawnedNodes.Clear();
             RegisterNodeToDatabase(rootData);
 
             foreach (Transform child in transform) Destroy(child.gameObject);
@@ -272,6 +277,9 @@ namespace ImmersiveGraph.Visual
 
             logic.InitializeNode(parentNode, incomingLine);
 
+            // REGISTRAR EL NODO EN LA LISTA GLOBAL
+            allSpawnedNodes.Add(logic);
+
             if (loadingBarPrefab != null)
             {
                 GameObject loadObj = Instantiate(loadingBarPrefab, obj.transform);
@@ -309,6 +317,48 @@ namespace ImmersiveGraph.Visual
             lr.SetPosition(1, start);
             lr.useWorldSpace = true;
             return lineObj;
+        }
+
+        // MOTOR DE BÚSQUEDA Y RESALTE
+        public void HighlightNodesByEntity(string entityName)
+        {
+            // 1. Verificar si la entidad existe en el diccionario global
+            if (!globalEntityDatabase.ContainsKey(entityName)) return;
+
+            // 2. Obtener los IDs de los nodos que contienen esta entidad (Comunidades o Archivos)
+            string[] targetIDs = globalEntityDatabase[entityName].nodos;
+            HashSet<string> targetSet = new HashSet<string>(targetIDs);
+
+            Debug.Log($"[KG Search] Entidad '{entityName}' encontrada en {targetSet.Count} nodos. Aplicando Ghosting y Glow...");
+
+            // 3. Iterar por TODOS los nodos 3D de la mesa
+            foreach (GraphNode node in allSpawnedNodes)
+            {
+                if (node == null || node.myData == null) continue;
+
+                // El nodo ROOT nunca se oculta
+                if (node.nodeType == "root") continue;
+
+                if (targetSet.Contains(node.myData.id))
+                {
+                    // ¡Lo encontró! Lo hace brillar
+                    node.SetVisualState(1);
+                }
+                else
+                {
+                    // No está relacionado, lo vuelve gris/fantasma
+                    node.SetVisualState(2);
+                }
+            }
+        }
+
+        public void ClearAllHighlights()
+        {
+            Debug.Log("[KG Search] Limpiando filtros visuales...");
+            foreach (GraphNode node in allSpawnedNodes)
+            {
+                if (node != null) node.SetVisualState(0); // Vuelve a la normalidad
+            }
         }
     }
 }

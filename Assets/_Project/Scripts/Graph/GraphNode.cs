@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using ImmersiveGraph.Data;
 using ImmersiveGraph.Visual;
 using ImmersiveGraph.Core;
-using ImmersiveGraph.Network; // <-- NUEVO: Para encontrar al HardwareRigSync
+using ImmersiveGraph.Network;
 
 namespace ImmersiveGraph.Interaction
 {
@@ -112,6 +112,26 @@ namespace ImmersiveGraph.Interaction
             }
         }
 
+        // FASE 4: CONTROL VISUAL DEL NODO
+        public void SetVisualState(int stateIndex)
+        {
+            if (_renderer == null) return;
+
+            switch (stateIndex) 
+            {
+                case 0: // NORMAL
+                    _renderer.material.color = _originalColor;
+                    break;
+                case 1: // GLOW (Resaltado Fuerte)
+                    _renderer.material.color = Color.cyan; // Color de resalte llamativo
+                    break;
+                case 2: // GHOST (No relacionado, opaco/gris)
+                    // Nota: Para que el alfa (0.1f) funcione, tu material en Unity debe estar en Rendering Mode: Transparent o Fade.
+                    _renderer.material.color = new Color(0.2f, 0.2f, 0.2f, 0.15f);
+                    break;
+            }
+        }
+
         void Update()
         {
             if (incomingLine != null && parentNodeTransform != null)
@@ -139,17 +159,14 @@ namespace ImmersiveGraph.Interaction
 
             SendToZone3();
 
-            // --- FASE 4: SINCRONIZACIÓN EN RED DE LA SELECCIÓN ---
             if (nodeType == "community" || nodeType == "root")
             {
                 if (HardwareRigSync.Local != null)
                 {
-                    // Estamos online: Le aviso a mi avatar en la red que seleccioné esto
                     HardwareRigSync.Local.SetSelectedNode(myData.id);
                 }
                 else if (miniWorldManager != null)
                 {
-                    // Fallback Offline: Lo resalto solo localmente
                     miniWorldManager.HighlightNodeLocalFallback(myData.id, UserColorPalette.GetLocalPlayerColor());
                 }
             }
