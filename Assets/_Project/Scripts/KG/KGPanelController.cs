@@ -17,8 +17,12 @@ namespace ImmersiveGraph.Visual
         [Header("Controles y Mensajes")]
         [Tooltip("Asigna aquí el botón de la UI para limpiar los filtros")]
         public Button clearFiltersButton;
-        [Tooltip("Asigna un TextMeshPro para mostrar mensajes flotantes (opcional)")]
-        public TextMeshProUGUI warningText; // <--- NUEVO
+
+        [Tooltip("Asigna un TextMeshPro para mostrar mensajes flotantes de advertencia")]
+        public TextMeshProUGUI warningText;
+
+        [Tooltip("Asigna un TextMeshPro para mostrar qué filtro está activo permanentemente")]
+        public TextMeshProUGUI activeFilterText;
 
         [Header("Física Base (Para tamaño 1.0)")]
         public float baseRepulsionForce = 2500f;
@@ -53,7 +57,10 @@ namespace ImmersiveGraph.Visual
         private float _currentScale = 1.0f;
         private float _currentRepulsion;
         private float _currentSpringLength;
-        private Coroutine _warningCoroutine; 
+        private Coroutine _warningCoroutine;
+
+        // --- NUEVO: MEMORIA DEL FILTRO ACTIVO ---
+        private string _currentActiveFilter = "";
 
         void Awake()
         {
@@ -65,14 +72,18 @@ namespace ImmersiveGraph.Visual
                 clearFiltersButton.gameObject.SetActive(false);
             }
 
-            // Ocultamos el texto de advertencia al inicio
             if (warningText != null) warningText.gameObject.SetActive(false);
+            if (activeFilterText != null) activeFilterText.gameObject.SetActive(false);
         }
 
         public void ResetFilters()
         {
+            // Borramos la memoria del filtro
+            _currentActiveFilter = "";
+
             if (H3GraphSpawner.Instance != null) H3GraphSpawner.Instance.ClearAllHighlights();
             if (clearFiltersButton != null) clearFiltersButton.gameObject.SetActive(false);
+            if (activeFilterText != null) activeFilterText.gameObject.SetActive(false);
         }
 
         public void ClearGraph()
@@ -80,14 +91,23 @@ namespace ImmersiveGraph.Visual
             foreach (Transform child in graphContainer)
             {
                 if (clearFiltersButton != null && child == clearFiltersButton.transform) continue;
-                if (warningText != null && child == warningText.transform) continue; // <--- Proteger texto flotante
+                if (warningText != null && child == warningText.transform) continue;
+                if (activeFilterText != null && child == activeFilterText.transform) continue;
 
                 Destroy(child.gameObject);
             }
             _nodes.Clear();
             _edges.Clear();
 
-            if (clearFiltersButton != null) clearFiltersButton.gameObject.SetActive(false);
+            // --- CORRECCIÓN VITAL ---
+            // Solo ocultamos los controles de filtro si NO hay ningún filtro activo en memoria.
+            if (string.IsNullOrEmpty(_currentActiveFilter))
+            {
+                if (clearFiltersButton != null) clearFiltersButton.gameObject.SetActive(false);
+                if (activeFilterText != null) activeFilterText.gameObject.SetActive(false);
+            }
+
+            // El mensaje de advertencia sí debe desaparecer al cambiar de archivo
             if (warningText != null) warningText.gameObject.SetActive(false);
         }
 
@@ -128,7 +148,6 @@ namespace ImmersiveGraph.Visual
                 float angle = i * angleStep;
                 Vector2 startPos = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * spawnRadius;
 
-                // --- NUEVO: Pasamos la cuenta de archivos al crear el nodo ---
                 int fileCount = H3GraphSpawner.Instance != null ? H3GraphSpawner.Instance.GetFileCountForEntity(entityName) : 0;
                 CreateNode(entityName, startPos, fileCount);
                 i++;
@@ -163,9 +182,6 @@ namespace ImmersiveGraph.Visual
             TextMeshProUGUI textComp = nodeObj.GetComponentInChildren<TextMeshProUGUI>();
             if (textComp != null) textComp.text = entityName;
 
-            // ==========================================
-            // --- FASE 4: COLORES SEGÚN RELEVANCIA ---
-            // ==========================================
             bool isGlobalEntity = (fileCount >= 2);
             Image bgImage = nodeObj.GetComponent<Image>();
 
@@ -173,12 +189,10 @@ namespace ImmersiveGraph.Visual
             {
                 if (isGlobalEntity)
                 {
-                    // Está en más de un archivo: Color llamativo (Ej: Cian claro/Verde)
                     bgImage.color = new Color(0.2f, 0.8f, 0.8f, 1f);
                 }
                 else
                 {
-                    // Solo en este archivo: Color oscuro / apagado (Gris plomo)
                     bgImage.color = new Color(0.3f, 0.3f, 0.3f, 1f);
                 }
             }
@@ -190,7 +204,9 @@ namespace ImmersiveGraph.Visual
             {
                 if (isGlobalEntity)
                 {
-                    // Solo filtra si vale la pena (está en 2 o más archivos)
+                    // Guardamos la entidad en la memoria del panel
+                    _currentActiveFilter = entityName;
+
                     if (H3GraphSpawner.Instance != null) H3GraphSpawner.Instance.HighlightNodesByEntity(entityName);
 
                     if (clearFiltersButton != null)
@@ -198,10 +214,16 @@ namespace ImmersiveGraph.Visual
                         clearFiltersButton.gameObject.SetActive(true);
                         clearFiltersButton.transform.SetAsLastSibling();
                     }
+
+                    if (activeFilterText != null)
+                    {
+                        activeFilterText.text = $"Filtro Activo: {entityName}";
+                        activeFilterText.gameObject.SetActive(true);
+                        activeFilterText.transform.SetAsLastSibling();
+                    }
                 }
                 else
                 {
-                    // No filtra, y le avisa al usuario
                     ShowWarningMessage($"La entidad '{entityName}' solo existe en este archivo.");
                 }
             });
@@ -209,9 +231,6 @@ namespace ImmersiveGraph.Visual
             _nodes.Add(entityName, new UINode { id = entityName, rect = rect, position = startPosition, velocity = Vector2.zero });
         }
 
-        // ==========================================
-        // --- MENSAJE FLOTANTE ANIMADO ---
-        // ==========================================
         private void ShowWarningMessage(string msg)
         {
             if (warningText != null)
@@ -229,15 +248,11 @@ namespace ImmersiveGraph.Visual
         {
             warningText.text = msg;
             warningText.gameObject.SetActive(true);
-            warningText.transform.SetAsLastSibling(); // Poner encima de todo
+            warningText.transform.SetAsLastSibling();
 
-            // Opacidad al 100%
             warningText.color = new Color(warningText.color.r, warningText.color.g, warningText.color.b, 1f);
-
-            // Esperar 2 segundos para que el usuario lea
             yield return new WaitForSeconds(2.0f);
 
-            // Desvanecimiento suave
             float alpha = 1f;
             while (alpha > 0f)
             {
@@ -249,7 +264,6 @@ namespace ImmersiveGraph.Visual
             warningText.gameObject.SetActive(false);
         }
 
-        // ... [CalculateLayoutInstantly y UpdateVisuals SE MANTIENEN EXACTAMENTE IGUAL] ...
         private void CalculateLayoutInstantly()
         {
             float safePadding = 50f * _currentScale;
