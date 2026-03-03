@@ -319,14 +319,39 @@ namespace ImmersiveGraph.Visual
             return lineObj;
         }
 
-        // MOTOR DE BÚSQUEDA Y RESALTE
+        // ==========================================
+        // --- MOTOR DE BÚSQUEDA Y RESALTE ---
+        // ==========================================
+
+        // --- NUEVO: Función para saber en cuántos archivos reales está la entidad ---
+        public int GetFileCountForEntity(string entityName)
+        {
+            string key = entityName.ToLower(); // Convertir a minúsculas por tu estructura JSON
+            if (!globalEntityDatabase.ContainsKey(key)) return 0;
+
+            int fileCount = 0;
+            string[] allNodes = globalEntityDatabase[key].nodos;
+
+            foreach (string nodeId in allNodes)
+            {
+                // Ignoramos los nodos de comunidad para contar solo los archivos reales
+                if (!nodeId.ToUpper().Contains("COMUNIDAD") && !nodeId.ToUpper().Contains("ROOT"))
+                {
+                    fileCount++;
+                }
+            }
+            return fileCount;
+        }
+
         public void HighlightNodesByEntity(string entityName)
         {
+            string key = entityName.ToLower(); // Convertir a minúsculas para coincidir con tu JSON
+
             // 1. Verificar si la entidad existe en el diccionario global
-            if (!globalEntityDatabase.ContainsKey(entityName)) return;
+            if (!globalEntityDatabase.ContainsKey(key)) return;
 
             // 2. Obtener los IDs de los nodos que contienen esta entidad (Comunidades o Archivos)
-            string[] targetIDs = globalEntityDatabase[entityName].nodos;
+            string[] targetIDs = globalEntityDatabase[key].nodos;
             HashSet<string> targetSet = new HashSet<string>(targetIDs);
 
             Debug.Log($"[KG Search] Entidad '{entityName}' encontrada en {targetSet.Count} nodos. Aplicando Ghosting y Glow...");
@@ -341,13 +366,11 @@ namespace ImmersiveGraph.Visual
 
                 if (targetSet.Contains(node.myData.id))
                 {
-                    // ¡Lo encontró! Lo hace brillar
-                    node.SetVisualState(1);
+                    node.SetVisualState(1); // Brilla
                 }
                 else
                 {
-                    // No está relacionado, lo vuelve gris/fantasma
-                    node.SetVisualState(2);
+                    node.SetVisualState(2); // Fantasma
                 }
             }
         }
