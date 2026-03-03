@@ -40,8 +40,13 @@ namespace ImmersiveGraph.Interaction
 
         private XRGrabInteractable _interactable;
         private Renderer _renderer;
+
+        // --- SISTEMA DE COLORES Y ESTADOS ---
         private Color _originalColor;
         private Color _hoverColor;
+        private Color _currentColorState; // Guarda el color que DEBERÍA tener según el filtro
+        private int _currentVisualState = 0; // 0=Normal, 1=Glow, 2=Ghost
+        private bool _isHovered = false;
 
         private bool _isGrabbing = false;
         private float _holdTimer = 0f;
@@ -102,6 +107,7 @@ namespace ImmersiveGraph.Interaction
             if (_renderer != null)
             {
                 _originalColor = _renderer.material.color;
+                _currentColorState = _originalColor; // Inicialmente, su estado es el color original
                 _hoverColor = Color.Lerp(_originalColor, Color.white, 0.4f);
             }
 
@@ -112,23 +118,72 @@ namespace ImmersiveGraph.Interaction
             }
         }
 
-        // FASE 4: CONTROL VISUAL DEL NODO
+        // ==========================================
+        // --- FASE 4: CONTROL VISUAL DEL NODO (CORREGIDO) ---
+        // ==========================================
         public void SetVisualState(int stateIndex)
         {
             if (_renderer == null) return;
+            _currentVisualState = stateIndex;
 
-            switch (stateIndex) 
+            switch (stateIndex)
             {
                 case 0: // NORMAL
-                    _renderer.material.color = _originalColor;
+                    _currentColorState = _originalColor;
                     break;
-                case 1: // GLOW (Resaltado Fuerte)
-                    _renderer.material.color = Color.cyan; // Color de resalte llamativo
+                case 1: // GLOW (Resaltado Fuerte - Entidad Encontrada)
+                    _currentColorState = Color.cyan;
                     break;
                 case 2: // GHOST (No relacionado, opaco/gris)
-                    // Nota: Para que el alfa (0.1f) funcione, tu material en Unity debe estar en Rendering Mode: Transparent o Fade.
-                    _renderer.material.color = new Color(0.2f, 0.2f, 0.2f, 0.15f);
+                    _currentColorState = new Color(0.2f, 0.2f, 0.2f, 0.15f);
                     break;
+            }
+
+            // Aplicar el color inmediatamente SOLO si no estamos apuntándole
+            if (!_isHovered)
+            {
+                _renderer.material.color = _currentColorState;
+            }
+        }
+
+        // --- MANEJO INTELIGENTE DEL HOVER ---
+        void OnHoverEnter(HoverEnterEventArgs args)
+        {
+            _isHovered = true;
+
+            if (_renderer != null)
+            {
+                // Si el nodo está en estado Ghost (Gris), le damos un ligero brillo gris para saber que lo estamos tocando,
+                // de lo contrario, le damos el brillo blanco estándar.
+                if (_currentVisualState == 2)
+                {
+                    _renderer.material.color = new Color(0.4f, 0.4f, 0.4f, 0.5f); // Un gris un poco más claro
+                }
+                else if (_currentVisualState == 1)
+                {
+                    _renderer.material.color = Color.white; // Si es cian, brilla blanco
+                }
+                else
+                {
+                    _renderer.material.color = _hoverColor; // Comportamiento normal
+                }
+            }
+
+            if (ExperimentDataLogger.Instance != null && Time.time - _lastHoverLogTime > _logCooldown)
+            {
+                _lastHoverLogTime = Time.time;
+                ExperimentDataLogger.Instance.LogEvent("ATTENTION", "Gaze/Hover", $"Node: {myData.title}", transform.position);
+            }
+        }
+
+        void OnHoverExit(HoverExitEventArgs args)
+        {
+            _isHovered = false;
+
+            // Al salir, no regresa al color original a ciegas, sino al color que DEBE tener según el filtro
+            if (_renderer != null)
+            {
+                _renderer.material.color = _currentColorState;
             }
         }
 
@@ -221,21 +276,5 @@ namespace ImmersiveGraph.Interaction
 
         private float _lastHoverLogTime = 0f;
         private float _logCooldown = 1.0f;
-
-        void OnHoverEnter(HoverEnterEventArgs args)
-        {
-            if (_renderer != null) _renderer.material.color = _hoverColor;
-
-            if (ExperimentDataLogger.Instance != null && Time.time - _lastHoverLogTime > _logCooldown)
-            {
-                _lastHoverLogTime = Time.time;
-                ExperimentDataLogger.Instance.LogEvent("ATTENTION", "Gaze/Hover", $"Node: {myData.title}", transform.position);
-            }
-        }
-
-        void OnHoverExit(HoverExitEventArgs args)
-        {
-            if (_renderer != null) _renderer.material.color = _originalColor;
-        }
     }
 }
