@@ -49,6 +49,9 @@ namespace ImmersiveGraph.Visual
             public UINode target;
             public string relation;
             public RectTransform lineRect;
+
+            // --- Referencia al texto del verbo ---
+            public RectTransform labelRect;
         }
 
         private Dictionary<string, UINode> _nodes = new Dictionary<string, UINode>();
@@ -59,7 +62,6 @@ namespace ImmersiveGraph.Visual
         private float _currentSpringLength;
         private Coroutine _warningCoroutine;
 
-        // --- MEMORIA DEL FILTRO ACTIVO ---
         private string _currentActiveFilter = "";
 
         void Awake()
@@ -78,7 +80,6 @@ namespace ImmersiveGraph.Visual
 
         public void ResetFilters()
         {
-            // Borramos la memoria del filtro
             _currentActiveFilter = "";
 
             if (H3GraphSpawner.Instance != null) H3GraphSpawner.Instance.ClearAllHighlights();
@@ -99,26 +100,21 @@ namespace ImmersiveGraph.Visual
             _nodes.Clear();
             _edges.Clear();
 
-            // Solo ocultamos los controles de filtro si NO hay ningún filtro activo en memoria.
             if (string.IsNullOrEmpty(_currentActiveFilter))
             {
                 if (clearFiltersButton != null) clearFiltersButton.gameObject.SetActive(false);
                 if (activeFilterText != null) activeFilterText.gameObject.SetActive(false);
             }
 
-            // El mensaje de advertencia sí debe desaparecer al cambiar de archivo
             if (warningText != null) warningText.gameObject.SetActive(false);
         }
 
-        // --- ACTUALIZADO: AHORA RECIBE GRAFO Y ENTIDADES SUELTAS ---
         public void BuildGraph(KGEdge[] kgData, string[] extraEntities)
         {
             ClearGraph();
 
-            // El HashSet garantiza que ninguna entidad se repita.
             HashSet<string> uniqueEntities = new HashSet<string>();
 
-            // 1. Añadimos primero todas las entidades que forman parte de relaciones (Grafo)
             if (kgData != null)
             {
                 foreach (var edge in kgData)
@@ -128,7 +124,6 @@ namespace ImmersiveGraph.Visual
                 }
             }
 
-            // 2. Añadimos las entidades sueltas (Si ya existen por el paso 1, el HashSet las ignora automáticamente)
             if (extraEntities != null)
             {
                 foreach (string ent in extraEntities)
@@ -141,10 +136,8 @@ namespace ImmersiveGraph.Visual
             }
 
             int totalNodes = uniqueEntities.Count;
-            // Si el archivo no tiene nada de nada, salimos, pero el panel y el filtro quedan vivos.
             if (totalNodes == 0) return;
 
-            // Cálculo de Escala
             if (totalNodes > nodeThresholdForScaling)
             {
                 _currentScale = (float)nodeThresholdForScaling / (float)totalNodes;
@@ -162,7 +155,6 @@ namespace ImmersiveGraph.Visual
             float angleStep = (Mathf.PI * 2f) / totalNodes;
             float spawnRadius = Mathf.Min(graphContainer.rect.width, graphContainer.rect.height) * 0.25f * _currentScale;
 
-            // Instanciar todos los Nodos
             foreach (string entityName in uniqueEntities)
             {
                 float angle = i * angleStep;
@@ -173,7 +165,6 @@ namespace ImmersiveGraph.Visual
                 i++;
             }
 
-            // Instanciar Líneas (Solo para las que vinieron en kgData)
             if (kgData != null)
             {
                 foreach (var edgeData in kgData)
@@ -186,7 +177,43 @@ namespace ImmersiveGraph.Visual
                         RectTransform lineRect = lineObj.GetComponent<RectTransform>();
                         lineRect.pivot = new Vector2(0f, 0.5f);
 
-                        _edges.Add(new UIEdge { source = sourceNode, target = targetNode, relation = edgeData.relacion, lineRect = lineRect });
+                        // ==========================================
+                        // --- CREACIÓN DINÁMICA DEL TEXTO (VERBO) ---
+                        // ==========================================
+                        GameObject labelObj = new GameObject("Verb_" + edgeData.relacion);
+                        labelObj.transform.SetParent(graphContainer, false);
+
+                        labelObj.transform.SetSiblingIndex(lineObj.transform.GetSiblingIndex() + 1);
+
+                        TextMeshProUGUI labelText = labelObj.AddComponent<TextMeshProUGUI>();
+                        labelText.text = edgeData.relacion;
+
+                        // --- CORRECCIÓN: ESCALADO DE FUENTE ---
+                        // Ajustamos el tamaño base de la letra multiplicándolo por la escala actual
+                        labelText.fontSize = 18f * _currentScale;
+
+                        labelText.color = new Color(1f, 0.9f, 0.5f, 1f);
+                        labelText.alignment = TextAlignmentOptions.Center;
+                        //labelText.enableWordWrapping = false;
+
+                        RectTransform labelRect = labelObj.GetComponent<RectTransform>();
+
+                        // --- CORRECCIÓN: ESCALADO DEL CONTENEDOR DE TEXTO ---
+                        labelRect.sizeDelta = new Vector2(200f * _currentScale, 30f * _currentScale);
+                        labelRect.pivot = new Vector2(0.5f, 0.5f);
+
+                        // Nos aseguramos que inicie horizontal y con la escala general
+                        labelRect.localRotation = Quaternion.identity;
+                        labelRect.localScale = Vector3.one;
+
+                        _edges.Add(new UIEdge
+                        {
+                            source = sourceNode,
+                            target = targetNode,
+                            relation = edgeData.relacion,
+                            lineRect = lineRect,
+                            labelRect = labelRect
+                        });
                     }
                 }
             }
@@ -228,7 +255,6 @@ namespace ImmersiveGraph.Visual
             {
                 if (isGlobalEntity)
                 {
-                    // Guardamos la entidad en la memoria del panel
                     _currentActiveFilter = entityName;
 
                     if (H3GraphSpawner.Instance != null) H3GraphSpawner.Instance.HighlightNodesByEntity(entityName);
@@ -344,9 +370,25 @@ namespace ImmersiveGraph.Visual
                 Vector2 dir = endPos - startPos;
                 float dist = dir.magnitude;
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+
+                // Actualizar la línea
                 edge.lineRect.anchoredPosition = startPos;
                 edge.lineRect.sizeDelta = new Vector2(dist, baseNodeThickness * _currentScale);
                 edge.lineRect.localRotation = Quaternion.Euler(0, 0, angle);
+
+                // ==========================================
+                // --- POSICIONAR EL VERBO (HORIZONTAL SIEMPRE) ---
+                // ==========================================
+                if (edge.labelRect != null)
+                {
+                    // Lo ubicamos exactamente en el punto medio de la línea
+                    Vector2 midPoint = startPos + (dir / 2f);
+                    edge.labelRect.anchoredPosition = midPoint;
+
+                    // --- CORRECCIÓN: FORZAR HORIZONTAL ---
+                    // Mantenemos la rotación siempre en 0, 0, 0 para que no gire con la línea.
+                    edge.labelRect.localRotation = Quaternion.identity;
+                }
             }
         }
     }
