@@ -63,7 +63,12 @@ namespace ImmersiveGraph.Collaboration
             GraphNode rootLogic = realRoot.GetComponent<GraphNode>();
             if (rootLogic == null) return;
 
-            Color rColor = realRoot.GetComponent<Renderer>()?.material.color ?? Color.white;
+            // OPTIMIZACIÓN: sharedMaterial
+            Color rColor = Color.white;
+            Renderer rootRenderer = realRoot.GetComponent<Renderer>();
+            if (rootRenderer != null && rootRenderer.sharedMaterial != null)
+                rColor = rootRenderer.sharedMaterial.color;
+
             GameObject miniRoot = CreateMiniNode(rootLogic.myData.id, Vector3.zero, rColor, 1.5f);
 
             miniNodesMap.Add(rootLogic.myData.id, miniRoot);
@@ -71,7 +76,12 @@ namespace ImmersiveGraph.Collaboration
 
             foreach (GraphNode comm in realCommunities)
             {
-                Color cColor = comm.GetComponent<Renderer>()?.material.color ?? Color.cyan;
+                // OPTIMIZACIÓN: sharedMaterial
+                Color cColor = Color.cyan;
+                Renderer commRenderer = comm.GetComponent<Renderer>();
+                if (commRenderer != null && commRenderer.sharedMaterial != null)
+                    cColor = commRenderer.sharedMaterial.color;
+
                 GameObject miniComm = CreateMiniNode(comm.myData.id, comm.transform.localPosition, cColor, 1.0f);
 
                 miniNodesMap.Add(comm.myData.id, miniComm);
@@ -94,8 +104,8 @@ namespace ImmersiveGraph.Collaboration
             Destroy(mini.GetComponent<Collider>());
 
             Renderer r = mini.GetComponent<Renderer>();
-            if (hologramMaterial != null) r.material = hologramMaterial;
-            r.material.color = color;
+            if (hologramMaterial != null) r.sharedMaterial = hologramMaterial; // OPTIMIZACIÓN
+            r.material.color = color; // Mantenemos .material aquí porque sí necesitamos instanciar este color único
 
             return mini;
         }
@@ -109,8 +119,8 @@ namespace ImmersiveGraph.Collaboration
             lineObj.transform.localScale = Vector3.one;
 
             LineRenderer lr = lineObj.AddComponent<LineRenderer>();
-            if (hologramMaterial != null) lr.material = hologramMaterial;
-            else lr.material = new Material(Shader.Find("Sprites/Default"));
+            if (hologramMaterial != null) lr.sharedMaterial = hologramMaterial; // OPTIMIZACIÓN
+            else lr.sharedMaterial = new Material(Shader.Find("Sprites/Default"));
 
             lr.startWidth = miniLineWidth;
             lr.endWidth = miniLineWidth;
@@ -123,12 +133,15 @@ namespace ImmersiveGraph.Collaboration
 
         void Update()
         {
-            if (!_isBuilt || miniWorldRoot == null) return;
+            if (!_isBuilt || miniWorldRoot == null || HardwareRigSync.Local == null) return;
 
-            var players = FindObjectsByType<HardwareRigSync>(FindObjectsSortMode.None);
-
-            foreach (var p in players)
+            // =========================================================
+            // OPTIMIZACIÓN MÁXIMA: Usar el Registro en vez de FindObjects
+            // =========================================================
+            foreach (var p in SharedWorkspaceTracker.RegisteredAvatars)
             {
+                if (p == null || p.Object == null || !p.Object.IsValid) continue;
+
                 int pId = p.Object.StateAuthority.PlayerId;
 
                 if (!_miniAvatars.ContainsKey(pId)) CreateMiniAvatar(pId);
@@ -153,7 +166,7 @@ namespace ImmersiveGraph.Collaboration
             Destroy(head.GetComponent<Collider>());
 
             Renderer headRenderer = head.GetComponent<Renderer>();
-            if (hologramMaterial != null) headRenderer.material = hologramMaterial;
+            if (hologramMaterial != null) headRenderer.sharedMaterial = hologramMaterial; // OPTIMIZACIÓN
             headRenderer.material.color = playerColor;
 
             GameObject gazeObj = new GameObject("GazeCone3D");
@@ -218,46 +231,43 @@ namespace ImmersiveGraph.Collaboration
         {
             if (!_miniAvatars.TryGetValue(playerId, out MiniAvatarData avatar)) return;
 
-            // Para evitar errores si el jugador local aún no está listo
-            if (HardwareRigSync.Local == null) return;
+            // OPTIMIZACIÓN: Evitar llamadas a InverseTransformPoint usando matemática vectorial directa donde sea posible.
+            Transform myLocalRig = HardwareRigSync.Local.transform;
 
-            // --- CORRECCIÓN MAGISTRAL: ESPACIO LOCAL POR ESCRITORIO ---
-            // 1. Calculamos el "offset" de dónde aparece el grafo en la mesa (Ej: Y + 0.3)
-            Vector3 myGraphLocalOffset = HardwareRigSync.Local.transform.InverseTransformPoint(_realGraphCenter);
+            Vector3 myGraphLocalOffset = myLocalRig.InverseTransformPoint(_realGraphCenter);
 
-            // 2. Calculamos dónde está la cabeza del OTRO jugador respecto a SU mesa
+            // Calculamos dónde está la cabeza del OTRO jugador respecto a SU mesa
             Vector3 theirHeadLocalPos = syncData.transform.InverseTransformPoint(syncData.HeadPos);
 
-            // 3. Posición relativa final para el minimundo
+            // Posición relativa final para el minimundo
             Vector3 relativePos = theirHeadLocalPos - myGraphLocalOffset;
             avatar.root.transform.localPosition = relativePos * avatarDistanceMultiplier;
 
-            // 4. Rotación relativa a su propia mesa
+            // Rotación relativa a su propia mesa
             Quaternion theirHeadLocalRot = Quaternion.Inverse(syncData.transform.rotation) * syncData.HeadRot;
             avatar.head.localRotation = theirHeadLocalRot;
 
             // --- CORRECCIÓN DEL LÁSER: DETECCIÓN SOBRE EL GRAFO DEL OPONENTE ---
-            // Tenemos que calcular el centro del grafo EN LA MESA DEL OTRO JUGADOR
             Vector3 theirGraphCenterGlobal = syncData.transform.TransformPoint(myGraphLocalOffset);
 
             bool isLookingAtGraphArea = false;
             Vector3 toTheirGraphCenter = theirGraphCenterGlobal - syncData.HeadPos;
             Vector3 theirLookDirection = syncData.HeadRot * Vector3.forward;
 
-            // Si el otro jugador mira hacia SU grafo, prendemos su láser en NUESTRO minimundo
             if (Vector3.Dot(toTheirGraphCenter.normalized, theirLookDirection) > 0)
             {
                 float distanceToRay = Vector3.Cross(theirLookDirection, toTheirGraphCenter).magnitude;
                 if (distanceToRay <= graphDetectionRadius) isLookingAtGraphArea = true;
             }
 
-            avatar.gazeConeRenderer.enabled = isLookingAtGraphArea;
-            if (isLookingAtGraphArea)
+            // OPTIMIZACIÓN: Solo acceder al material si hay un cambio de estado en el renderer (evitar setear booleanos redundantes)
+            if (avatar.gazeConeRenderer.enabled != isLookingAtGraphArea)
             {
-                avatar.gazeConeTransform.localScale = new Vector3(gazeConeBaseRadius, gazeConeBaseRadius, gazeConeMaxLength);
-                Color coneColor = usePlayerColorForCone ? UserColorPalette.GetColor(playerId) : customConeColor;
-                coneColor.a = gazeConeAlpha;
-                avatar.gazeConeRenderer.material.color = coneColor;
+                avatar.gazeConeRenderer.enabled = isLookingAtGraphArea;
+                if (isLookingAtGraphArea)
+                {
+                    avatar.gazeConeTransform.localScale = new Vector3(gazeConeBaseRadius, gazeConeBaseRadius, gazeConeMaxLength);
+                }
             }
 
             // --- FASE 4: SINCRONIZACIÓN DE SELECCIÓN (EL RESALTADO) ---
@@ -279,7 +289,6 @@ namespace ImmersiveGraph.Collaboration
             }
         }
 
-        // --- FUNCIONES VISUALES PURAS ---
         private void HighlightNodeVisuals(string nodeId, Color highlightColor)
         {
             if (miniNodesMap.TryGetValue(nodeId, out GameObject node))
@@ -303,7 +312,6 @@ namespace ImmersiveGraph.Collaboration
             }
         }
 
-        // --- FALLBACK OFFLINE ---
         private string _offlineHighlightedNode = "";
 
         public void HighlightNodeLocalFallback(string nodeId, Color highlightColor)
