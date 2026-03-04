@@ -312,12 +312,6 @@ namespace ImmersiveGraph.Visual
                     GameObject kgIcon = Instantiate(kgIndicatorPrefab, obj.transform);
                     kgIcon.transform.localPosition = kgIndicatorOffset;
                     kgIcon.transform.localScale = kgIndicatorScale;
-
-                    // Le inyectamos la animación si no la trae el prefab por defecto
-                    if (kgIcon.GetComponent<FloatingAnim>() == null)
-                    {
-                        kgIcon.AddComponent<FloatingAnim>();
-                    }
                 }
             }
 
