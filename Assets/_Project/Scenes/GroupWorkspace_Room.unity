@@ -1087,7 +1087,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Collaboration.MainGraphCollaborationManager
   remoteUserMarkerPrefab: {fileID: 6348756859386182688, guid: c12c5ccc82f8af74d89ed2a7aa16c757, type: 3}
-  markerOffset: {x: 0, y: 0.05, z: 0}
+  markerOffset: {x: 0, y: 0.1, z: 0}
 --- !u!1 &355704859
 GameObject:
   m_ObjectHideFlags: 0

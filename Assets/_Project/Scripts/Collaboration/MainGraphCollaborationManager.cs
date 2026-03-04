@@ -67,19 +67,35 @@ namespace ImmersiveGraph.Collaboration
 
                 string targetNodeId = avatar.SelectedNodeId.ToString();
 
-                // 4. Verificación de Selección
+                // 4. Verificación de Selección (CON PROTECCIÓN CONTRA REFERENCIAS NULAS)
                 if (string.IsNullOrEmpty(targetNodeId))
                 {
                     if (shouldLog) Debug.Log($"[CollabManager] El compañero (ID: {playerId}) no está agarrando/seleccionando ningún nodo.");
-                    if (_activeMarkers.ContainsKey(playerId)) _activeMarkers[playerId].gameObject.SetActive(false);
+
+                    if (_activeMarkers.TryGetValue(playerId, out CollabUserMarker markerToHide))
+                    {
+                        if (markerToHide != null)
+                        {
+                            markerToHide.gameObject.SetActive(false);
+                        }
+                        else
+                        {
+                            // Limpieza de estado sucio: el objeto se destruyó, lo borramos del diccionario
+                            _activeMarkers.Remove(playerId);
+                        }
+                    }
                     continue;
                 }
+
+                // Limpieza del string por si la red envió espacios invisibles
+                targetNodeId = targetNodeId.Trim();
 
                 // 5. Verificación de Coincidencia en el Diccionario
                 if (H3GraphSpawner.Instance.spawnedNodesMap.TryGetValue(targetNodeId, out GraphNode targetNode))
                 {
-                    // ¡ÉXITO! Se encontró el nodo
-                    if (!_activeMarkers.ContainsKey(playerId))
+                    // ¡ÉXITO! Se encontró el nodo. 
+                    // CONDICIÓN SEGURA: Creamos el cubo si no existe la llave, O si el cubo fue destruido previamente (null).
+                    if (!_activeMarkers.ContainsKey(playerId) || _activeMarkers[playerId] == null)
                     {
                         Debug.Log($"[CollabManager] ¡EXITO! Instanciando nuevo CUBO para el compañero {playerId} en el nodo '{targetNodeId}'.");
                         GameObject newMarkerObj = Instantiate(remoteUserMarkerPrefab, transform);
@@ -90,29 +106,33 @@ namespace ImmersiveGraph.Collaboration
 
                     CollabUserMarker marker = _activeMarkers[playerId];
 
-                    if (!marker.gameObject.activeSelf)
+                    // Doble validación de seguridad antes de activar
+                    if (marker != null && !marker.gameObject.activeSelf)
                     {
                         Debug.Log($"[CollabManager] Reactivando cubo oculto para el compañero {playerId}.");
                         marker.gameObject.SetActive(true);
                     }
 
-                    // Lógica UX de nodos colapsados
-                    GraphNode visualTarget = targetNode;
-                    if (!visualTarget.gameObject.activeInHierarchy && visualTarget.parentNodeTransform != null)
+                    // Lógica UX de nodos colapsados (Intacta)
+                    if (marker != null)
                     {
-                        GraphNode parentNode = visualTarget.parentNodeTransform.GetComponent<GraphNode>();
-                        if (parentNode != null)
+                        GraphNode visualTarget = targetNode;
+                        if (!visualTarget.gameObject.activeInHierarchy && visualTarget.parentNodeTransform != null)
                         {
-                            visualTarget = parentNode;
-                            if (shouldLog) Debug.Log($"[CollabManager] El nodo '{targetNodeId}' está colapsado. Moviendo el cubo al padre '{parentNode.myData.id}'.");
+                            GraphNode parentNode = visualTarget.parentNodeTransform.GetComponent<GraphNode>();
+                            if (parentNode != null)
+                            {
+                                visualTarget = parentNode;
+                                if (shouldLog) Debug.Log($"[CollabManager] El nodo '{targetNodeId}' está colapsado. Moviendo el cubo al padre '{parentNode.myData.id}'.");
+                            }
                         }
+
+                        // Posicionamiento
+                        marker.transform.position = visualTarget.transform.position + markerOffset;
+                        marker.transform.Rotate(Vector3.up, 45f * Time.deltaTime, Space.World);
+
+                        if (shouldLog) Debug.Log($"[CollabManager] El cubo del ID {playerId} está flotando sobre el nodo visual: {visualTarget.name}");
                     }
-
-                    // Posicionamiento
-                    marker.transform.position = visualTarget.transform.position + markerOffset;
-                    marker.transform.Rotate(Vector3.up, 45f * Time.deltaTime, Space.World);
-
-                    if (shouldLog) Debug.Log($"[CollabManager] El cubo del ID {playerId} está flotando sobre el nodo visual: {visualTarget.name}");
                 }
                 else
                 {
