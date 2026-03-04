@@ -48,6 +48,11 @@ namespace ImmersiveGraph.Interaction
         private int _currentVisualState = 0; // 0=Normal, 1=Glow, 2=Ghost
         private bool _isHovered = false;
 
+        // --- NUEVO: SISTEMA DE RESPLANDOR (AURA) LOCAL ---
+        private GameObject _glowObject;
+        private Renderer _glowRenderer;
+        private static GraphNode _currentSelectedLocalNode; // Memoria global para saber qué nodo está seleccionado
+
         private bool _isGrabbing = false;
         private float _holdTimer = 0f;
         private float _activationTime = 4.0f;
@@ -74,6 +79,9 @@ namespace ImmersiveGraph.Interaction
             rb.isKinematic = true;
 
             if (_interactable != null) _interactable.movementType = XRBaseInteractable.MovementType.Kinematic;
+
+            // Creamos el halo de resplandor invisible alrededor del nodo
+            CreateGlowHalo();
         }
 
         void OnEnable()
@@ -107,7 +115,7 @@ namespace ImmersiveGraph.Interaction
             if (_renderer != null)
             {
                 _originalColor = _renderer.material.color;
-                _currentColorState = _originalColor; // Inicialmente, su estado es el color original
+                _currentColorState = _originalColor;
                 _hoverColor = Color.Lerp(_originalColor, Color.white, 0.4f);
             }
 
@@ -118,9 +126,47 @@ namespace ImmersiveGraph.Interaction
             }
         }
 
-        // ==========================================
-        // --- FASE 4: CONTROL VISUAL DEL NODO (CORREGIDO) ---
-        // ==========================================
+        // CREACIÓN DEL HALO (RESPLANDOR) 
+        private void CreateGlowHalo()
+        {
+            _glowObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            _glowObject.name = "LocalSelectionGlow";
+            _glowObject.transform.SetParent(this.transform);
+            _glowObject.transform.localPosition = Vector3.zero;
+
+            // Hacemos el aura un 35% más grande que el nodo para que lo rodee
+            _glowObject.transform.localScale = Vector3.one * 1.35f;
+
+            // MUY IMPORTANTE: Destruimos el collider del brillo para que no interfiera con el láser
+            Destroy(_glowObject.GetComponent<Collider>());
+
+            _glowRenderer = _glowObject.GetComponent<Renderer>();
+
+            // Usamos un shader nativo de Unity (Sprites/Default) que es excelente para brillos transparentes sin configuraciones extra
+            Material glowMat = new Material(Shader.Find("Sprites/Default"));
+            _glowRenderer.material = glowMat;
+
+            // Lo apagamos por defecto
+            _glowObject.SetActive(false);
+        }
+
+        public void SetLocalSelectedGlow(bool isSelected)
+        {
+            if (_glowObject != null)
+            {
+                _glowObject.SetActive(isSelected);
+
+                if (isSelected && HardwareRigSync.Local != null)
+                {
+                    // Obtenemos tu color y le bajamos la opacidad (Alpha) para que parezca un resplandor semitransparente
+                    Color myColor = UserColorPalette.GetColor(HardwareRigSync.Local.Object.StateAuthority.PlayerId);
+                    myColor.a = 0.45f; // 45% de opacidad
+                    _glowRenderer.material.color = myColor;
+                }
+            }
+        }
+
+        // CONTROL VISUAL DEL NODO (INTACTO)
         public void SetVisualState(int stateIndex)
         {
             if (_renderer == null) return;
@@ -131,42 +177,32 @@ namespace ImmersiveGraph.Interaction
                 case 0: // NORMAL
                     _currentColorState = _originalColor;
                     break;
-                case 1: // GLOW (Resaltado Fuerte - Entidad Encontrada)
+                case 1: // GLOW (KG Resaltado)
                     _currentColorState = Color.cyan;
                     break;
-                case 2: // GHOST (No relacionado, opaco/gris)
+                case 2: // GHOST (KG Fantasma)
                     _currentColorState = new Color(0.2f, 0.2f, 0.2f, 0.15f);
                     break;
             }
 
-            // Aplicar el color inmediatamente SOLO si no estamos apuntándole
             if (!_isHovered)
             {
                 _renderer.material.color = _currentColorState;
             }
         }
 
-        // --- MANEJO INTELIGENTE DEL HOVER ---
         void OnHoverEnter(HoverEnterEventArgs args)
         {
             _isHovered = true;
 
             if (_renderer != null)
             {
-                // Si el nodo está en estado Ghost (Gris), le damos un ligero brillo gris para saber que lo estamos tocando,
-                // de lo contrario, le damos el brillo blanco estándar.
                 if (_currentVisualState == 2)
-                {
-                    _renderer.material.color = new Color(0.4f, 0.4f, 0.4f, 0.5f); // Un gris un poco más claro
-                }
+                    _renderer.material.color = new Color(0.4f, 0.4f, 0.4f, 0.5f);
                 else if (_currentVisualState == 1)
-                {
-                    _renderer.material.color = Color.white; // Si es cian, brilla blanco
-                }
+                    _renderer.material.color = Color.white;
                 else
-                {
-                    _renderer.material.color = _hoverColor; // Comportamiento normal
-                }
+                    _renderer.material.color = _hoverColor;
             }
 
             if (ExperimentDataLogger.Instance != null && Time.time - _lastHoverLogTime > _logCooldown)
@@ -180,7 +216,6 @@ namespace ImmersiveGraph.Interaction
         {
             _isHovered = false;
 
-            // Al salir, no regresa al color original a ciegas, sino al color que DEBE tener según el filtro
             if (_renderer != null)
             {
                 _renderer.material.color = _currentColorState;
@@ -214,6 +249,18 @@ namespace ImmersiveGraph.Interaction
 
             SendToZone3();
 
+            // --- APLICACIÓN DEL RESPLANDOR LOCAL ---
+            // 1. Apagamos el resplandor del nodo que teníamos seleccionado antes (si existe)
+            if (_currentSelectedLocalNode != null && _currentSelectedLocalNode != this)
+            {
+                _currentSelectedLocalNode.SetLocalSelectedGlow(false);
+            }
+
+            // 2. Encendemos el resplandor de ESTE nuevo nodo
+            _currentSelectedLocalNode = this;
+            SetLocalSelectedGlow(true);
+            // ----------------------------------------
+
             if (nodeType == "community" || nodeType == "root")
             {
                 if (HardwareRigSync.Local != null)
@@ -222,7 +269,15 @@ namespace ImmersiveGraph.Interaction
                 }
                 else if (miniWorldManager != null)
                 {
-                    miniWorldManager.HighlightNodeLocalFallback(myData.id, UserColorPalette.GetLocalPlayerColor());
+                    miniWorldManager.HighlightNodeLocalFallback(myData.id, Color.white);
+                }
+            }
+            // Si es un archivo, también le avisamos a la red para que el minimundo y el otro gestor lo sepan
+            else if (nodeType == "file")
+            {
+                if (HardwareRigSync.Local != null)
+                {
+                    HardwareRigSync.Local.SetSelectedNode(myData.id);
                 }
             }
         }
