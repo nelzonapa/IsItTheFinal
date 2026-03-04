@@ -25,7 +25,14 @@ namespace ImmersiveGraph.Network
 
         public override void Spawned()
         {
+            ImmersiveGraph.Collaboration.SharedWorkspaceTracker.RegisteredLines.Add(this); // <- NUEVO
             FindTargets();
+        }
+
+        // --- NUEVO ---
+        private void OnDestroy()
+        {
+            ImmersiveGraph.Collaboration.SharedWorkspaceTracker.RegisteredLines.Remove(this);
         }
 
         public void SetConnections(NetworkId start, NetworkId end)

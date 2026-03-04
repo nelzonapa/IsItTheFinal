@@ -40,6 +40,7 @@ namespace ImmersiveGraph.Network
 
         public override void Spawned()
         {
+            ImmersiveGraph.Collaboration.SharedWorkspaceTracker.RegisteredAvatars.Add(this); // <- NUEVO
             // Si yo soy el dueño de este avatar, me asigno como el "Local"
             if (Object.HasStateAuthority || Object.HasInputAuthority)
             {
@@ -50,6 +51,12 @@ namespace ImmersiveGraph.Network
 
                 FindLocalHardware();
             }
+        }
+
+        // --- NUEVO ---
+        private void OnDestroy()
+        {
+            ImmersiveGraph.Collaboration.SharedWorkspaceTracker.RegisteredAvatars.Remove(this);
         }
 
         // --- NUEVO: FUNCIÓN PARA CAMBIAR EL NODO SELECCIONADO ---

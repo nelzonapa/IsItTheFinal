@@ -18,7 +18,15 @@ namespace ImmersiveGraph.Network
 
         public override void Spawned()
         {
+            ImmersiveGraph.Collaboration.SharedWorkspaceTracker.RegisteredTokens.Add(this); // <- NUEVO
             UpdateVisuals();
+        }
+
+
+        // --- NUEVO ---
+        private void OnDestroy()
+        {
+            ImmersiveGraph.Collaboration.SharedWorkspaceTracker.RegisteredTokens.Remove(this);
         }
 
         // Actualizamos la inicialización para recibir el sourceID

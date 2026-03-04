@@ -17,6 +17,7 @@ namespace ImmersiveGraph.Network
 
         public override void Spawned()
         {
+            ImmersiveGraph.Collaboration.SharedWorkspaceTracker.RegisteredPostIts.Add(this); // <- NUEVO
             // Si SOY el dueño, inicializo el texto de red con lo que tenga el input
             if (Object.HasStateAuthority)
             {
@@ -34,6 +35,12 @@ namespace ImmersiveGraph.Network
 
             // Escuchar cambios locales para enviarlos a la red
             inputField.onValueChanged.AddListener(OnLocalInputChanged);
+        }
+
+        // --- NUEVO ---
+        private void OnDestroy()
+        {
+            ImmersiveGraph.Collaboration.SharedWorkspaceTracker.RegisteredPostIts.Remove(this);
         }
 
         public void OnLocalInputChanged(string text)

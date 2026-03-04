@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using ImmersiveGraph.Network;
-using Fusion;
 
 namespace ImmersiveGraph.Collaboration
 {
@@ -36,11 +35,18 @@ namespace ImmersiveGraph.Collaboration
         public Vector2 BoundingBoxCenter { get; private set; }
         public Vector2 BoundingBoxSize { get; private set; }
 
-        // --- NUEVAS VARIABLES DE PRESENCIA (FASE 4) ---
         public bool IsOccupied { get; private set; }
         public string OccupantsNames { get; private set; }
 
         private float _timer = 0f;
+
+        // ==============================================================
+        // --- OPTIMIZACIÓN: REGISTRO ESTÁTICO DE ENTIDADES EN RED ---
+        // ==============================================================
+        public static readonly HashSet<NetworkTokenSync> RegisteredTokens = new HashSet<NetworkTokenSync>();
+        public static readonly HashSet<NetworkPostItSync> RegisteredPostIts = new HashSet<NetworkPostItSync>();
+        public static readonly HashSet<NetworkConnectionLine> RegisteredLines = new HashSet<NetworkConnectionLine>();
+        public static readonly HashSet<HardwareRigSync> RegisteredAvatars = new HashSet<HardwareRigSync>();
 
         private void Awake()
         {
@@ -63,65 +69,70 @@ namespace ImmersiveGraph.Collaboration
             ActiveNodes.Clear();
             ActiveLines.Clear();
 
-            // 1. ESCANEO DE NODOS
-            var allNetworkObjects = FindObjectsByType<NetworkObject>(FindObjectsSortMode.None);
             float minX = float.MaxValue, maxX = float.MinValue;
             float minZ = float.MaxValue, maxZ = float.MinValue;
             bool hasObjects = false;
 
-            foreach (var netObj in allNetworkObjects)
+            // 1. ESCANEO DE TOKENS (Cero GetComponent, Cero FindObjectsByType)
+            foreach (var token in RegisteredTokens)
             {
-                if (Vector3.Distance(netObj.transform.position, transform.position) > collaborativeRadius) continue;
+                if (token == null) continue;
+                if (Vector3.Distance(token.transform.position, transform.position) > collaborativeRadius) continue;
 
-                var tokenSync = netObj.GetComponent<NetworkTokenSync>();
-                var postItSync = netObj.GetComponent<NetworkPostItSync>();
+                hasObjects = true;
+                UpdateBounds(token.transform.position, ref minX, ref maxX, ref minZ, ref maxZ);
 
-                if (tokenSync != null || postItSync != null)
+                Color objColor = ExtractSafeColor(token.GetComponent<Renderer>());
+
+                ActiveNodes.Add(new TrackedNode
                 {
-                    hasObjects = true;
-                    Vector3 pos = netObj.transform.position;
-
-                    if (pos.x < minX) minX = pos.x;
-                    if (pos.x > maxX) maxX = pos.x;
-                    if (pos.z < minZ) minZ = pos.z;
-                    if (pos.z > maxZ) maxZ = pos.z;
-
-                    Color objColor = Color.white;
-                    var r = netObj.GetComponent<Renderer>();
-                    if (r != null && r.material != null) objColor = r.material.color;
-
-                    string extractedText = "";
-                    if (tokenSync != null) extractedText = tokenSync.TokenLabel.ToString();
-                    else if (postItSync != null) extractedText = postItSync.NetworkContent.ToString();
-
-                    ActiveNodes.Add(new TrackedNode
-                    {
-                        id = netObj.Id.ToString(),
-                        type = tokenSync != null ? UIDashboardElement.ElementType.Token : UIDashboardElement.ElementType.PostIt,
-                        position = pos,
-                        color = objColor,
-                        originDocumentId = tokenSync != null ? tokenSync.SourceNodeID.ToString() : "",
-                        textContent = extractedText
-                    });
-                }
+                    id = token.Id.ToString(),
+                    type = UIDashboardElement.ElementType.Token,
+                    position = token.transform.position,
+                    color = objColor,
+                    originDocumentId = token.SourceNodeID.ToString(),
+                    textContent = token.TokenLabel.ToString()
+                });
             }
 
-            // 2. ESCANEO DE LÍNEAS
-            var allLines = FindObjectsByType<NetworkConnectionLine>(FindObjectsSortMode.None);
-            foreach (var line in allLines)
+            // 2. ESCANEO DE POST-ITS
+            foreach (var postIt in RegisteredPostIts)
             {
+                if (postIt == null) continue;
+                if (Vector3.Distance(postIt.transform.position, transform.position) > collaborativeRadius) continue;
+
+                hasObjects = true;
+                UpdateBounds(postIt.transform.position, ref minX, ref maxX, ref minZ, ref maxZ);
+
+                Color objColor = ExtractSafeColor(postIt.GetComponent<Renderer>());
+
+                ActiveNodes.Add(new TrackedNode
+                {
+                    id = postIt.Id.ToString(),
+                    type = UIDashboardElement.ElementType.PostIt,
+                    position = postIt.transform.position,
+                    color = objColor,
+                    originDocumentId = "",
+                    textContent = postIt.NetworkContent.ToString()
+                });
+            }
+
+            // 3. ESCANEO DE LÍNEAS
+            foreach (var line in RegisteredLines)
+            {
+                if (line == null) continue;
                 if (line.StartNodeID.IsValid && line.EndNodeID.IsValid)
                 {
                     ActiveLines.Add(new TrackedLine
                     {
-                        id = line.GetComponent<NetworkObject>().Id.ToString(),
+                        id = line.Id.ToString(),
                         startNodeId = line.StartNodeID.ToString(),
                         endNodeId = line.EndNodeID.ToString()
                     });
                 }
             }
 
-            // 3. CALCULAR BOUNDING BOX
+            // 4. CALCULAR BOUNDING BOX
             if (hasObjects)
             {
                 BoundingBoxCenter = new Vector2((minX + maxX) / 2f, (minZ + maxZ) / 2f);
@@ -133,25 +144,38 @@ namespace ImmersiveGraph.Collaboration
                 BoundingBoxSize = new Vector2(2f, 2f);
             }
 
-            // ==========================================
-            // 4. ESCANEO DE PRESENCIA (FASE 4)
-            // ==========================================
+            // 5. ESCANEO DE PRESENCIA
             IsOccupied = false;
             List<string> occupantList = new List<string>();
-            var allAvatars = FindObjectsByType<HardwareRigSync>(FindObjectsSortMode.None);
 
-            foreach (var avatar in allAvatars)
+            foreach (var avatar in RegisteredAvatars)
             {
-                // Comparamos usando la posición de la cabeza
+                if (avatar == null) continue;
+
                 if (Vector3.Distance(avatar.HeadPos, transform.position) <= collaborativeRadius)
                 {
                     IsOccupied = true;
-                    // Extraemos el ID del jugador
                     int pId = avatar.Object != null && avatar.Object.IsValid ? avatar.Object.InputAuthority.PlayerId : -1;
                     occupantList.Add("Usuario " + pId);
                 }
             }
             OccupantsNames = string.Join(", ", occupantList);
+        }
+
+        // --- Funciones Auxiliares de Optimización ---
+        private void UpdateBounds(Vector3 pos, ref float minX, ref float maxX, ref float minZ, ref float maxZ)
+        {
+            if (pos.x < minX) minX = pos.x;
+            if (pos.x > maxX) maxX = pos.x;
+            if (pos.z < minZ) minZ = pos.z;
+            if (pos.z > maxZ) maxZ = pos.z;
+        }
+
+        private Color ExtractSafeColor(Renderer r)
+        {
+            // Usar sharedMaterial evita crear instancias de memoria basura (Garbage Collection)
+            if (r != null && r.sharedMaterial != null) return r.sharedMaterial.color;
+            return Color.white;
         }
     }
 }
