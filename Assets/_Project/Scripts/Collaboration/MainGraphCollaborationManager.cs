@@ -9,144 +9,117 @@ namespace ImmersiveGraph.Collaboration
 {
     public class MainGraphCollaborationManager : MonoBehaviour
     {
-        [Header("Configuración del Marcador")]
-        [Tooltip("El prefab creado en la Fase 1 (RemoteUserMarker_Prefab)")]
-        public GameObject markerPrefab;
+        [Header("Configuración de Marcadores")]
+        [Tooltip("Arrastra aquí tu RemoteUserMarker_Prefab (El Cubo sin colliders)")]
+        public GameObject remoteUserMarkerPrefab;
 
-        [Tooltip("Distancia vertical a la que se sitúa el marcador sobre el nodo para no taparlo")]
-        public float markerYOffset = 0.35f;
+        [Tooltip("Qué tan alto sobre el nodo debe flotar el cubo")]
+        public Vector3 markerOffset = new Vector3(0, 0.25f, 0);
 
-        // Diccionario para mantener controlados los marcadores de cada jugador remoto
-        private Dictionary<int, CollabUserMarker> _playerMarkers = new Dictionary<int, CollabUserMarker>();
+        // Diccionario para mantener un solo cubo instanciado por cada jugador remoto
+        private Dictionary<int, CollabUserMarker> _activeMarkers = new Dictionary<int, CollabUserMarker>();
+
+        // Temporizador para no inundar la consola de Unity
+        private float _debugTimer = 0f;
 
         void Update()
         {
-            // 1. Seguridad: No hacer nada si el grafo aún no se ha generado
-            if (H3GraphSpawner.Instance == null || H3GraphSpawner.Instance.allSpawnedNodes.Count == 0) return;
-
-            // 2. Buscar todos los jugadores conectados en la sala
-            var players = FindObjectsByType<HardwareRigSync>(FindObjectsSortMode.None);
-
-            foreach (var syncData in players)
+            // Control de logs: true solo una vez por segundo
+            bool shouldLog = false;
+            _debugTimer += Time.deltaTime;
+            if (_debugTimer >= 1.0f)
             {
-                // Ignorar al jugador local (no necesitas ver un cubo encima de lo que tú mismo estás tocando)
-                if (syncData == HardwareRigSync.Local) continue;
-
-                int playerId = syncData.Object.StateAuthority.PlayerId;
-
-                // 3. Crear el marcador para este jugador si es la primera vez que lo detectamos
-                if (!_playerMarkers.ContainsKey(playerId))
-                {
-                    CreateMarkerForPlayer(playerId);
-                }
-
-                // 4. Actualizar la posición exacta del marcador en este frame
-                UpdateMarkerPosition(playerId, syncData);
-            }
-        }
-
-        private void CreateMarkerForPlayer(int playerId)
-        {
-            if (markerPrefab == null) return;
-
-            // Instanciar el cubo como hijo de este Gestor para mantener la jerarquía limpia
-            GameObject markerObj = Instantiate(markerPrefab, transform);
-            markerObj.name = $"Marker_Player_{playerId}";
-
-            CollabUserMarker markerScript = markerObj.GetComponent<CollabUserMarker>();
-            if (markerScript != null)
-            {
-                // Extraer el color oficial del usuario remoto y pintar el cubo
-                Color pColor = UserColorPalette.GetColor(playerId);
-                markerScript.SetupMarker(pColor);
+                shouldLog = true;
+                _debugTimer = 0f;
             }
 
-            _playerMarkers.Add(playerId, markerScript);
-        }
-
-        private void UpdateMarkerPosition(int playerId, HardwareRigSync syncData)
-        {
-            if (!_playerMarkers.TryGetValue(playerId, out CollabUserMarker marker)) return;
-
-            // Leer qué está mirando el compañero a través de la red
-            string targetNodeId = syncData.SelectedNodeId.ToString();
-
-            // Si el compañero no tiene nada seleccionado o está mirando al vacío, apagamos su cubo
-            if (string.IsNullOrEmpty(targetNodeId))
+            // 1. Verificación del Spawner
+            if (H3GraphSpawner.Instance == null || H3GraphSpawner.Instance.spawnedNodesMap.Count == 0)
             {
-                marker.gameObject.SetActive(false);
+                if (shouldLog) Debug.LogWarning("[CollabManager] Esperando... H3GraphSpawner no existe o el mapa de nodos está vacío.");
                 return;
             }
 
-            // Buscar el nodo 3D equivalente en NUESTRA mesa local
-            GraphNode targetNode = FindNodeInScene(targetNodeId);
-
-            if (targetNode != null)
+            // 2. Verificación del Jugador Local
+            if (HardwareRigSync.Local == null)
             {
-                // --- LA MAGIA DE LA CONCIENCIA ASIMÉTRICA ---
-                // Si nuestro compañero está en un archivo, pero nosotros tenemos esa comunidad cerrada,
-                // GetHighestVisibleNode encontrará automáticamente la comunidad cerrada y pondrá el cubo ahí.
-                GraphNode visibleNode = GetHighestVisibleNode(targetNode);
+                if (shouldLog) Debug.LogWarning("[CollabManager] Esperando... El jugador local (HardwareRigSync) aún no se ha asignado.");
+                return;
+            }
 
-                if (visibleNode != null)
+            int localPlayerId = HardwareRigSync.Local.Object.StateAuthority.PlayerId;
+
+            // 3. Verificación de la sala
+            if (shouldLog && SharedWorkspaceTracker.RegisteredAvatars.Count <= 1)
+            {
+                Debug.Log($"[CollabManager] Sala solitaria. Solo hay {SharedWorkspaceTracker.RegisteredAvatars.Count} avatar(es) registrados. Esperando a un compañero...");
+            }
+
+            // Iteramos sobre la lista de avatares en red
+            foreach (var avatar in SharedWorkspaceTracker.RegisteredAvatars)
+            {
+                if (avatar == null || avatar.Object == null || !avatar.Object.IsValid) continue;
+
+                int playerId = avatar.Object.StateAuthority.PlayerId;
+
+                // Ignoramos nuestro propio avatar
+                if (playerId == localPlayerId) continue;
+
+                string targetNodeId = avatar.SelectedNodeId.ToString();
+
+                // 4. Verificación de Selección
+                if (string.IsNullOrEmpty(targetNodeId))
                 {
-                    marker.gameObject.SetActive(true);
+                    if (shouldLog) Debug.Log($"[CollabManager] El compañero (ID: {playerId}) no está agarrando/seleccionando ningún nodo.");
+                    if (_activeMarkers.ContainsKey(playerId)) _activeMarkers[playerId].gameObject.SetActive(false);
+                    continue;
+                }
 
-                    // POSICIONAMIENTO ESTÁTICO Y DIRECTO (Cero animaciones)
-                    marker.transform.position = visibleNode.transform.position + new Vector3(0, markerYOffset, 0);
+                // 5. Verificación de Coincidencia en el Diccionario
+                if (H3GraphSpawner.Instance.spawnedNodesMap.TryGetValue(targetNodeId, out GraphNode targetNode))
+                {
+                    // ¡ÉXITO! Se encontró el nodo
+                    if (!_activeMarkers.ContainsKey(playerId))
+                    {
+                        Debug.Log($"[CollabManager] ¡EXITO! Instanciando nuevo CUBO para el compañero {playerId} en el nodo '{targetNodeId}'.");
+                        GameObject newMarkerObj = Instantiate(remoteUserMarkerPrefab, transform);
+                        CollabUserMarker markerLogic = newMarkerObj.GetComponent<CollabUserMarker>();
+                        markerLogic.SetupMarker(UserColorPalette.GetColor(playerId));
+                        _activeMarkers[playerId] = markerLogic;
+                    }
 
-                    // Mantenemos la rotación fija para que siempre se vea uniforme
-                    marker.transform.rotation = Quaternion.identity;
+                    CollabUserMarker marker = _activeMarkers[playerId];
+
+                    if (!marker.gameObject.activeSelf)
+                    {
+                        Debug.Log($"[CollabManager] Reactivando cubo oculto para el compañero {playerId}.");
+                        marker.gameObject.SetActive(true);
+                    }
+
+                    // Lógica UX de nodos colapsados
+                    GraphNode visualTarget = targetNode;
+                    if (!visualTarget.gameObject.activeInHierarchy && visualTarget.parentNodeTransform != null)
+                    {
+                        GraphNode parentNode = visualTarget.parentNodeTransform.GetComponent<GraphNode>();
+                        if (parentNode != null)
+                        {
+                            visualTarget = parentNode;
+                            if (shouldLog) Debug.Log($"[CollabManager] El nodo '{targetNodeId}' está colapsado. Moviendo el cubo al padre '{parentNode.myData.id}'.");
+                        }
+                    }
+
+                    // Posicionamiento
+                    marker.transform.position = visualTarget.transform.position + markerOffset;
+                    marker.transform.Rotate(Vector3.up, 45f * Time.deltaTime, Space.World);
+
+                    if (shouldLog) Debug.Log($"[CollabManager] El cubo del ID {playerId} está flotando sobre el nodo visual: {visualTarget.name}");
                 }
                 else
                 {
-                    marker.gameObject.SetActive(false);
+                    // ERROR CRÍTICO: El ID viajó por la red, pero no existe en tu mapa local
+                    if (shouldLog) Debug.LogError($"[CollabManager] ERROR DE MAPA: El compañero {playerId} seleccionó el nodo '{targetNodeId}', pero ese ID NO existe en tu spawnedNodesMap.");
                 }
             }
-            else
-            {
-                marker.gameObject.SetActive(false);
-            }
-        }
-
-        /// <summary>
-        /// Busca un nodo específico por su ID dentro de todos los nodos instanciados en la escena.
-        /// </summary>
-        private GraphNode FindNodeInScene(string nodeId)
-        {
-            foreach (GraphNode node in H3GraphSpawner.Instance.allSpawnedNodes)
-            {
-                if (node != null && node.myData != null && node.myData.id == nodeId)
-                {
-                    return node;
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Sube por la jerarquía del grafo hasta encontrar un nodo que esté visible actualmente.
-        /// Soluciona el problema de los nodos colapsados.
-        /// </summary>
-        private GraphNode GetHighestVisibleNode(GraphNode startNode)
-        {
-            GraphNode currentNode = startNode;
-
-            // Mientras el nodo actual esté "apagado" (colapsado por el usuario local)
-            while (currentNode != null && !currentNode.gameObject.activeInHierarchy)
-            {
-                if (currentNode.parentNodeTransform != null)
-                {
-                    // Subimos un nivel hacia el padre (Ej. de Archivo -> Comunidad)
-                    currentNode = currentNode.parentNodeTransform.GetComponent<GraphNode>();
-                }
-                else
-                {
-                    break; // Llegamos a la raíz o el árbol está roto
-                }
-            }
-
-            return currentNode;
         }
     }
 }

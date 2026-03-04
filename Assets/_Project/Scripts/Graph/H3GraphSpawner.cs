@@ -67,9 +67,13 @@ namespace ImmersiveGraph.Visual
         [Header("Feedback de Audio")]
         public AudioClip nodeExpandSound;
 
-        // LISTA GLOBAL DE TODOS LOS NODOS 3D INSTANCIADOS
+                // LISTA GLOBAL DE TODOS LOS NODOS 3D INSTANCIADOS
         [HideInInspector]
         public List<GraphNode> allSpawnedNodes = new List<GraphNode>();
+
+        // MAPA O(1) PARA BÚSQUEDA INSTANTÁNEA
+        [HideInInspector]
+        public Dictionary<string, GraphNode> spawnedNodesMap = new Dictionary<string, GraphNode>();
 
         void Awake()
         {
@@ -176,6 +180,7 @@ namespace ImmersiveGraph.Visual
         {
             nodeDatabase.Clear();
             allSpawnedNodes.Clear();
+            spawnedNodesMap.Clear(); // optimiza
             RegisterNodeToDatabase(rootData);
 
             foreach (Transform child in transform) Destroy(child.gameObject);
@@ -285,6 +290,7 @@ namespace ImmersiveGraph.Visual
             logic.InitializeNode(parentNode, incomingLine);
 
             allSpawnedNodes.Add(logic);
+            spawnedNodesMap[data.id] = logic; // optimiza
 
             if (loadingBarPrefab != null)
             {

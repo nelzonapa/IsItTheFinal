@@ -8,21 +8,39 @@ namespace ImmersiveGraph.Collaboration
         [Tooltip("El Renderer del objeto 3D que cambiará de color.")]
         public Renderer markerRenderer;
 
+        [Header("Efecto de Brillo (Glow)")]
+        [Tooltip("Multiplicador de intensidad para el brillo HDR. Súbelo si quieres más luz.")]
+        public float glowIntensity = 3.0f;
+
+        private MaterialPropertyBlock _propBlock;
+
         /// <summary>
-        /// Aplica el color del usuario remoto al marcador.
+        /// Aplica el color del usuario remoto y genera emisión HDR (Optimizado O(1)).
         /// </summary>
         public void SetupMarker(Color userColor)
         {
             if (markerRenderer != null)
             {
-                // Al modificar '.material', Unity crea automáticamente una instancia 
-                // única de este material, evitando que todos los cubos cambien a la vez.
-                markerRenderer.material.color = userColor;
+                if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
 
-                // Opcional: Si usas un material transparente/holográfico, 
-                // asegúrate de mantener el Alpha (transparencia) original del material.
-                // Color finalColor = new Color(userColor.r, userColor.g, userColor.b, markerRenderer.material.color.a);
-                // markerRenderer.material.color = finalColor;
+                markerRenderer.GetPropertyBlock(_propBlock);
+
+                // 1. Asignar el color base (Cubrimos tanto el motor clásico como URP)
+                _propBlock.SetColor("_Color", userColor);
+                _propBlock.SetColor("_BaseColor", userColor);
+
+                // 2. Crear el color HDR multiplicando por la intensidad para el Glow
+                Color hdrGlowColor = new Color(
+                    userColor.r * glowIntensity,
+                    userColor.g * glowIntensity,
+                    userColor.b * glowIntensity,
+                    1f
+                );
+
+                // 3. Inyectar el brillo en el canal de Emisión
+                _propBlock.SetColor("_EmissionColor", hdrGlowColor);
+
+                markerRenderer.SetPropertyBlock(_propBlock);
             }
             else
             {
