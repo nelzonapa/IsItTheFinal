@@ -387,18 +387,6 @@ PrefabInstance:
       value: NetworkFinisherButton
       objectReference: {fileID: 0}
     - target: {fileID: 8938481160725371547, guid: bbee5d4be87cfb24fa9f07c7adb88fd3, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8938481160725371547, guid: bbee5d4be87cfb24fa9f07c7adb88fd3, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8938481160725371547, guid: bbee5d4be87cfb24fa9f07c7adb88fd3, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.18950002
-      objectReference: {fileID: 0}
-    - target: {fileID: 8938481160725371547, guid: bbee5d4be87cfb24fa9f07c7adb88fd3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 74.18678
       objectReference: {fileID: 0}
@@ -1270,7 +1258,7 @@ Transform:
   m_GameObject: {fileID: 440981744}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 71.15778, y: 1.91202, z: -9120.508}
+  m_LocalPosition: {x: 72.676, y: 1.91202, z: -9120.508}
   m_LocalScale: {x: 0.4, y: 0.01, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1299,6 +1287,22 @@ PrefabInstance:
     - target: {fileID: 1861052815609057959, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_Name
       value: SmartDesk
+      objectReference: {fileID: 0}
+    - target: {fileID: 2527375261398012341, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3119671140305070326, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3119671140305070326, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3119671140305070326, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1869,7 +1873,7 @@ Transform:
   m_GameObject: {fileID: 846257589}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 68.986786, y: 1.92802, z: -9120.532}
+  m_LocalPosition: {x: 70.285, y: 1.92802, z: -9120.532}
   m_LocalScale: {x: 0.4, y: 0.01, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -543,8 +543,8 @@ MonoBehaviour:
   successMessageObject: {fileID: 7910023840525283079}
   statusText: {fileID: 0}
   successSound: {fileID: 8300000, guid: 50b31dc3902dee84f9afe169c7c33d11, type: 3}
-  quitAppAfterDelay: 0
-  delayToQuit: 5
+  quitAppAfterDelay: 1
+  delayToQuit: 2
 --- !u!82 &8313637681067223233
 AudioSource:
   m_ObjectHideFlags: 0

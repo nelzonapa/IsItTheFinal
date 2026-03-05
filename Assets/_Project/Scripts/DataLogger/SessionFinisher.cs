@@ -1,6 +1,7 @@
 using UnityEngine;
-using UnityEngine.UI; // Para botones UI estándar
-using TMPro; // Para TextMeshPro
+using UnityEngine.UI;
+using TMPro;
+using Fusion; // <-- NUEVO: Importamos la librería de red para manejar la desconexión
 
 namespace ImmersiveGraph.Data
 {
@@ -8,7 +9,7 @@ namespace ImmersiveGraph.Data
     public class SessionFinisher : MonoBehaviour
     {
         [Header("Referencias del Botón")]
-        public Button uiButton; // Tu botón actual
+        public Button uiButton;
 
         [Header("Feedback de Éxito")]
         [Tooltip("El Panel o Canvas que contiene el mensaje de 'Datos Guardados'")]
@@ -31,30 +32,23 @@ namespace ImmersiveGraph.Data
         {
             _audioSource = GetComponent<AudioSource>();
 
-            // Configurar botón UI
             if (uiButton != null)
             {
                 uiButton.onClick.AddListener(OnFinishClicked);
             }
 
-            // Asegurarnos que el mensaje empiece apagado
             if (successMessageObject != null) successMessageObject.SetActive(false);
         }
 
         public void OnFinishClicked()
         {
-            if (_isFinished) return; // Evitar doble clic
+            if (_isFinished) return;
 
             // 1. LLAMAR AL LOGGER (Guardar todo)
             if (ExperimentDataLogger.Instance != null)
             {
-                // Métrica de tiempo final
                 ExperimentDataLogger.Instance.LogEvent("SYSTEM", "SESSION_FINISHED_BY_USER", "Button Pressed", Vector3.zero);
-
-                // Exportar JSON
                 ExperimentDataLogger.Instance.ExportFinalGraphState();
-
-                // Guardar CSV
                 ExperimentDataLogger.Instance.SaveLogsToDisk();
 
                 Debug.Log("--- EXPERIMENTO FINALIZADO Y GUARDADO ---");
@@ -63,7 +57,7 @@ namespace ImmersiveGraph.Data
             {
                 Debug.LogError("Error: No se encontró ExperimentDataLogger.");
                 if (statusText != null) statusText.text = "Error: No se encontró el Logger.";
-                return; // Si falla el logger, quizás no debamos mostrar éxito
+                return;
             }
 
             // 2. FEEDBACK VISUAL Y AUDITIVO
@@ -74,29 +68,24 @@ namespace ImmersiveGraph.Data
         {
             _isFinished = true;
 
-            // A. Sonido
             if (_audioSource != null && successSound != null)
             {
                 _audioSource.PlayOneShot(successSound);
             }
 
-            // B. Desactivar el botón para que no le den click otra vez
             if (uiButton != null)
             {
                 uiButton.interactable = false;
-                // Cambiar color a verde visualmente
                 var colors = uiButton.colors;
-                colors.disabledColor = new Color(0.2f, 0.8f, 0.2f); // Verde
+                colors.disabledColor = new Color(0.2f, 0.8f, 0.2f);
                 uiButton.colors = colors;
             }
 
-            // C. Mostrar el Mensaje en Pantalla/Mesa
             if (successMessageObject != null)
             {
                 successMessageObject.SetActive(true);
             }
 
-            // D. Salir de la App (Opcional)
             if (quitAppAfterDelay)
             {
                 StartCoroutine(QuitCoroutine());
@@ -105,14 +94,29 @@ namespace ImmersiveGraph.Data
 
         System.Collections.IEnumerator QuitCoroutine()
         {
-            if (statusText != null) statusText.text += $"\nCerrando en {delayToQuit} segundos...";
+            if (statusText != null) statusText.text += $"\nDesconectando de la red en {delayToQuit} segundos...";
 
             yield return new WaitForSeconds(delayToQuit);
 
-            Debug.Log("Cerrando Aplicación...");
+            Debug.Log("Desconectando al usuario local de la sesión...");
+
+            // --- NUEVO: Desconexión elegante y local ---
+            // Buscamos el NetworkRunner activo. Es seguro usar FindFirstObjectByType aquí 
+            // porque solo ocurre una vez al final de la sesión, no afecta el rendimiento (O(1) en ejecución continua no aplica aquí).
+            NetworkRunner runner = FindFirstObjectByType<NetworkRunner>();
+            if (runner != null && runner.IsRunning)
+            {
+                // Shutdown() desconecta a ESTE cliente enviando un mensaje de despedida al servidor.
+                // Los demás usuarios seguirán en su mundo sin interrupciones y verán desaparecer el avatar inmediatamente.
+                runner.Shutdown();
+            }
+
+            // Damos un pequeño frame de gracia (medio segundo) para que el paquete de desconexión viaje por la red antes de matar la app
+            yield return new WaitForSeconds(0.5f);
+
+            Debug.Log("Cerrando Aplicación VR...");
             Application.Quit();
 
-            // Nota: Application.Quit() no funciona en el Editor de Unity, solo en la Build.
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
