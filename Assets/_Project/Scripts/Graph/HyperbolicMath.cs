@@ -112,7 +112,7 @@ namespace ImmersiveGraph.Visual
             float angleStep = arcAngle / Mathf.Max(1, columns - 1);
 
             // 3. Definir altura de las filas
-            float rowHeight = 2.0f; // Distancia vertical entre nodos (30cm)
+            float rowHeight = 3.0f; // Distancia vertical entre nodos (30cm)
             // Calculamos el inicio para que el bloque quede centrado verticalmente
             float startHeight = -((rows - 1) * rowHeight) / 2f;
 
