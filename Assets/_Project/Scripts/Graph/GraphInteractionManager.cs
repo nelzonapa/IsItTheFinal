@@ -10,6 +10,7 @@ namespace ImmersiveGraph.Interaction
         [Header("Configuración Cielo (Contexto)")]
         [Tooltip("A dónde sube el Root (relativo a la mesa).")]
         public Vector3 skyPositionOffset = new Vector3(0, 1.6f, 1.5f);
+        public Vector3 skyRotationOffset = new Vector3(-20, 42, 0);
         [Tooltip("Escala del Root en el cielo.")]
         public float skyScale = 2.0f; // No lo hagas muy gigante o se verá pixelado
         [Tooltip("Radio del abanico/arco en el cielo.")]
@@ -123,9 +124,26 @@ namespace ImmersiveGraph.Interaction
                 float t = Mathf.SmoothStep(0, 1, timer / animationDuration);
 
                 // A. Mover Root al Cielo
-                _rootNode.localPosition = Vector3.Lerp(startRootPos, _originalRootPos + skyPositionOffset, t);
-                _rootNode.localScale = Vector3.Lerp(startRootScale, _originalRootScale * skyScale, t);
+                // Posición
+                _rootNode.localPosition = Vector3.Lerp(
+                    startRootPos,
+                    _originalRootPos + skyPositionOffset,
+                    t
+                );
 
+                // Rotación
+                _rootNode.localRotation = Quaternion.Lerp(
+                    startCommRot,
+                    Quaternion.Euler(skyRotationOffset),
+                    t
+                );
+
+                // Escala
+                _rootNode.localScale = Vector3.Lerp(
+                    startRootScale,
+                    _originalRootScale * skyScale,
+                    t
+                );
                 // B. Mover Comunidad a la Mesa (Posición Fija)
                 targetCommunity.transform.localPosition = Vector3.Lerp(startCommPos, tableFocusPosition, t);
                 targetCommunity.transform.localRotation = Quaternion.Lerp(startCommRot, Quaternion.identity, t);
