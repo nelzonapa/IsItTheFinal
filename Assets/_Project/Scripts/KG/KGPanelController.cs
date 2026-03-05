@@ -57,7 +57,7 @@ namespace ImmersiveGraph.Visual
         private Dictionary<string, UINode> _nodes = new Dictionary<string, UINode>();
         private List<UIEdge> _edges = new List<UIEdge>();
 
-        private float _currentScale = 1.0f;
+        private float _currentScale = 5.0f;
         private float _currentRepulsion;
         private float _currentSpringLength;
         private Coroutine _warningCoroutine;
