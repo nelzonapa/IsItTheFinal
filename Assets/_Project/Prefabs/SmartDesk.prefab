@@ -228,7 +228,7 @@ Transform:
   m_GameObject: {fileID: 144407537680031910}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.22, y: -0.931, z: 0}
+  m_LocalPosition: {x: 0.22, y: -1.054, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -416,10 +416,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Collaboration.MiniWorldManager
   miniWorldRoot: {fileID: 2534936418959269404}
-  scaleFactor: 0.025
-  avatarDistanceMultiplier: 5
-  graphDetectionRadius: 1.5
-  gazeConeMaxLength: 5
+  scaleFactor: 0.01
+  avatarDistanceMultiplier: 8
+  graphDetectionRadius: 5
+  gazeConeMaxLength: 15
   gazeConeBaseRadius: 1
   usePlayerColorForCone: 0
   customConeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -2383,7 +2383,7 @@ Transform:
   m_GameObject: {fileID: 3663433614703408737}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.028, y: 0.85, z: -0.43}
+  m_LocalPosition: {x: -2.028, y: 1.089, z: -0.43}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
