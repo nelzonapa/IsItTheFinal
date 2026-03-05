@@ -15,7 +15,7 @@ namespace ImmersiveGraph.Collaboration
         private MaterialPropertyBlock _propBlock;
 
         /// <summary>
-        /// Aplica el color del usuario remoto y genera emisión HDR (Optimizado O(1)).
+        /// Aplica el color del usuario remoto, fuerza la opacidad y genera emisión HDR.
         /// </summary>
         public void SetupMarker(Color userColor)
         {
@@ -23,9 +23,14 @@ namespace ImmersiveGraph.Collaboration
             {
                 if (_propBlock == null) _propBlock = new MaterialPropertyBlock();
 
+                // Forzar opacidad total
+                // Si la paleta devuelve un color transparente (a = 0), el objeto desaparece.
+                // Lo forzamos a 1 (100% opaco) para garantizar que se renderice en pantalla.
+                userColor.a = 1.0f;
+
                 markerRenderer.GetPropertyBlock(_propBlock);
 
-                // 1. Asignar el color base (Cubrimos tanto el motor clásico como URP)
+                // 1. Asignar el color base sólido
                 _propBlock.SetColor("_Color", userColor);
                 _propBlock.SetColor("_BaseColor", userColor);
 
@@ -34,10 +39,10 @@ namespace ImmersiveGraph.Collaboration
                     userColor.r * glowIntensity,
                     userColor.g * glowIntensity,
                     userColor.b * glowIntensity,
-                    1f
+                    1.0f
                 );
 
-                // 3. Inyectar el brillo en el canal de Emisión
+                // 3. Inyectar el brillo
                 _propBlock.SetColor("_EmissionColor", hdrGlowColor);
 
                 markerRenderer.SetPropertyBlock(_propBlock);
