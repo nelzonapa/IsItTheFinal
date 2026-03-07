@@ -421,7 +421,7 @@ MonoBehaviour:
   graphDetectionRadius: 5
   gazeConeMaxLength: 15
   gazeConeBaseRadius: 1
-  usePlayerColorForCone: 0
+  usePlayerColorForCone: 1
   customConeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   gazeConeAlpha: 0.3
   hologramMaterial: {fileID: 2100000, guid: ce31e88767174154d85658826679b29d, type: 2}
@@ -2382,7 +2382,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3663433614703408737}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.028, y: 1.089, z: -0.43}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3064,13 +3064,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681373145530603542}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: -0.38268343, z: 0, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4187504857660638696}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -45, z: 0}
 --- !u!1 &4915472041934677329
 GameObject:
   m_ObjectHideFlags: 0
@@ -4423,13 +4423,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7811330940087541257}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: -0.38268343, z: 0, w: 0.92387956}
   m_LocalPosition: {x: -2.802, y: 1.72, z: 1.215}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9013347094446411954}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -45, z: 0}
 --- !u!33 &6441179205116000431
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -4608,10 +4608,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d2947455fef744abd6f4b4ff0a1b42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.GraphInteractionManager
-  vaultPositionOffset: {x: -5, y: 1.5, z: 5}
+  vaultPositionOffset: {x: -3, y: 2.5, z: 3}
   vaultScale: 3.5
-  tableFocusPosition: {x: 15, y: -2.16, z: -15}
-  animationDuration: 1.5
+  tableFocusPosition: {x: 16, y: -2.5, z: -16}
+  animationDuration: 3
 --- !u!114 &3727908263082871224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4634,12 +4634,14 @@ MonoBehaviour:
   nodeUIPrefab: {fileID: 152192296721054117, guid: 15505e98cc1d3d242b872ad45cf7b8ba, type: 3}
   loadingBarPrefab: {fileID: 3595480536926159497, guid: 3087918ec9e8aa74d81876d091452f98, type: 3}
   reviewedMarkerPrefab: {fileID: 1102540967185720030, guid: cc31e57de48da5c4786d65f3671f37ae, type: 3}
+  initialMiniatureScale: 0.2
   kgIndicatorPrefab: {fileID: 4232482797655884062, guid: bb1a79228b3144a4aa93beb64644c3af, type: 3}
   kgIndicatorOffset: {x: 0, y: 0.8, z: 0}
   kgIndicatorScale: {x: 0.1, y: 0.1, z: 0.1}
   markerOffset: {x: 0.36, y: 0.49, z: 0}
   markerScale: {x: 0.5, y: 0.5, z: 0.5}
-  communityOrbitRadius: 10
+  communityMiniatureRadius: 3
+  communityExpandedRadius: 5
   fileOrbitRadius: 10
   lineMaterial: {fileID: 2100000, guid: 0fcf4715c091eda4f97e84803e479e04, type: 2}
   lineWidth: 0.005

@@ -38,9 +38,11 @@ namespace ImmersiveGraph.Visual
         public GameObject loadingBarPrefab;
         public GameObject reviewedMarkerPrefab;
 
-        // --- NUEVO PUNTO 6: INDICADOR KG ---
-        [Header("Indicador Grafo de Conocimiento (Punto 6)")]
-        [Tooltip("Prefab del ícono 3D que flotará sobre los archivos con KG")]
+        [Header("Escala Inicial (Mesa)")]
+        [Tooltip("Escala del planeta miniatura sobre la mesa. 0.3 = 30% del tamaño real.")]
+        public float initialMiniatureScale = 0.3f;
+
+        [Header("Indicador Grafo de Conocimiento")]
         public GameObject kgIndicatorPrefab;
         public Vector3 kgIndicatorOffset = new Vector3(0, 0.35f, 0);
         public Vector3 kgIndicatorScale = new Vector3(0.1f, 0.1f, 0.1f);
@@ -49,9 +51,14 @@ namespace ImmersiveGraph.Visual
         public Vector3 markerOffset = new Vector3(0, 0.25f, 0);
         public Vector3 markerScale = new Vector3(0.2f, 0.2f, 0.2f);
 
-        [Header("Layout (Distancias)")]
-        public float communityOrbitRadius = 0.6f;
-        public float fileOrbitRadius = 0.25f;
+        // --- NUEVAS VARIABLES DE RADIO ---
+        [Header("Layout Orgánico (Force-Directed)")]
+        [Tooltip("Radio de separación cuando las comunidades están en la MESA (miniatura).")]
+        public float communityMiniatureRadius = 0.4f;
+        [Tooltip("Radio de separación cuando las comunidades forman la BÓVEDA en el fondo.")]
+        public float communityExpandedRadius = 1.2f;
+        [Tooltip("Qué tan dispersos están los archivos alrededor de su comunidad.")]
+        public float fileOrbitRadius = 0.35f;
 
         [Header("Estilo de Líneas")]
         public Material lineMaterial;
@@ -67,11 +74,9 @@ namespace ImmersiveGraph.Visual
         [Header("Feedback de Audio")]
         public AudioClip nodeExpandSound;
 
-                // LISTA GLOBAL DE TODOS LOS NODOS 3D INSTANCIADOS
         [HideInInspector]
         public List<GraphNode> allSpawnedNodes = new List<GraphNode>();
 
-        // MAPA O(1) PARA BÚSQUEDA INSTANTÁNEA
         [HideInInspector]
         public Dictionary<string, GraphNode> spawnedNodesMap = new Dictionary<string, GraphNode>();
 
@@ -94,7 +99,6 @@ namespace ImmersiveGraph.Visual
             if (!string.IsNullOrEmpty(indexJsonContent))
             {
                 ParseGlobalIndexNative(indexJsonContent);
-                Debug.Log($"[KG System] Índice global cargado con {globalEntityDatabase.Count} entidades.");
             }
 
             string graphFilePath = Path.Combine(Application.streamingAssetsPath, jsonFileName);
@@ -144,7 +148,6 @@ namespace ImmersiveGraph.Visual
                 if (keyEnd == -1) break;
 
                 string key = jsonText.Substring(keyStart + 1, keyEnd - keyStart - 1);
-
                 int objStart = jsonText.IndexOf('{', keyEnd + 1);
                 if (objStart == -1) break;
 
@@ -165,13 +168,11 @@ namespace ImmersiveGraph.Visual
                 }
 
                 string objJson = jsonText.Substring(objStart, objEnd - objStart);
-
                 GlobalEntityData data = JsonUtility.FromJson<GlobalEntityData>(objJson);
                 if (data != null && !string.IsNullOrEmpty(data.nombre_original))
                 {
                     globalEntityDatabase[key] = data;
                 }
-
                 i = objEnd;
             }
         }
@@ -180,7 +181,7 @@ namespace ImmersiveGraph.Visual
         {
             nodeDatabase.Clear();
             allSpawnedNodes.Clear();
-            spawnedNodesMap.Clear(); // optimiza
+            spawnedNodesMap.Clear();
             RegisterNodeToDatabase(rootData);
 
             foreach (Transform child in transform) Destroy(child.gameObject);
@@ -189,9 +190,11 @@ namespace ImmersiveGraph.Visual
 
             if (rootData.children == null) return;
 
-            int commCount = rootData.children.Count;
-            Vector3[] commPositions = HyperbolicMath.GetFibonacciSphere(commCount, communityOrbitRadius);
+            // --- FASE 3: APLICAMOS EL ALGORITMO CON EL RADIO DE LA MESA (Miniatura) ---
+            Vector3[] commPositions = SimulateOrganicForceDirectedLayout(rootData.children, communityMiniatureRadius);
+
             List<GraphNode> createdCommunities = new List<GraphNode>();
+            int commCount = rootData.children.Count;
 
             for (int i = 0; i < commCount; i++)
             {
@@ -208,7 +211,8 @@ namespace ImmersiveGraph.Visual
                 {
                     int fileCount = commData.children.Count;
                     Vector3 directionOut = commObj.transform.localPosition.normalized;
-                    Vector3[] filePositions = HyperbolicMath.GetOrientedHemisphere(fileCount, fileOrbitRadius, directionOut);
+
+                    Vector3[] filePositions = SimulateOrganicFileCloud(fileCount, fileOrbitRadius, directionOut);
 
                     for (int j = 0; j < fileCount; j++)
                     {
@@ -227,23 +231,83 @@ namespace ImmersiveGraph.Visual
                 if (commLogic != null) commLogic.InitializeNode(rootObj.transform, lineToComm.GetComponent<LineRenderer>());
             }
 
-            if (interactionManager != null) interactionManager.InitializeGraph(rootObj.transform);
-            if (miniWorldManager != null) miniWorldManager.BuildMiniatureFromRealGraph(rootObj.transform, createdCommunities);
+            rootObj.transform.localScale = new Vector3(initialMiniatureScale, initialMiniatureScale, initialMiniatureScale);
 
-            // ==========================================
-            // LOG DE VERIFICACIÓN GLOBAL DE GRAFOS
-            // ==========================================
-            int filesWithKG = 0;
-            int totalTriplets = 0;
-            foreach (var kvp in nodeDatabase)
+            // PASAMOS AMBOS RADIOS AL MANAGER PARA LA ANIMACIÓN
+            if (interactionManager != null) interactionManager.InitializeGraph(rootObj.transform, communityMiniatureRadius, communityExpandedRadius);
+
+            if (miniWorldManager != null) miniWorldManager.BuildMiniatureFromRealGraph(rootObj.transform, createdCommunities);
+        }
+
+        // ==========================================
+        // MOTORES FÍSICOS FORCE-DIRECTED (ESTÁTICOS)
+        // ==========================================
+
+        private Vector3[] SimulateOrganicForceDirectedLayout(List<NodeData> communities, float baseRadius)
+        {
+            int count = communities.Count;
+            Vector3[] pos = new Vector3[count];
+            float[] masses = new float[count];
+
+            for (int i = 0; i < count; i++)
             {
-                if (kvp.Value.type == "file" && kvp.Value.knowledge_graph != null && kvp.Value.knowledge_graph.Length > 0)
+                masses[i] = (communities[i].children != null && communities[i].children.Count > 0) ? communities[i].children.Count : 2f;
+                Vector3 randomDir = Random.onUnitSphere;
+
+                if (randomDir.z < 0.2f) randomDir.z = Mathf.Abs(randomDir.z) + 0.2f;
+                pos[i] = randomDir.normalized * baseRadius * Random.Range(0.7f, 1.3f);
+            }
+
+            float k = baseRadius * 0.4f;
+            for (int iter = 0; iter < 100; iter++)
+            {
+                Vector3[] disp = new Vector3[count];
+
+                for (int i = 0; i < count; i++)
                 {
-                    filesWithKG++;
-                    totalTriplets += kvp.Value.knowledge_graph.Length;
+                    for (int j = 0; j < count; j++)
+                    {
+                        if (i == j) continue;
+                        Vector3 delta = pos[i] - pos[j];
+                        float dist = delta.magnitude;
+                        if (dist < 0.01f) dist = 0.01f;
+
+                        float force = (k * k) / dist * (masses[i] + masses[j]) * 0.05f;
+                        disp[i] += (delta / dist) * force;
+                    }
+                }
+
+                for (int i = 0; i < count; i++)
+                {
+                    Vector3 delta = pos[i];
+                    float dist = delta.magnitude;
+                    float force = (dist * dist) / k;
+                    disp[i] -= (delta / dist) * force * 0.1f;
+                }
+
+                for (int i = 0; i < count; i++)
+                {
+                    pos[i] += disp[i] * 0.05f;
+                    if (pos[i].z < 0.1f) pos[i].z = 0.1f;
                 }
             }
-            Debug.Log($"[KG System] Escaneo de la jerarquía completado: Encontrados {filesWithKG} archivos que contienen un Grafo de Conocimiento (Total global de {totalTriplets} relaciones).");
+
+            return pos;
+        }
+
+        private Vector3[] SimulateOrganicFileCloud(int fileCount, float radius, Vector3 communityDirection)
+        {
+            Vector3[] pos = new Vector3[fileCount];
+            for (int i = 0; i < fileCount; i++)
+            {
+                Vector3 randomPoint = Random.insideUnitSphere;
+                if (Vector3.Dot(randomPoint, communityDirection) < 0)
+                {
+                    randomPoint = -randomPoint;
+                }
+                pos[i] = communityDirection * (radius * 0.5f) + randomPoint * (radius * Random.Range(0.5f, 1.5f));
+            }
+            return pos;
         }
 
         void RegisterNodeToDatabase(NodeData node)
@@ -290,7 +354,7 @@ namespace ImmersiveGraph.Visual
             logic.InitializeNode(parentNode, incomingLine);
 
             allSpawnedNodes.Add(logic);
-            spawnedNodesMap[data.id] = logic; // optimiza
+            spawnedNodesMap[data.id] = logic;
 
             if (loadingBarPrefab != null)
             {
@@ -310,7 +374,6 @@ namespace ImmersiveGraph.Visual
                 if (uiController != null) uiController.SetupUI(data.title, "");
             }
 
-            // INDICADOR KG VISUAL ---
             if (type == "file" && data.knowledge_graph != null && data.knowledge_graph.Length > 0)
             {
                 if (kgIndicatorPrefab != null)
@@ -342,10 +405,6 @@ namespace ImmersiveGraph.Visual
             return lineObj;
         }
 
-        // ==========================================
-        // --- MOTOR DE BÚSQUEDA Y RESALTE ---
-        // ==========================================
-
         public int GetFileCountForEntity(string entityName)
         {
             string key = entityName.ToLower();
@@ -367,37 +426,32 @@ namespace ImmersiveGraph.Visual
         public void HighlightNodesByEntity(string entityName)
         {
             string key = entityName.ToLower();
-
             if (!globalEntityDatabase.ContainsKey(key)) return;
 
             string[] targetIDs = globalEntityDatabase[key].nodos;
             HashSet<string> targetSet = new HashSet<string>(targetIDs);
 
-            Debug.Log($"[KG Search] Entidad '{entityName}' encontrada en {targetSet.Count} nodos. Aplicando Ghosting y Glow...");
-
             foreach (GraphNode node in allSpawnedNodes)
             {
                 if (node == null || node.myData == null) continue;
-
                 if (node.nodeType == "root") continue;
 
                 if (targetSet.Contains(node.myData.id))
                 {
-                    node.SetVisualState(1); // Brilla
+                    node.SetVisualState(1);
                 }
                 else
                 {
-                    node.SetVisualState(2); // Fantasma
+                    node.SetVisualState(2);
                 }
             }
         }
 
         public void ClearAllHighlights()
         {
-            Debug.Log("[KG Search] Limpiando filtros visuales...");
             foreach (GraphNode node in allSpawnedNodes)
             {
-                if (node != null) node.SetVisualState(0); // Vuelve a la normalidad
+                if (node != null) node.SetVisualState(0);
             }
         }
     }

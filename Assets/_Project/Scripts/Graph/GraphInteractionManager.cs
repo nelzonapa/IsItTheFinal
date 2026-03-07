@@ -25,17 +25,34 @@ namespace ImmersiveGraph.Interaction
         private GraphNode _currentFocusedCommunity;
         private bool _isExpandedMode = false;
 
-        // Memoria del estado inicial (El mundo pequeño en la mesa)
+        // Memoria del estado inicial y factor de expansión de radio
         private Vector3 _originalRootPos;
         private Vector3 _originalRootScale;
+        private float _radiusExpandFactor = 1f; // Calculado dinámicamente
 
-        public void InitializeGraph(Transform rootNode)
+        private List<GraphNode> _allCommunities = new List<GraphNode>();
+
+        // SE ACTUALIZÓ PARA RECIBIR LOS DOS RADIOS
+        public void InitializeGraph(Transform rootNode, float minRadius, float expRadius)
         {
             _rootNode = rootNode;
             _originalRootPos = rootNode.localPosition;
             _originalRootScale = rootNode.localScale;
             _isExpandedMode = false;
             _currentFocusedCommunity = null;
+
+            // Calculamos cuánto tienen que separarse los nodos (Ej: Si min es 0.4 y exp es 1.2, el factor es 3)
+            _radiusExpandFactor = expRadius / minRadius;
+
+            _allCommunities.Clear();
+            foreach (Transform child in _rootNode)
+            {
+                GraphNode node = child.GetComponent<GraphNode>();
+                if (node != null && node.nodeType == "community")
+                {
+                    _allCommunities.Add(node);
+                }
+            }
         }
 
         public void OnCommunityHoldActivated(GraphNode selectedNode)
@@ -44,92 +61,142 @@ namespace ImmersiveGraph.Interaction
             {
                 if (_currentFocusedCommunity == selectedNode)
                 {
-                    // Si toco el que está en la mesa -> Todo vuelve a ser un planeta miniatura
                     StartCoroutine(AnimateResetToMiniature());
                 }
                 else
                 {
-                    // Si miro a la bóveda y elijo otro continente -> Hacemos el intercambio
                     StartCoroutine(AnimateSwapCommunity(selectedNode));
                 }
             }
             else
             {
-                // Si el planeta está cerrado en la mesa -> Expandir bóveda y traer continente a la mesa
                 StartCoroutine(AnimateFocusToTable(selectedNode));
             }
         }
 
-        // --- FASE 1 & 2: EXPANSIÓN (Mundo atrás, Comunidad a la mesa) ---
+        private void SetCommunityFileState(GraphNode community, bool showFiles, bool isInteractive)
+        {
+            if (community == null) return;
+            community.ForceExpand(showFiles);
+
+            if (showFiles && community.childNodes != null)
+            {
+                foreach (GameObject fileObj in community.childNodes)
+                {
+                    if (fileObj == null) continue;
+
+                    Collider col = fileObj.GetComponent<Collider>();
+                    if (col != null) col.enabled = isInteractive;
+
+                    Canvas[] uis = fileObj.GetComponentsInChildren<Canvas>(true);
+                    foreach (Canvas ui in uis)
+                    {
+                        ui.gameObject.SetActive(isInteractive);
+                    }
+                }
+            }
+        }
+
+        // ==========================================
+        // CINEMÁTICAS CON EXPANSIÓN DE RADIO
+        // ==========================================
+
         IEnumerator AnimateFocusToTable(GraphNode targetCommunity)
         {
             _isExpandedMode = true;
             _currentFocusedCommunity = targetCommunity;
 
-            // 1. DESVINCULAR: Sacamos temporalmente la comunidad del Root 
-            // Esto evita que herede la escala gigante y nos permite moverla independiente.
-            // El parámetro 'true' hace que mantenga su posición mundial exacta en este frame.
+            SetCommunityFileState(targetCommunity, true, true);
+            foreach (GraphNode comm in _allCommunities)
+            {
+                if (comm != targetCommunity) SetCommunityFileState(comm, true, false);
+            }
+
             targetCommunity.transform.SetParent(this.transform, true);
 
-            // Guardar posiciones de partida para la interpolación
             Vector3 startRootPos = _rootNode.localPosition;
             Vector3 startRootScale = _rootNode.localScale;
-
             Vector3 startCommPos = targetCommunity.transform.localPosition;
             Quaternion startCommRot = targetCommunity.transform.localRotation;
 
-            float timer = 0f;
+            // Capturamos desde dónde arranca cada comunidad para hacer el Lerp seguro
+            Dictionary<GraphNode, Vector3> startPositions = new Dictionary<GraphNode, Vector3>();
+            foreach (GraphNode comm in _allCommunities)
+            {
+                startPositions[comm] = comm.transform.localPosition;
+            }
 
+            float timer = 0f;
             while (timer < animationDuration)
             {
                 timer += Time.deltaTime;
                 float t = Mathf.SmoothStep(0, 1, timer / animationDuration);
 
-                // A. El Mundo General (Root) viaja hacia atrás y crece formando la bóveda
+                // 1. El mundo crece y retrocede
                 _rootNode.localPosition = Vector3.Lerp(startRootPos, _originalRootPos + vaultPositionOffset, t);
                 _rootNode.localScale = Vector3.Lerp(startRootScale, _originalRootScale * vaultScale, t);
 
-                // B. La Comunidad seleccionada viaja hacia el centro de la mesa a escala normal
+                // 2. La comunidad seleccionada viene a la mesa
                 targetCommunity.transform.localPosition = Vector3.Lerp(startCommPos, tableFocusPosition, t);
                 targetCommunity.transform.localRotation = Quaternion.Lerp(startCommRot, Quaternion.identity, t);
 
+                // 3. ¡NUEVO! Las comunidades de fondo se expanden outward multiplicando su posición original
+                foreach (GraphNode comm in _allCommunities)
+                {
+                    if (comm != targetCommunity)
+                    {
+                        Vector3 expandedPos = comm.originalLocalPosition * _radiusExpandFactor;
+                        comm.transform.localPosition = Vector3.Lerp(startPositions[comm], expandedPos, t);
+                    }
+                }
+
                 yield return null;
             }
-
-            // Al terminar de viajar, expandimos visualmente los archivos (Preparando Fase 3)
-            targetCommunity.ForceExpand(true);
         }
 
-        // --- FASE 1: RETORNO (Comunidad vuelve al mundo, Mundo vuelve a la mesa) ---
         IEnumerator AnimateResetToMiniature()
         {
-            // Ocultar archivos
-            if (_currentFocusedCommunity != null) _currentFocusedCommunity.ForceExpand(false);
+            foreach (GraphNode comm in _allCommunities)
+            {
+                SetCommunityFileState(comm, false, false);
+            }
 
-            // 1. REVINCULAR: Devolvemos la comunidad al Root ANTES de animar.
             _currentFocusedCommunity.transform.SetParent(_rootNode, true);
 
             Vector3 startRootPos = _rootNode.localPosition;
             Vector3 startRootScale = _rootNode.localScale;
 
-            // Ahora la posición local de la comunidad es relativa al Root gigante
-            Vector3 startCommPos = _currentFocusedCommunity.transform.localPosition;
+            Dictionary<GraphNode, Vector3> startPositions = new Dictionary<GraphNode, Vector3>();
+            foreach (GraphNode comm in _allCommunities)
+            {
+                startPositions[comm] = comm.transform.localPosition;
+            }
+
             Quaternion startCommRot = _currentFocusedCommunity.transform.localRotation;
 
             float timer = 0f;
-
             while (timer < animationDuration)
             {
                 timer += Time.deltaTime;
                 float t = Mathf.SmoothStep(0, 1, timer / animationDuration);
 
-                // A. El Mundo General se encoge y regresa a la mesa
+                // 1. El mundo se encoge y regresa a la mesa
                 _rootNode.localPosition = Vector3.Lerp(startRootPos, _originalRootPos, t);
                 _rootNode.localScale = Vector3.Lerp(startRootScale, _originalRootScale, t);
 
-                // B. La Comunidad viaja internamente a su coordenada matemática original en la esfera
-                _currentFocusedCommunity.transform.localPosition = Vector3.Lerp(startCommPos, _currentFocusedCommunity.originalLocalPosition, t);
-                _currentFocusedCommunity.transform.localRotation = Quaternion.Lerp(startCommRot, Quaternion.identity, t);
+                // 2. TODAS las comunidades regresan a su radio miniatura original (incluyendo la que estaba en la mesa)
+                foreach (GraphNode comm in _allCommunities)
+                {
+                    if (comm == _currentFocusedCommunity)
+                    {
+                        comm.transform.localPosition = Vector3.Lerp(startPositions[comm], comm.originalLocalPosition, t);
+                        comm.transform.localRotation = Quaternion.Lerp(startCommRot, Quaternion.identity, t);
+                    }
+                    else
+                    {
+                        comm.transform.localPosition = Vector3.Lerp(startPositions[comm], comm.originalLocalPosition, t);
+                    }
+                }
 
                 yield return null;
             }
@@ -138,44 +205,40 @@ namespace ImmersiveGraph.Interaction
             _currentFocusedCommunity = null;
         }
 
-        // --- TRANSICIÓN: INTERCAMBIO FLUIDO ---
         IEnumerator AnimateSwapCommunity(GraphNode newFocusNode)
         {
             GraphNode oldFocusNode = _currentFocusedCommunity;
 
-            // Colapsar el viejo, expandir el nuevo
-            oldFocusNode.ForceExpand(false);
+            SetCommunityFileState(oldFocusNode, true, false);
+            SetCommunityFileState(newFocusNode, true, true);
 
-            // 1. Jerarquías: El viejo vuelve al planeta, el nuevo sale del planeta
             oldFocusNode.transform.SetParent(_rootNode, true);
             newFocusNode.transform.SetParent(this.transform, true);
 
             _currentFocusedCommunity = newFocusNode;
 
             float timer = 0f;
-
             Vector3 startOldPos = oldFocusNode.transform.localPosition;
             Vector3 startNewPos = newFocusNode.transform.localPosition;
             Quaternion startNewRot = newFocusNode.transform.localRotation;
+
+            // Calculamos el punto destino exacto en el fondo para la comunidad que regresa
+            Vector3 oldExpandedTargetPos = oldFocusNode.originalLocalPosition * _radiusExpandFactor;
 
             while (timer < animationDuration)
             {
                 timer += Time.deltaTime;
                 float t = Mathf.SmoothStep(0, 1, timer / animationDuration);
 
-                // A. El Mundo ya está en el fondo, no lo movemos.
+                // El viejo foco viaja desde la mesa hasta su posición con radio EXPANDIDO en la bóveda
+                oldFocusNode.transform.localPosition = Vector3.Lerp(startOldPos, oldExpandedTargetPos, t);
 
-                // B. El viejo viaja de la mesa hacia su posición en la bóveda
-                oldFocusNode.transform.localPosition = Vector3.Lerp(startOldPos, oldFocusNode.originalLocalPosition, t);
-
-                // C. El nuevo viaja desde la bóveda hacia la mesa
+                // El nuevo foco viaja desde la bóveda a la mesa
                 newFocusNode.transform.localPosition = Vector3.Lerp(startNewPos, tableFocusPosition, t);
                 newFocusNode.transform.localRotation = Quaternion.Lerp(startNewRot, Quaternion.identity, t);
 
                 yield return null;
             }
-
-            newFocusNode.ForceExpand(true);
         }
     }
 }
