@@ -1,7 +1,8 @@
-using UnityEngine;
+using ImmersiveGraph.Visual;
 using System.Collections;
 using System.Collections.Generic;
-using ImmersiveGraph.Visual;
+using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace ImmersiveGraph.Interaction
 {
@@ -10,12 +11,14 @@ namespace ImmersiveGraph.Interaction
         [Header("Metáfora Overview (La Bóveda)")]
         [Tooltip("Hacia dónde retrocede el mundo general. Z positivo es hacia adelante/atrás, Y es arriba.")]
         public Vector3 vaultPositionOffset = new Vector3(0, 0.8f, 2.5f);
+        [Tooltip("Rotación del mundo cuando entra en modo bóveda.")]
+        public Vector3 vaultRotationOffset = new Vector3(0, 0, 0);
         [Tooltip("Qué tan gigante se vuelve el planeta en el fondo.")]
         public float vaultScale = 3.5f;
 
         [Header("Metáfora Detail (La Mesa)")]
-        [Tooltip("Posición exacta en la mesa donde se analiza la comunidad elegida.")]
-        public Vector3 tableFocusPosition = new Vector3(0, 0.2f, 0);
+        [Tooltip("Punto exacto (Objeto Vacío) en la mesa donde se analiza la comunidad elegida.")]
+        public Transform tableFocusAnchor; // <-- NUEVO: EL PUNTO ANCLA
 
         [Header("Animación")]
         public float animationDuration = 0.8f;
@@ -28,20 +31,21 @@ namespace ImmersiveGraph.Interaction
         // Memoria del estado inicial y factor de expansión de radio
         private Vector3 _originalRootPos;
         private Vector3 _originalRootScale;
-        private float _radiusExpandFactor = 1f; // Calculado dinámicamente
+        private float _radiusExpandFactor = 1f;
 
         private List<GraphNode> _allCommunities = new List<GraphNode>();
 
-        // SE ACTUALIZÓ PARA RECIBIR LOS DOS RADIOS
+        private Quaternion _originalRootRot;
+
         public void InitializeGraph(Transform rootNode, float minRadius, float expRadius)
         {
             _rootNode = rootNode;
             _originalRootPos = rootNode.localPosition;
+            _originalRootRot = rootNode.localRotation;
             _originalRootScale = rootNode.localScale;
             _isExpandedMode = false;
             _currentFocusedCommunity = null;
 
-            // Calculamos cuánto tienen que separarse los nodos (Ej: Si min es 0.4 y exp es 1.2, el factor es 3)
             _radiusExpandFactor = expRadius / minRadius;
 
             _allCommunities.Clear();
@@ -57,6 +61,19 @@ namespace ImmersiveGraph.Interaction
 
         public void OnCommunityHoldActivated(GraphNode selectedNode)
         {
+            XRGrabInteractable grab = selectedNode.GetComponent<XRGrabInteractable>();
+            if (grab != null && grab.isSelected)
+            {
+                grab.interactionManager.SelectExit(grab.firstInteractorSelecting, grab);
+            }
+
+            // Verificación de seguridad
+            if (tableFocusAnchor == null)
+            {
+                Debug.LogError("[Interacción] ¡Falta asignar el 'Table Focus Anchor' en el Inspector!");
+                return;
+            }
+
             if (_isExpandedMode)
             {
                 if (_currentFocusedCommunity == selectedNode)
@@ -98,7 +115,7 @@ namespace ImmersiveGraph.Interaction
         }
 
         // ==========================================
-        // CINEMÁTICAS CON EXPANSIÓN DE RADIO
+        // CINEMÁTICAS CON EL NUEVO ANCLA
         // ==========================================
 
         IEnumerator AnimateFocusToTable(GraphNode targetCommunity)
@@ -106,20 +123,27 @@ namespace ImmersiveGraph.Interaction
             _isExpandedMode = true;
             _currentFocusedCommunity = targetCommunity;
 
+            XRGrabInteractable grab = targetCommunity.GetComponent<XRGrabInteractable>();
+            if (grab != null) grab.enabled = false;
+
+
             SetCommunityFileState(targetCommunity, true, true);
             foreach (GraphNode comm in _allCommunities)
             {
                 if (comm != targetCommunity) SetCommunityFileState(comm, true, false);
             }
 
-            targetCommunity.transform.SetParent(this.transform, true);
+            // AHORA LO HACEMOS HIJO DEL ANCLA DE LA MESA
+            targetCommunity.transform.SetParent(tableFocusAnchor, true);
 
             Vector3 startRootPos = _rootNode.localPosition;
             Vector3 startRootScale = _rootNode.localScale;
+
+            // Posiciones iniciales relativas al ancla recién asignado
             Vector3 startCommPos = targetCommunity.transform.localPosition;
             Quaternion startCommRot = targetCommunity.transform.localRotation;
+            Quaternion startRootRot = _rootNode.localRotation;
 
-            // Capturamos desde dónde arranca cada comunidad para hacer el Lerp seguro
             Dictionary<GraphNode, Vector3> startPositions = new Dictionary<GraphNode, Vector3>();
             foreach (GraphNode comm in _allCommunities)
             {
@@ -136,11 +160,14 @@ namespace ImmersiveGraph.Interaction
                 _rootNode.localPosition = Vector3.Lerp(startRootPos, _originalRootPos + vaultPositionOffset, t);
                 _rootNode.localScale = Vector3.Lerp(startRootScale, _originalRootScale * vaultScale, t);
 
-                // 2. La comunidad seleccionada viene a la mesa
-                targetCommunity.transform.localPosition = Vector3.Lerp(startCommPos, tableFocusPosition, t);
+                Quaternion targetRot = _originalRootRot * Quaternion.Euler(vaultRotationOffset);
+                _rootNode.localRotation = Quaternion.Lerp(startRootRot, targetRot, t);
+
+                // 2. La comunidad va a Vector3.zero (que es exactamente el centro del Ancla)
+                targetCommunity.transform.localPosition = Vector3.Lerp(startCommPos, Vector3.zero, t);
                 targetCommunity.transform.localRotation = Quaternion.Lerp(startCommRot, Quaternion.identity, t);
 
-                // 3. ¡NUEVO! Las comunidades de fondo se expanden outward multiplicando su posición original
+                // 3. Comunidades de fondo
                 foreach (GraphNode comm in _allCommunities)
                 {
                     if (comm != targetCommunity)
@@ -152,19 +179,26 @@ namespace ImmersiveGraph.Interaction
 
                 yield return null;
             }
+            if (grab != null) grab.enabled = true;
         }
 
         IEnumerator AnimateResetToMiniature()
         {
+
+            XRGrabInteractable grab = _currentFocusedCommunity.GetComponent<XRGrabInteractable>();
+            if (grab != null) grab.enabled = false;
+
             foreach (GraphNode comm in _allCommunities)
             {
                 SetCommunityFileState(comm, false, false);
             }
 
+            // Lo regresamos al mundo root
             _currentFocusedCommunity.transform.SetParent(_rootNode, true);
 
             Vector3 startRootPos = _rootNode.localPosition;
             Vector3 startRootScale = _rootNode.localScale;
+            Quaternion startRootRot = _rootNode.localRotation;
 
             Dictionary<GraphNode, Vector3> startPositions = new Dictionary<GraphNode, Vector3>();
             foreach (GraphNode comm in _allCommunities)
@@ -180,11 +214,10 @@ namespace ImmersiveGraph.Interaction
                 timer += Time.deltaTime;
                 float t = Mathf.SmoothStep(0, 1, timer / animationDuration);
 
-                // 1. El mundo se encoge y regresa a la mesa
                 _rootNode.localPosition = Vector3.Lerp(startRootPos, _originalRootPos, t);
                 _rootNode.localScale = Vector3.Lerp(startRootScale, _originalRootScale, t);
+                _rootNode.localRotation = Quaternion.Lerp(startRootRot, _originalRootRot, t);
 
-                // 2. TODAS las comunidades regresan a su radio miniatura original (incluyendo la que estaba en la mesa)
                 foreach (GraphNode comm in _allCommunities)
                 {
                     if (comm == _currentFocusedCommunity)
@@ -203,17 +236,24 @@ namespace ImmersiveGraph.Interaction
 
             _isExpandedMode = false;
             _currentFocusedCommunity = null;
+            if (grab != null) grab.enabled = true;
         }
 
         IEnumerator AnimateSwapCommunity(GraphNode newFocusNode)
         {
             GraphNode oldFocusNode = _currentFocusedCommunity;
 
+            XRGrabInteractable grabOld = oldFocusNode.GetComponent<XRGrabInteractable>();
+            XRGrabInteractable grabNew = newFocusNode.GetComponent<XRGrabInteractable>();
+            if (grabOld != null) grabOld.enabled = false;
+            if (grabNew != null) grabNew.enabled = false;
+
             SetCommunityFileState(oldFocusNode, true, false);
             SetCommunityFileState(newFocusNode, true, true);
 
+            // El viejo regresa al root, el nuevo se ancla a la mesa
             oldFocusNode.transform.SetParent(_rootNode, true);
-            newFocusNode.transform.SetParent(this.transform, true);
+            newFocusNode.transform.SetParent(tableFocusAnchor, true);
 
             _currentFocusedCommunity = newFocusNode;
 
@@ -222,7 +262,6 @@ namespace ImmersiveGraph.Interaction
             Vector3 startNewPos = newFocusNode.transform.localPosition;
             Quaternion startNewRot = newFocusNode.transform.localRotation;
 
-            // Calculamos el punto destino exacto en el fondo para la comunidad que regresa
             Vector3 oldExpandedTargetPos = oldFocusNode.originalLocalPosition * _radiusExpandFactor;
 
             while (timer < animationDuration)
@@ -230,14 +269,16 @@ namespace ImmersiveGraph.Interaction
                 timer += Time.deltaTime;
                 float t = Mathf.SmoothStep(0, 1, timer / animationDuration);
 
-                // El viejo foco viaja desde la mesa hasta su posición con radio EXPANDIDO en la bóveda
+                // El viejo foco viaja a su lugar en el root
                 oldFocusNode.transform.localPosition = Vector3.Lerp(startOldPos, oldExpandedTargetPos, t);
 
-                // El nuevo foco viaja desde la bóveda a la mesa
-                newFocusNode.transform.localPosition = Vector3.Lerp(startNewPos, tableFocusPosition, t);
+                // El nuevo foco viaja EXACTAMENTE al centro del Ancla
+                newFocusNode.transform.localPosition = Vector3.Lerp(startNewPos, Vector3.zero, t);
                 newFocusNode.transform.localRotation = Quaternion.Lerp(startNewRot, Quaternion.identity, t);
 
                 yield return null;
+                if (grabOld != null) grabOld.enabled = true;
+                if (grabNew != null) grabNew.enabled = true;
             }
         }
     }

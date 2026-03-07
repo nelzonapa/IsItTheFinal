@@ -975,6 +975,7 @@ Transform:
   - {fileID: 1589067903021199238}
   - {fileID: 2364989591469545260}
   - {fileID: 5119170893319367203}
+  - {fileID: 1992957595174643337}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &2447872933905962812
@@ -4424,7 +4425,7 @@ Transform:
   m_GameObject: {fileID: 7811330940087541257}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.38268343, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: -2.802, y: 1.72, z: 1.215}
+  m_LocalPosition: {x: -4.377, y: 3.38, z: 2.088}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4608,10 +4609,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d2947455fef744abd6f4b4ff0a1b42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.GraphInteractionManager
-  vaultPositionOffset: {x: -3, y: 2.5, z: 3}
-  vaultScale: 3.5
-  tableFocusPosition: {x: 16, y: -2.5, z: -16}
-  animationDuration: 3
+  vaultPositionOffset: {x: 0, y: 2.8, z: 1}
+  vaultRotationOffset: {x: 0, y: -20, z: 0}
+  vaultScale: 1
+  tableFocusAnchor: {fileID: 1992957595174643337}
+  animationDuration: 5
 --- !u!114 &3727908263082871224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4642,7 +4644,7 @@ MonoBehaviour:
   markerScale: {x: 0.5, y: 0.5, z: 0.5}
   communityMiniatureRadius: 3
   communityExpandedRadius: 5
-  fileOrbitRadius: 10
+  fileOrbitRadius: 5
   lineMaterial: {fileID: 2100000, guid: 0fcf4715c091eda4f97e84803e479e04, type: 2}
   lineWidth: 0.005
   loaderOffset: {x: 0, y: -1, z: 0}
@@ -5601,6 +5603,37 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &8951704158506580223
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1992957595174643337}
+  m_Layer: 0
+  m_Name: Mesa_PuntoFoco
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1992957595174643337
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8951704158506580223}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.967, y: 2.042, z: 1.232}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9013347094446411954}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9141788892058965657
 GameObject:
   m_ObjectHideFlags: 0
