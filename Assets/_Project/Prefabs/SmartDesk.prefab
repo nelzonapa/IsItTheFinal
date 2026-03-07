@@ -4608,11 +4608,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d2947455fef744abd6f4b4ff0a1b42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Interaction.GraphInteractionManager
-  skyPositionOffset: {x: 2.3, y: 3.7, z: 0}
-  skyRotationOffset: {x: -20, y: -10, z: 0}
-  skyScale: 3.5
-  horizonArcRadius: 14
-  tableFocusPosition: {x: -6, y: -8.5, z: -3}
+  vaultPositionOffset: {x: -5, y: 1.5, z: 5}
+  vaultScale: 3.5
+  tableFocusPosition: {x: 15, y: -2.16, z: -15}
   animationDuration: 1.5
 --- !u!114 &3727908263082871224
 MonoBehaviour:
