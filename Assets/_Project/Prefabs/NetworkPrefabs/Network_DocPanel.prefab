@@ -1218,8 +1218,7 @@ MonoBehaviour:
   commAmenazaText: {fileID: 8978727115089305206}
   fileFullText: {fileID: 6391170507052860621}
   fileRiskText: {fileID: 5811096687541665992}
-  fileImageViewer: {fileID: 6447722221976881426}
-  imageLoadingSpinner: {fileID: 0}
+  kgPanelController: {fileID: 0}
 --- !u!114 &7895620454450399958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2305,7 +2304,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6005337733842216256, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.017815014
+      value: -0.017822266
       objectReference: {fileID: 0}
     - target: {fileID: 6320061725465671354, guid: e139e7ba9cf18cd448aca381faf6a8d8, type: 3}
       propertyPath: m_AnchorMax.x
