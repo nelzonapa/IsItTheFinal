@@ -1272,9 +1272,53 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 738305345}
     m_Modifications:
+    - target: {fileID: 820629064285437188, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 820629064285437188, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -3.0760498
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117198061108358910, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117198061108358910, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1861052815609057959, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_Name
       value: SmartDesk
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6877971403611914178, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_Value
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9013347094446411954, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4090,9 +4134,53 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1009485158}
     m_Modifications:
+    - target: {fileID: 820629064285437188, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 820629064285437188, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -2.8479004
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117198061108358910, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117198061108358910, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1861052815609057959, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_Name
       value: SmartDesk (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6877971403611914178, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
+      propertyPath: m_Value
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9013347094446411954, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_LocalPosition.x

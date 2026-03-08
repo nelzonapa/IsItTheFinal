@@ -225,7 +225,7 @@ MonoBehaviour:
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 0.05
-  m_fontSizeMax: 1
+  m_fontSizeMax: 15
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256

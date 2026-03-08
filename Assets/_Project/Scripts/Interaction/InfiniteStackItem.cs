@@ -1,53 +1,62 @@
-using ImmersiveGraph.Core; // <--- NECESARIO
+using ImmersiveGraph.Core;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 namespace ImmersiveGraph.Interaction
 {
-    [RequireComponent(typeof(UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable))]
+    // Cambiamos XRGrabInteractable por XRSimpleInteractable. 
+    // Esto asegura que la base reciba interacción pero sea inamovible.
+    [RequireComponent(typeof(UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable))]
     public class InfiniteStackItem : MonoBehaviour
     {
-        private bool hasSpawnedReplacement = false;
-        private Vector3 startPosition;
-        private Quaternion startRotation;
-        private Renderer _myRenderer; // Para cambiar mi color
+        [Header("Prefab a generar")]
+        [Tooltip("Prefab que se generará (Este SÍ debe tener XRGrabInteractable en el inspector)")]
+        public GameObject prefabToSpawn;
+
+        [Header("Configuración de Aparición")]
+        [Tooltip("Distancia hacia arriba (en el eje Y) donde aparecerá el nuevo Post-it para evitar choques")]
+        public float spawnOffsetY = 0.15f;
+
+        [Tooltip("Segundos de espera entre cada creación para evitar generar demasiados por accidente")]
+        public float cooldownTime = 0.5f;
+
+        private float _lastSpawnTime = 0f;
 
         void Start()
         {
-            startPosition = transform.position;
-            startRotation = transform.rotation;
-            _myRenderer = GetComponentInChildren<Renderer>(); // Obtenemos referencia visual
+            // Obtenemos el componente Simple Interactable
+            var simpleInteractable = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable>();
 
-            var grab = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
-            grab.selectEntered.AddListener(OnGrab);
+            // Escuchamos el evento de cuando el usuario presiona el gatillo sobre el dispensador
+            simpleInteractable.selectEntered.AddListener(OnDispensePostIt);
         }
 
-        void OnGrab(SelectEnterEventArgs args)
+        void OnDispensePostIt(SelectEnterEventArgs args)
         {
-            if (!hasSpawnedReplacement)
+            // 1. Validar el tiempo de recarga (Evita spam de objetos)
+            if (Time.time - _lastSpawnTime < cooldownTime) return;
+            _lastSpawnTime = Time.time;
+
+            if (prefabToSpawn != null)
             {
-                hasSpawnedReplacement = true; // Ya soy libre
+                // 2. Calcular la nueva posición sumando el Offset hacia arriba
+                Vector3 spawnPosition = transform.position + (Vector3.up * spawnOffsetY);
 
-                // 1. PINTARME A M� MISMO (El que tengo en la mano)
-                if (_myRenderer != null)
-                {
-                    _myRenderer.material.color = UserColorPalette.GetLocalPlayerColor();
-                }
+                // 3. Crear el nuevo Post-it en el aire
+                GameObject newPostIt = Instantiate(prefabToSpawn, spawnPosition, transform.rotation);
+                newPostIt.name = prefabToSpawn.name;
 
-                // 2. CREAR EL REEMPLAZO EN LA MESA
-                GameObject replacement = Instantiate(this.gameObject, startPosition, startRotation);
-                replacement.name = this.gameObject.name;
-
-                // 3. RESTAURAR EL COLOR DEL REEMPLAZO
-                // Como 'replacement' es una copia de 'this' (que acabamos de pintar),
-                // nacer� pintado. Hay que devolverlo al color original (ej. blanco o amarillo p�lido).
-                var repRenderer = replacement.GetComponentInChildren<Renderer>();
+                // 4. Pintar el NUEVO post-it con el color del usuario.
+                // Lo aplicamos al nuevo porque la base dispensadora debería mantenerse estática/neutra.
+                Renderer repRenderer = newPostIt.GetComponentInChildren<Renderer>();
                 if (repRenderer != null)
                 {
-                    // Asumiendo que el color base de tus post-its es blanco o un amarillo claro por defecto.
-                    // Si tienes un color espec�fico, ponlo aqu�.
-                    repRenderer.material.color = Color.white;
+                    repRenderer.material.color = UserColorPalette.GetLocalPlayerColor();
                 }
+            }
+            else
+            {
+                Debug.LogWarning("InfiniteStackItem: No se asignó prefabToSpawn en el Inspector.");
             }
         }
     }
