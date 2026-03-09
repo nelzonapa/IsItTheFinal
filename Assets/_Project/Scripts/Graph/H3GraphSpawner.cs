@@ -57,7 +57,13 @@ namespace ImmersiveGraph.Visual
         public float communityExpandedRadius = 1.2f;
         public float fileOrbitRadius = 0.35f;
 
-        // --- NUEVAS VARIABLES DE FÍSICA PARA EL ACOMODO ---
+        // --- NUEVO: LÍMITES ERGONÓMICOS DE TECHO Y SUELO ---
+        [Header("Límites de Ergonomía VR (Techo y Suelo)")]
+        [Tooltip("Altura máxima en el eje Y. Evita que el usuario fuerce el cuello hacia arriba.")]
+        public float maxHeightLimit = 0.6f;
+        [Tooltip("Altura mínima en el eje Y. Evita que el usuario tenga que mirar hacia sus pies.")]
+        public float minHeightLimit = -0.1f;
+
         [Header("Dinámica de Acomodo Espacial")]
         public bool aplicarFisicaContinua = true;
         [Tooltip("Radio virtual del nodo cuando NO tiene archivos visibles")]
@@ -100,7 +106,6 @@ namespace ImmersiveGraph.Visual
 
         void Update()
         {
-            // FÍSICA DE EMPUJE CONTINUO: Acomoda los nodos que regresan con carga (archivos fantasmas)
             if (!aplicarFisicaContinua || _activeCommunities.Count == 0 || transform.childCount == 0 || interactionManager == null) return;
 
             Transform rootObjTransform = transform.GetChild(0);
@@ -109,7 +114,6 @@ namespace ImmersiveGraph.Visual
             {
                 GraphNode nodeA = _activeCommunities[i];
 
-                // Solo acomodamos los nodos que están en el grafo general (no los que están en la mesa)
                 if (nodeA.transform.parent != rootObjTransform) continue;
 
                 bool aHasFiles = nodeA.childNodes != null && nodeA.childNodes.Count > 0 && nodeA.childNodes[0].activeSelf;
@@ -132,7 +136,6 @@ namespace ImmersiveGraph.Visual
 
                     if (dist < minSafeDist && dist > 0.001f)
                     {
-                        // Si el Nodo A NO se está animando (viajando), se deja empujar. 
                         if (!interactionManager.IsNodeAnimating(nodeA))
                         {
                             push += diff.normalized * (minSafeDist - dist) * fuerzaDeEmpuje;
@@ -143,8 +146,14 @@ namespace ImmersiveGraph.Visual
                 if (push != Vector3.zero)
                 {
                     Vector3 newPos = nodeA.transform.localPosition + push * Time.deltaTime;
-                    // Forzar que siempre se deslicen sobre la cáscara de la esfera
-                    nodeA.transform.localPosition = newPos.normalized * communityMiniatureRadius;
+
+                    // 1. Mantenerse sobre el radio de la esfera
+                    newPos = newPos.normalized * communityMiniatureRadius;
+
+                    // 2. APLICAR EL TECHO Y EL SUELO (Recorte Ergonómico)
+                    newPos.y = Mathf.Clamp(newPos.y, minHeightLimit, maxHeightLimit);
+
+                    nodeA.transform.localPosition = newPos;
                     nodeA.originalLocalPosition = nodeA.transform.localPosition;
                 }
             }
@@ -322,6 +331,9 @@ namespace ImmersiveGraph.Visual
                 {
                     pos[i] += disp[i] * 0.05f;
                     if (pos[i].z < 0.1f) pos[i].z = 0.1f;
+
+                    // --- APLICAR TECHO Y SUELO AL GENERAR LOS NODOS ---
+                    pos[i].y = Mathf.Clamp(pos[i].y, minHeightLimit, maxHeightLimit);
                 }
             }
             return pos;
@@ -334,7 +346,12 @@ namespace ImmersiveGraph.Visual
             {
                 Vector3 randomPoint = Random.insideUnitSphere;
                 if (Vector3.Dot(randomPoint, communityDirection) < 0) randomPoint = -randomPoint;
-                pos[i] = communityDirection * (radius * 0.5f) + randomPoint * (radius * Random.Range(0.5f, 1.5f));
+
+                Vector3 calculatedPos = communityDirection * (radius * 0.5f) + randomPoint * (radius * Random.Range(0.5f, 1.5f));
+
+                // --- APLICAR TECHO Y SUELO TAMBIÉN A LOS ARCHIVOS ---
+                calculatedPos.y = Mathf.Clamp(calculatedPos.y, minHeightLimit, maxHeightLimit);
+                pos[i] = calculatedPos;
             }
             return pos;
         }

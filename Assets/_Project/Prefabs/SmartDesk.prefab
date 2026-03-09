@@ -4099,6 +4099,8 @@ MonoBehaviour:
   communityMiniatureRadius: 3
   communityExpandedRadius: 5
   fileOrbitRadius: 8
+  maxHeightLimit: 5
+  minHeightLimit: -5
   aplicarFisicaContinua: 1
   radioBaseNodo: 0.15
   radioExpandidoNodo: 0.35
