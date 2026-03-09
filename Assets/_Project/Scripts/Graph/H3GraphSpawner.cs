@@ -94,6 +94,9 @@ namespace ImmersiveGraph.Visual
 
         private List<GraphNode> _activeCommunities = new List<GraphNode>();
 
+        // --- DICCIONARIO DINÁMICO DE COLORES POR FUENTE ---
+        private Dictionary<string, Color> sourceColorMap = new Dictionary<string, Color>();
+
         void Awake()
         {
             if (Instance == null) Instance = this;
@@ -234,12 +237,28 @@ namespace ImmersiveGraph.Visual
             }
         }
 
+        // --- MÉTODO PARA OBTENER COLOR ÚNICO POR FUENTE ---
+        private Color GetColorForSource(string source)
+        {
+            if (string.IsNullOrEmpty(source)) source = "Desconocido";
+
+            if (!sourceColorMap.ContainsKey(source))
+            {
+                // Usa la proporción áurea para generar colores bien diferenciados dinámicamente
+                float hue = (sourceColorMap.Count * 0.618033988749895f) % 1f;
+                sourceColorMap[source] = Color.HSVToRGB(hue, 0.7f, 0.9f);
+            }
+            return sourceColorMap[source];
+        }
+
         void GenerateH3Layout(NodeData rootData)
         {
             nodeDatabase.Clear();
             allSpawnedNodes.Clear();
             spawnedNodesMap.Clear();
             _activeCommunities.Clear();
+            sourceColorMap.Clear(); // Limpiamos el mapa al recargar
+
             RegisterNodeToDatabase(rootData);
 
             foreach (Transform child in transform) Destroy(child.gameObject);
@@ -254,7 +273,28 @@ namespace ImmersiveGraph.Visual
             for (int i = 0; i < commCount; i++)
             {
                 NodeData commData = rootData.children[i];
-                Color groupColor = Color.HSVToRGB((float)i / commCount, 0.7f, 0.9f);
+
+                // --- CALCULAR FUENTE DOMINANTE PARA COLOREAR LA COMUNIDAD ---
+                string dominantSource = "Desconocido";
+                if (commData.children != null && commData.children.Count > 0)
+                {
+                    Dictionary<string, int> sourceCounts = new Dictionary<string, int>();
+                    foreach (var file in commData.children)
+                    {
+                        // Se asume que NodeData.data.source está mapeado correctamente
+                        string src = (file.data != null && !string.IsNullOrEmpty(file.data.source)) ? file.data.source : "Desconocido";
+                        if (!sourceCounts.ContainsKey(src)) sourceCounts[src] = 0;
+                        sourceCounts[src]++;
+                    }
+
+                    int max = 0;
+                    foreach (var kvp in sourceCounts)
+                    {
+                        if (kvp.Value > max) { max = kvp.Value; dominantSource = kvp.Key; }
+                    }
+                }
+
+                Color groupColor = GetColorForSource(dominantSource);
 
                 GameObject lineToComm = CreateLine(rootObj.transform.position, rootObj.transform);
                 GameObject commObj = CreateNodeObject(communityPrefab, rootObj.transform, commPositions[i], commData, "community", rootObj.transform, lineToComm.GetComponent<LineRenderer>(), groupColor);
@@ -271,8 +311,13 @@ namespace ImmersiveGraph.Visual
                     for (int j = 0; j < fileCount; j++)
                     {
                         NodeData fileData = commData.children[j];
+
+                        // --- COLOREAR ARCHIVO POR SU FUENTE ESPECÍFICA ---
+                        string fileSrc = (fileData.data != null && !string.IsNullOrEmpty(fileData.data.source)) ? fileData.data.source : "Desconocido";
+                        Color fileColor = GetColorForSource(fileSrc);
+
                         GameObject lineToFile = CreateLine(commObj.transform.position, commObj.transform);
-                        GameObject fileObj = CreateNodeObject(filePrefab, commObj.transform, filePositions[j], fileData, "file", commObj.transform, lineToFile.GetComponent<LineRenderer>(), groupColor);
+                        GameObject fileObj = CreateNodeObject(filePrefab, commObj.transform, filePositions[j], fileData, "file", commObj.transform, lineToFile.GetComponent<LineRenderer>(), fileColor);
 
                         if (commLogic != null)
                         {
