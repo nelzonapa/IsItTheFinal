@@ -1,6 +1,6 @@
 using Fusion;
 using ImmersiveGraph.Data;
-using ImmersiveGraph.Core; // <--- NECESARIO
+using ImmersiveGraph.Core;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;

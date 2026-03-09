@@ -3631,6 +3631,7 @@ MonoBehaviour:
   graphContainer: {fileID: 0}
   nodePrefab: {fileID: 7606018330044113167, guid: fb1dc226bbea66d4bb5e123012c48919, type: 3}
   linePrefab: {fileID: 7948218715770260542, guid: 7c2485c5608cabd4ea16589c85a63180, type: 3}
+  token3DPrefab: {fileID: 3135422479235381209, guid: 1632e9071d3bc94489c080199a8adf25, type: 3}
   clearFiltersButton: {fileID: 8571453740860196777}
   warningText: {fileID: 7037941662893765958}
   activeFilterText: {fileID: 944106286352047556}
@@ -3955,7 +3956,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2893154904286887996
 Transform:
   m_ObjectHideFlags: 0

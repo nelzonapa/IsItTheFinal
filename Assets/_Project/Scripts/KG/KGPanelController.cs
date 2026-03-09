@@ -1,10 +1,11 @@
+using ImmersiveGraph.Core;
+using ImmersiveGraph.Data;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems; // <-- NECESARIO PARA ARRASTRAR Y CLICS
 using TMPro;
-using ImmersiveGraph.Data;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace ImmersiveGraph.Visual
 {
@@ -15,14 +16,13 @@ namespace ImmersiveGraph.Visual
         public GameObject nodePrefab;
         public GameObject linePrefab;
 
+        [Header("Generador de Tokens 3D")]
+        [Tooltip("Asigna aquí tu prefab del Token 3D que se instanciará al agarrar el nodo")]
+        public GameObject token3DPrefab;
+
         [Header("Controles y Mensajes")]
-        [Tooltip("Asigna aquí el botón de la UI para limpiar los filtros")]
         public Button clearFiltersButton;
-
-        [Tooltip("Asigna un TextMeshPro para mostrar mensajes flotantes de advertencia")]
         public TextMeshProUGUI warningText;
-
-        [Tooltip("Asigna un TextMeshPro para mostrar qué filtro está activo permanentemente")]
         public TextMeshProUGUI activeFilterText;
 
         [Header("Física Base (Para tamaño 1.0)")]
@@ -51,8 +51,6 @@ namespace ImmersiveGraph.Visual
             public string relation;
             public RectTransform lineRect;
             public RectTransform labelRect;
-
-            public float parallelOffset;
         }
 
         private Dictionary<string, UINode> _nodes = new Dictionary<string, UINode>();
@@ -129,10 +127,7 @@ namespace ImmersiveGraph.Visual
             {
                 foreach (string ent in extraEntities)
                 {
-                    if (!string.IsNullOrEmpty(ent))
-                    {
-                        uniqueEntities.Add(ent);
-                    }
+                    if (!string.IsNullOrEmpty(ent)) uniqueEntities.Add(ent);
                 }
             }
 
@@ -194,16 +189,13 @@ namespace ImmersiveGraph.Visual
                         labelRect.localRotation = Quaternion.identity;
                         labelRect.localScale = Vector3.one;
 
-                        float offset = (_edges.Count % 3 - 1) * 10f * _currentScale;
-
                         _edges.Add(new UIEdge
                         {
                             source = sourceNode,
                             target = targetNode,
                             relation = edgeData.relacion,
                             lineRect = lineRect,
-                            labelRect = labelRect,
-                            parallelOffset = offset
+                            labelRect = labelRect
                         });
                     }
                 }
@@ -233,26 +225,19 @@ namespace ImmersiveGraph.Visual
                 else bgImage.color = new Color(0.3f, 0.3f, 0.3f, 1f);
             }
 
-            // =========================================================
-            // ELIMINADO: Ya no usamos el Button genérico de Unity.
-            // AHORA: Usamos nuestro script inteligente para gestionar todo.
-            // =========================================================
-
-            // Asegurarnos de que tenga el componente RaycastTarget encendido (la Image ya lo hace)
+            // --- LÓGICA DE GATILLO (UI 2D CLIC / ARRASTRE) ---
             UIDraggableNode smartNodeHandler = nodeObj.AddComponent<UIDraggableNode>();
 
             float safePadding = 50f * _currentScale;
             float widthLimit = (graphContainer.rect.width / 2f) - safePadding;
             float heightLimit = (graphContainer.rect.height / 2f) - safePadding;
 
-            // Definimos qué pasa cuando se ARRASTRA (Drag)
             System.Action<Vector2> onDragUpdate = (newPosition) =>
             {
                 _nodes[entityName].position = newPosition;
                 UpdateVisuals();
             };
 
-            // Definimos qué pasa cuando se hace CLIC (Tap)
             System.Action onClickAction = () =>
             {
                 if (isGlobalEntity)
@@ -279,8 +264,49 @@ namespace ImmersiveGraph.Visual
                 }
             };
 
-            // Inicializamos el nodo inteligente
             smartNodeHandler.Initialize(rect, graphContainer, widthLimit, heightLimit, onDragUpdate, onClickAction);
+
+            // =========================================================
+            // --- NUEVO: LÓGICA DE AGARRE GRIP (SPAWN TOKEN 3D) ---
+            // =========================================================
+
+            // 1. Añadimos un cuerpo físico invisible para que el XR Interactor lo vea
+            BoxCollider col3D = nodeObj.AddComponent<BoxCollider>();
+            // Le damos el tamaño del nodo UI y un grosor para que el rayo no lo atraviese de largo
+            col3D.size = new Vector3(rect.rect.width, rect.rect.height, 10f);
+
+            // 2. Le añadimos el componente XR Simple Interactable
+            var xrInteractable = nodeObj.AddComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable>();
+
+            // 3. Cuando el botón de agarre (Grip/Select) accione este collider:
+            xrInteractable.selectEntered.AddListener((args) =>
+            {
+                if (token3DPrefab != null)
+                {
+                    // Lo instanciamos ligeramente enfrente del panel 2D (hacia el usuario)
+                    Vector3 spawnPos = nodeObj.transform.position - (nodeObj.transform.forward * 0.15f);
+                    GameObject newToken = Instantiate(token3DPrefab, spawnPos, nodeObj.transform.rotation);
+                    newToken.name = "Token3D_" + entityName;
+
+                    // --- PINTAR EL TOKEN --- (Idéntico a SelectableText)
+                    var renderer = newToken.GetComponentInChildren<Renderer>();
+                    if (renderer != null)
+                    {
+                        renderer.material.color = UserColorPalette.GetLocalPlayerColor();
+                    }
+
+                    // --- INYECTAR TEXTO ---
+                    TMP_Text[] textComponents = newToken.GetComponentsInChildren<TMP_Text>();
+                    foreach (var txt in textComponents)
+                    {
+                        txt.text = entityName;
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("[KGPanel] No se asignó el token3DPrefab en el inspector.");
+                }
+            });
 
             _nodes.Add(entityName, new UINode { id = entityName, rect = rect, position = startPosition, velocity = Vector2.zero });
         }
@@ -375,17 +401,13 @@ namespace ImmersiveGraph.Visual
                 float dist = dir.magnitude;
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-                Vector2 normal = new Vector2(-dir.y, dir.x).normalized;
-                Vector2 offset = normal * edge.parallelOffset;
-
-                edge.lineRect.anchoredPosition = startPos + offset;
-
+                edge.lineRect.anchoredPosition = startPos;
                 edge.lineRect.sizeDelta = new Vector2(dist, baseNodeThickness * _currentScale);
                 edge.lineRect.localRotation = Quaternion.Euler(0, 0, angle);
 
                 if (edge.labelRect != null)
                 {
-                    Vector2 midPoint = startPos + (dir / 2f) + offset;
+                    Vector2 midPoint = startPos + (dir / 2f);
                     edge.labelRect.anchoredPosition = midPoint;
                     edge.labelRect.localRotation = Quaternion.identity;
                 }
@@ -406,7 +428,6 @@ namespace ImmersiveGraph.Visual
         private float _limitX;
         private float _limitY;
 
-        // Bandera inteligente para saber si el usuario se movió
         private bool _wasDragged = false;
 
         public void Initialize(RectTransform nodeRect, RectTransform canvasRect, float limitX, float limitY, System.Action<Vector2> onDragUpdate, System.Action onClickAction)
@@ -421,13 +442,11 @@ namespace ImmersiveGraph.Visual
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            // Al apretar el gatillo, reseteamos la bandera asumiendo que es un clic limpio
             _wasDragged = false;
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            // Si el motor de Unity detecta movimiento (supera el Drag Threshold), marcamos que se arrastró
             _wasDragged = true;
             transform.SetAsLastSibling();
         }
@@ -446,12 +465,10 @@ namespace ImmersiveGraph.Visual
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            // Termina el arrastre. _wasDragged sigue en TRUE hasta el próximo PointerDown.
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            // LA MAGIA: Solo activamos el filtro (el clic) si el usuario NO arrastró el nodo.
             if (!_wasDragged)
             {
                 _onClickAction?.Invoke();
