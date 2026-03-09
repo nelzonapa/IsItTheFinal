@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems; // <-- NECESARIO PARA ARRASTRAR Y CLICS
 using TMPro;
 using ImmersiveGraph.Data;
 
@@ -49,8 +50,6 @@ namespace ImmersiveGraph.Visual
             public UINode target;
             public string relation;
             public RectTransform lineRect;
-
-            // --- Referencia al texto del verbo ---
             public RectTransform labelRect;
         }
 
@@ -177,32 +176,19 @@ namespace ImmersiveGraph.Visual
                         RectTransform lineRect = lineObj.GetComponent<RectTransform>();
                         lineRect.pivot = new Vector2(0f, 0.5f);
 
-                        // ==========================================
-                        // --- CREACIÓN DINÁMICA DEL TEXTO (VERBO) ---
-                        // ==========================================
                         GameObject labelObj = new GameObject("Verb_" + edgeData.relacion);
                         labelObj.transform.SetParent(graphContainer, false);
-
                         labelObj.transform.SetSiblingIndex(lineObj.transform.GetSiblingIndex() + 1);
 
                         TextMeshProUGUI labelText = labelObj.AddComponent<TextMeshProUGUI>();
                         labelText.text = edgeData.relacion;
-
-                        // --- CORRECCIÓN: ESCALADO DE FUENTE ---
-                        // Ajustamos el tamaño base de la letra multiplicándolo por la escala actual
                         labelText.fontSize = 18f * _currentScale;
-
                         labelText.color = new Color(1f, 0.9f, 0.5f, 1f);
                         labelText.alignment = TextAlignmentOptions.Center;
-                        //labelText.enableWordWrapping = false;
 
                         RectTransform labelRect = labelObj.GetComponent<RectTransform>();
-
-                        // --- CORRECCIÓN: ESCALADO DEL CONTENEDOR DE TEXTO ---
                         labelRect.sizeDelta = new Vector2(200f * _currentScale, 30f * _currentScale);
                         labelRect.pivot = new Vector2(0.5f, 0.5f);
-
-                        // Nos aseguramos que inicie horizontal y con la escala general
                         labelRect.localRotation = Quaternion.identity;
                         labelRect.localScale = Vector3.one;
 
@@ -238,25 +224,35 @@ namespace ImmersiveGraph.Visual
 
             if (bgImage != null)
             {
-                if (isGlobalEntity)
-                {
-                    bgImage.color = new Color(0.2f, 0.8f, 0.8f, 1f);
-                }
-                else
-                {
-                    bgImage.color = new Color(0.3f, 0.3f, 0.3f, 1f);
-                }
+                if (isGlobalEntity) bgImage.color = new Color(0.2f, 0.8f, 0.8f, 1f);
+                else bgImage.color = new Color(0.3f, 0.3f, 0.3f, 1f);
             }
 
-            Button btn = nodeObj.GetComponent<Button>();
-            if (btn == null) btn = nodeObj.AddComponent<Button>();
+            // =========================================================
+            // ELIMINADO: Ya no usamos el Button genérico de Unity.
+            // AHORA: Usamos nuestro script inteligente para gestionar todo.
+            // =========================================================
 
-            btn.onClick.AddListener(() =>
+            // Asegurarnos de que tenga el componente RaycastTarget encendido (la Image ya lo hace)
+            UIDraggableNode smartNodeHandler = nodeObj.AddComponent<UIDraggableNode>();
+
+            float safePadding = 50f * _currentScale;
+            float widthLimit = (graphContainer.rect.width / 2f) - safePadding;
+            float heightLimit = (graphContainer.rect.height / 2f) - safePadding;
+
+            // Definimos qué pasa cuando se ARRASTRA (Drag)
+            System.Action<Vector2> onDragUpdate = (newPosition) =>
+            {
+                _nodes[entityName].position = newPosition;
+                UpdateVisuals();
+            };
+
+            // Definimos qué pasa cuando se hace CLIC (Tap)
+            System.Action onClickAction = () =>
             {
                 if (isGlobalEntity)
                 {
                     _currentActiveFilter = entityName;
-
                     if (H3GraphSpawner.Instance != null) H3GraphSpawner.Instance.HighlightNodesByEntity(entityName);
 
                     if (clearFiltersButton != null)
@@ -276,7 +272,10 @@ namespace ImmersiveGraph.Visual
                 {
                     ShowWarningMessage($"La entidad '{entityName}' solo existe en este archivo.");
                 }
-            });
+            };
+
+            // Inicializamos el nodo inteligente
+            smartNodeHandler.Initialize(rect, graphContainer, widthLimit, heightLimit, onDragUpdate, onClickAction);
 
             _nodes.Add(entityName, new UINode { id = entityName, rect = rect, position = startPosition, velocity = Vector2.zero });
         }
@@ -371,24 +370,82 @@ namespace ImmersiveGraph.Visual
                 float dist = dir.magnitude;
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-                // Actualizar la línea
                 edge.lineRect.anchoredPosition = startPos;
                 edge.lineRect.sizeDelta = new Vector2(dist, baseNodeThickness * _currentScale);
                 edge.lineRect.localRotation = Quaternion.Euler(0, 0, angle);
 
-                // ==========================================
-                // --- POSICIONAR EL VERBO (HORIZONTAL SIEMPRE) ---
-                // ==========================================
                 if (edge.labelRect != null)
                 {
-                    // Lo ubicamos exactamente en el punto medio de la línea
                     Vector2 midPoint = startPos + (dir / 2f);
                     edge.labelRect.anchoredPosition = midPoint;
-
-                    // --- CORRECCIÓN: FORZAR HORIZONTAL ---
-                    // Mantenemos la rotación siempre en 0, 0, 0 para que no gire con la línea.
                     edge.labelRect.localRotation = Quaternion.identity;
                 }
+            }
+        }
+    }
+
+    // ==========================================
+    // --- LÓGICA INTELIGENTE (ARRASTRE VS CLIC) ---
+    // ==========================================
+    public class UIDraggableNode : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerDownHandler, IPointerClickHandler
+    {
+        private RectTransform _nodeRect;
+        private RectTransform _canvasRect;
+        private System.Action<Vector2> _onDragUpdate;
+        private System.Action _onClickAction;
+
+        private float _limitX;
+        private float _limitY;
+
+        // Bandera inteligente para saber si el usuario se movió
+        private bool _wasDragged = false;
+
+        public void Initialize(RectTransform nodeRect, RectTransform canvasRect, float limitX, float limitY, System.Action<Vector2> onDragUpdate, System.Action onClickAction)
+        {
+            _nodeRect = nodeRect;
+            _canvasRect = canvasRect;
+            _limitX = limitX;
+            _limitY = limitY;
+            _onDragUpdate = onDragUpdate;
+            _onClickAction = onClickAction;
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            // Al apretar el gatillo, reseteamos la bandera asumiendo que es un clic limpio
+            _wasDragged = false;
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            // Si el motor de Unity detecta movimiento (supera el Drag Threshold), marcamos que se arrastró
+            _wasDragged = true;
+            transform.SetAsLastSibling();
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRect, eventData.position, eventData.pressEventCamera, out Vector2 localPointerPosition))
+            {
+                localPointerPosition.x = Mathf.Clamp(localPointerPosition.x, -_limitX, _limitX);
+                localPointerPosition.y = Mathf.Clamp(localPointerPosition.y, -_limitY, _limitY);
+
+                _nodeRect.anchoredPosition = localPointerPosition;
+                _onDragUpdate?.Invoke(localPointerPosition);
+            }
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            // Termina el arrastre. _wasDragged sigue en TRUE hasta el próximo PointerDown.
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            // LA MAGIA: Solo activamos el filtro (el clic) si el usuario NO arrastró el nodo.
+            if (!_wasDragged)
+            {
+                _onClickAction?.Invoke();
             }
         }
     }
