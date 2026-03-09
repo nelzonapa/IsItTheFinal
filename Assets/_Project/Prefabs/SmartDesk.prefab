@@ -1185,7 +1185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.6431373}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1784,8 +1784,8 @@ Transform:
   m_GameObject: {fileID: 4180109581072555309}
   serializedVersion: 2
   m_LocalRotation: {x: 0.12897308, y: 0.20920585, z: -0.027847152, w: 0.968929}
-  m_LocalPosition: {x: -0.168, y: 0.175, z: 0.132}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalPosition: {x: -0.168, y: -0.146, z: 0.051}
+  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5119170893319367203}
@@ -2380,15 +2380,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4792782635014712557}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.63270533, y: 0, z: 0, w: 0.77439266}
-  m_LocalPosition: {x: -0.427, y: 0.935, z: -0.084}
+  m_LocalRotation: {x: 0.4695792, y: -0, z: -0, w: 0.8828904}
+  m_LocalPosition: {x: -0.593, y: 0.827, z: -0.246}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3545558943545134854}
   - {fileID: 6111235057680832571}
   m_Father: {fileID: 8839602106188717790}
-  m_LocalEulerAnglesHint: {x: 78.5, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 56.014, y: 0, z: 0}
 --- !u!54 &4990625249381989815
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3270,8 +3270,8 @@ Transform:
   m_GameObject: {fileID: 6674525928458883975}
   serializedVersion: 2
   m_LocalRotation: {x: 0.15595216, y: -0, z: -0, w: 0.9877646}
-  m_LocalPosition: {x: -1.155, y: 0.682, z: 0.368}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalPosition: {x: -1.841, y: 0.615, z: 0.306}
+  m_LocalScale: {x: 0.4, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3280548386926511697}
@@ -3599,7 +3599,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.392}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3634,13 +3634,13 @@ MonoBehaviour:
   clearFiltersButton: {fileID: 8571453740860196777}
   warningText: {fileID: 7037941662893765958}
   activeFilterText: {fileID: 944106286352047556}
-  baseRepulsionForce: 2000
+  baseRepulsionForce: 3000
   baseSpringLength: 250
   springForce: 5
   damping: 0.85
   baseNodeThickness: 3
   nodeThresholdForScaling: 1
-  minScaleLimit: 0.3
+  minScaleLimit: 0.4
 --- !u!65 &5325385477809883269
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4513,7 +4513,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4588,7 +4588,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.4339623, g: 0.4339623, b: 0.4339623, a: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

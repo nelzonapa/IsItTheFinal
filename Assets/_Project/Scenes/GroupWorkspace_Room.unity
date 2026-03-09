@@ -617,7 +617,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6598815579406187037, guid: 18ddb545287c546e19cc77dc9fbb2189, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1278,7 +1278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 820629064285437188, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.4671936
+      value: 0.729126
       objectReference: {fileID: 0}
     - target: {fileID: 1117198061108358910, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1295,18 +1295,6 @@ PrefabInstance:
     - target: {fileID: 1861052815609057959, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_Name
       value: SmartDesk
-      objectReference: {fileID: 0}
-    - target: {fileID: 3119671140305070326, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3119671140305070326, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3119671140305070326, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1331,10 +1319,6 @@ PrefabInstance:
     - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5349194860287292673, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
-      propertyPath: m_fontSize
-      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 6877971403611914178, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_Value
@@ -4160,7 +4144,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 820629064285437188, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.4671936
+      value: -0.27859497
       objectReference: {fileID: 0}
     - target: {fileID: 1117198061108358910, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchorMax.x
@@ -4177,18 +4161,6 @@ PrefabInstance:
     - target: {fileID: 1861052815609057959, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_Name
       value: SmartDesk (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 3119671140305070326, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3119671140305070326, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3119671140305070326, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchorMax.y
@@ -4213,10 +4185,6 @@ PrefabInstance:
     - target: {fileID: 5113961637092120971, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5349194860287292673, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
-      propertyPath: m_fontSize
-      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 6877971403611914178, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_Value
