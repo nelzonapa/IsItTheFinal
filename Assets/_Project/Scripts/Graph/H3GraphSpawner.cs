@@ -51,14 +51,20 @@ namespace ImmersiveGraph.Visual
         public Vector3 markerOffset = new Vector3(0, 0.25f, 0);
         public Vector3 markerScale = new Vector3(0.2f, 0.2f, 0.2f);
 
-        // --- NUEVAS VARIABLES DE RADIO ---
+        // --- VARIABLES DE RADIO ---
         [Header("Layout Orgánico (Force-Directed)")]
-        [Tooltip("Radio de separación cuando las comunidades están en la MESA (miniatura).")]
         public float communityMiniatureRadius = 0.4f;
-        [Tooltip("Radio de separación cuando las comunidades forman la BÓVEDA en el fondo.")]
         public float communityExpandedRadius = 1.2f;
-        [Tooltip("Qué tan dispersos están los archivos alrededor de su comunidad.")]
         public float fileOrbitRadius = 0.35f;
+
+        // --- NUEVAS VARIABLES DE FÍSICA PARA EL ACOMODO ---
+        [Header("Dinámica de Acomodo Espacial")]
+        public bool aplicarFisicaContinua = true;
+        [Tooltip("Radio virtual del nodo cuando NO tiene archivos visibles")]
+        public float radioBaseNodo = 0.15f;
+        [Tooltip("Radio virtual del nodo cuando tiene archivos fantasmas visibles")]
+        public float radioExpandidoNodo = 0.35f;
+        public float fuerzaDeEmpuje = 2.0f;
 
         [Header("Estilo de Líneas")]
         public Material lineMaterial;
@@ -80,6 +86,8 @@ namespace ImmersiveGraph.Visual
         [HideInInspector]
         public Dictionary<string, GraphNode> spawnedNodesMap = new Dictionary<string, GraphNode>();
 
+        private List<GraphNode> _activeCommunities = new List<GraphNode>();
+
         void Awake()
         {
             if (Instance == null) Instance = this;
@@ -90,16 +98,65 @@ namespace ImmersiveGraph.Visual
             yield return LoadGraphRoutine();
         }
 
+        void Update()
+        {
+            // FÍSICA DE EMPUJE CONTINUO: Acomoda los nodos que regresan con carga (archivos fantasmas)
+            if (!aplicarFisicaContinua || _activeCommunities.Count == 0 || transform.childCount == 0 || interactionManager == null) return;
+
+            Transform rootObjTransform = transform.GetChild(0);
+
+            for (int i = 0; i < _activeCommunities.Count; i++)
+            {
+                GraphNode nodeA = _activeCommunities[i];
+
+                // Solo acomodamos los nodos que están en el grafo general (no los que están en la mesa)
+                if (nodeA.transform.parent != rootObjTransform) continue;
+
+                bool aHasFiles = nodeA.childNodes != null && nodeA.childNodes.Count > 0 && nodeA.childNodes[0].activeSelf;
+                float radA = aHasFiles ? radioExpandidoNodo : radioBaseNodo;
+
+                Vector3 push = Vector3.zero;
+
+                for (int j = 0; j < _activeCommunities.Count; j++)
+                {
+                    if (i == j) continue;
+                    GraphNode nodeB = _activeCommunities[j];
+                    if (nodeB.transform.parent != rootObjTransform) continue;
+
+                    bool bHasFiles = nodeB.childNodes != null && nodeB.childNodes.Count > 0 && nodeB.childNodes[0].activeSelf;
+                    float radB = bHasFiles ? radioExpandidoNodo : radioBaseNodo;
+
+                    Vector3 diff = nodeA.transform.localPosition - nodeB.transform.localPosition;
+                    float dist = diff.magnitude;
+                    float minSafeDist = radA + radB;
+
+                    if (dist < minSafeDist && dist > 0.001f)
+                    {
+                        // Si el Nodo A NO se está animando (viajando), se deja empujar. 
+                        if (!interactionManager.IsNodeAnimating(nodeA))
+                        {
+                            push += diff.normalized * (minSafeDist - dist) * fuerzaDeEmpuje;
+                        }
+                    }
+                }
+
+                if (push != Vector3.zero)
+                {
+                    Vector3 newPos = nodeA.transform.localPosition + push * Time.deltaTime;
+                    // Forzar que siempre se deslicen sobre la cáscara de la esfera
+                    nodeA.transform.localPosition = newPos.normalized * communityMiniatureRadius;
+                    nodeA.originalLocalPosition = nodeA.transform.localPosition;
+                }
+            }
+        }
+
         IEnumerator LoadGraphRoutine()
         {
             string indexFilePath = Path.Combine(Application.streamingAssetsPath, entityIndexFileName);
             string indexJsonContent = "";
             yield return ReadFileRoutine(indexFilePath, result => indexJsonContent = result);
 
-            if (!string.IsNullOrEmpty(indexJsonContent))
-            {
-                ParseGlobalIndexNative(indexJsonContent);
-            }
+            if (!string.IsNullOrEmpty(indexJsonContent)) ParseGlobalIndexNative(indexJsonContent);
 
             string graphFilePath = Path.Combine(Application.streamingAssetsPath, jsonFileName);
             string graphJsonContent = "";
@@ -143,20 +200,14 @@ namespace ImmersiveGraph.Visual
             {
                 int keyStart = jsonText.IndexOf('"', i);
                 if (keyStart == -1) break;
-
                 int keyEnd = jsonText.IndexOf('"', keyStart + 1);
                 if (keyEnd == -1) break;
-
                 string key = jsonText.Substring(keyStart + 1, keyEnd - keyStart - 1);
                 int objStart = jsonText.IndexOf('{', keyEnd + 1);
                 if (objStart == -1) break;
 
                 string inBetween = jsonText.Substring(keyEnd + 1, objStart - keyEnd - 1);
-                if (inBetween.Contains("\""))
-                {
-                    i = keyEnd + 1;
-                    continue;
-                }
+                if (inBetween.Contains("\"")) { i = keyEnd + 1; continue; }
 
                 int braceCount = 1;
                 int objEnd = objStart + 1;
@@ -169,10 +220,7 @@ namespace ImmersiveGraph.Visual
 
                 string objJson = jsonText.Substring(objStart, objEnd - objStart);
                 GlobalEntityData data = JsonUtility.FromJson<GlobalEntityData>(objJson);
-                if (data != null && !string.IsNullOrEmpty(data.nombre_original))
-                {
-                    globalEntityDatabase[key] = data;
-                }
+                if (data != null && !string.IsNullOrEmpty(data.nombre_original)) globalEntityDatabase[key] = data;
                 i = objEnd;
             }
         }
@@ -182,6 +230,7 @@ namespace ImmersiveGraph.Visual
             nodeDatabase.Clear();
             allSpawnedNodes.Clear();
             spawnedNodesMap.Clear();
+            _activeCommunities.Clear();
             RegisterNodeToDatabase(rootData);
 
             foreach (Transform child in transform) Destroy(child.gameObject);
@@ -190,10 +239,7 @@ namespace ImmersiveGraph.Visual
 
             if (rootData.children == null) return;
 
-            // --- FASE 3: APLICAMOS EL ALGORITMO CON EL RADIO DE LA MESA (Miniatura) ---
             Vector3[] commPositions = SimulateOrganicForceDirectedLayout(rootData.children, communityMiniatureRadius);
-
-            List<GraphNode> createdCommunities = new List<GraphNode>();
             int commCount = rootData.children.Count;
 
             for (int i = 0; i < commCount; i++)
@@ -205,13 +251,12 @@ namespace ImmersiveGraph.Visual
                 GameObject commObj = CreateNodeObject(communityPrefab, rootObj.transform, commPositions[i], commData, "community", rootObj.transform, lineToComm.GetComponent<LineRenderer>(), groupColor);
 
                 GraphNode commLogic = commObj.GetComponent<GraphNode>();
-                if (commLogic != null) createdCommunities.Add(commLogic);
+                if (commLogic != null) _activeCommunities.Add(commLogic);
 
                 if (commData.children != null)
                 {
                     int fileCount = commData.children.Count;
                     Vector3 directionOut = commObj.transform.localPosition.normalized;
-
                     Vector3[] filePositions = SimulateOrganicFileCloud(fileCount, fileOrbitRadius, directionOut);
 
                     for (int j = 0; j < fileCount; j++)
@@ -227,21 +272,14 @@ namespace ImmersiveGraph.Visual
                         }
                     }
                 }
-
                 if (commLogic != null) commLogic.InitializeNode(rootObj.transform, lineToComm.GetComponent<LineRenderer>());
             }
 
             rootObj.transform.localScale = new Vector3(initialMiniatureScale, initialMiniatureScale, initialMiniatureScale);
 
-            // PASAMOS AMBOS RADIOS AL MANAGER PARA LA ANIMACIÓN
             if (interactionManager != null) interactionManager.InitializeGraph(rootObj.transform, communityMiniatureRadius, communityExpandedRadius);
-
-            if (miniWorldManager != null) miniWorldManager.BuildMiniatureFromRealGraph(rootObj.transform, createdCommunities);
+            if (miniWorldManager != null) miniWorldManager.BuildMiniatureFromRealGraph(rootObj.transform, _activeCommunities);
         }
-
-        // ==========================================
-        // MOTORES FÍSICOS FORCE-DIRECTED (ESTÁTICOS)
-        // ==========================================
 
         private Vector3[] SimulateOrganicForceDirectedLayout(List<NodeData> communities, float baseRadius)
         {
@@ -253,7 +291,6 @@ namespace ImmersiveGraph.Visual
             {
                 masses[i] = (communities[i].children != null && communities[i].children.Count > 0) ? communities[i].children.Count : 2f;
                 Vector3 randomDir = Random.onUnitSphere;
-
                 if (randomDir.z < 0.2f) randomDir.z = Mathf.Abs(randomDir.z) + 0.2f;
                 pos[i] = randomDir.normalized * baseRadius * Random.Range(0.7f, 1.3f);
             }
@@ -262,7 +299,6 @@ namespace ImmersiveGraph.Visual
             for (int iter = 0; iter < 100; iter++)
             {
                 Vector3[] disp = new Vector3[count];
-
                 for (int i = 0; i < count; i++)
                 {
                     for (int j = 0; j < count; j++)
@@ -271,12 +307,10 @@ namespace ImmersiveGraph.Visual
                         Vector3 delta = pos[i] - pos[j];
                         float dist = delta.magnitude;
                         if (dist < 0.01f) dist = 0.01f;
-
                         float force = (k * k) / dist * (masses[i] + masses[j]) * 0.05f;
                         disp[i] += (delta / dist) * force;
                     }
                 }
-
                 for (int i = 0; i < count; i++)
                 {
                     Vector3 delta = pos[i];
@@ -284,14 +318,12 @@ namespace ImmersiveGraph.Visual
                     float force = (dist * dist) / k;
                     disp[i] -= (delta / dist) * force * 0.1f;
                 }
-
                 for (int i = 0; i < count; i++)
                 {
                     pos[i] += disp[i] * 0.05f;
                     if (pos[i].z < 0.1f) pos[i].z = 0.1f;
                 }
             }
-
             return pos;
         }
 
@@ -301,10 +333,7 @@ namespace ImmersiveGraph.Visual
             for (int i = 0; i < fileCount; i++)
             {
                 Vector3 randomPoint = Random.insideUnitSphere;
-                if (Vector3.Dot(randomPoint, communityDirection) < 0)
-                {
-                    randomPoint = -randomPoint;
-                }
+                if (Vector3.Dot(randomPoint, communityDirection) < 0) randomPoint = -randomPoint;
                 pos[i] = communityDirection * (radius * 0.5f) + randomPoint * (radius * Random.Range(0.5f, 1.5f));
             }
             return pos;
@@ -313,20 +342,13 @@ namespace ImmersiveGraph.Visual
         void RegisterNodeToDatabase(NodeData node)
         {
             if (node == null) return;
-            if (!string.IsNullOrEmpty(node.id) && !nodeDatabase.ContainsKey(node.id))
-            {
-                nodeDatabase.Add(node.id, node);
-            }
-            if (node.children != null)
-            {
-                foreach (var child in node.children) RegisterNodeToDatabase(child);
-            }
+            if (!string.IsNullOrEmpty(node.id) && !nodeDatabase.ContainsKey(node.id)) nodeDatabase.Add(node.id, node);
+            if (node.children != null) foreach (var child in node.children) RegisterNodeToDatabase(child);
         }
 
         public NodeData GetNodeDataByID(string id)
         {
-            if (nodeDatabase.ContainsKey(id)) return nodeDatabase[id];
-            return null;
+            return nodeDatabase.ContainsKey(id) ? nodeDatabase[id] : null;
         }
 
         GameObject CreateNodeObject(GameObject prefab, Transform parent, Vector3 localPos, NodeData data, string type, Transform parentNode, LineRenderer incomingLine, Color nodeColor)
@@ -346,7 +368,6 @@ namespace ImmersiveGraph.Visual
             logic.interactionManager = this.interactionManager;
             logic.miniWorldManager = this.miniWorldManager;
             logic.expandSound = nodeExpandSound;
-
             logic.reviewedMarkerPrefab = reviewedMarkerPrefab;
             logic.markerLocalOffset = markerOffset;
             logic.markerLocalScale = markerScale;
@@ -369,19 +390,15 @@ namespace ImmersiveGraph.Visual
                 GameObject uiObj = Instantiate(nodeUIPrefab, obj.transform);
                 uiObj.transform.localPosition = uiOffset;
                 uiObj.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
-
                 NodeUIController uiController = uiObj.GetComponent<NodeUIController>();
                 if (uiController != null) uiController.SetupUI(data.title, "");
             }
 
-            if (type == "file" && data.knowledge_graph != null && data.knowledge_graph.Length > 0)
+            if (type == "file" && data.knowledge_graph != null && data.knowledge_graph.Length > 0 && kgIndicatorPrefab != null)
             {
-                if (kgIndicatorPrefab != null)
-                {
-                    GameObject kgIcon = Instantiate(kgIndicatorPrefab, obj.transform);
-                    kgIcon.transform.localPosition = kgIndicatorOffset;
-                    kgIcon.transform.localScale = kgIndicatorScale;
-                }
+                GameObject kgIcon = Instantiate(kgIndicatorPrefab, obj.transform);
+                kgIcon.transform.localPosition = kgIndicatorOffset;
+                kgIcon.transform.localScale = kgIndicatorScale;
             }
 
             return obj;
@@ -392,10 +409,7 @@ namespace ImmersiveGraph.Visual
             GameObject lineObj = new GameObject("Link");
             lineObj.transform.SetParent(parent);
             LineRenderer lr = lineObj.AddComponent<LineRenderer>();
-
-            if (lineMaterial != null) lr.material = lineMaterial;
-            else lr.material = new Material(Shader.Find("Sprites/Default"));
-
+            lr.material = lineMaterial != null ? lineMaterial : new Material(Shader.Find("Sprites/Default"));
             lr.startWidth = lineWidth;
             lr.endWidth = lineWidth;
             lr.positionCount = 2;
@@ -409,16 +423,11 @@ namespace ImmersiveGraph.Visual
         {
             string key = entityName.ToLower();
             if (!globalEntityDatabase.ContainsKey(key)) return 0;
-
             int fileCount = 0;
             string[] allNodes = globalEntityDatabase[key].nodos;
-
             foreach (string nodeId in allNodes)
             {
-                if (!nodeId.ToUpper().Contains("COMUNIDAD") && !nodeId.ToUpper().Contains("ROOT"))
-                {
-                    fileCount++;
-                }
+                if (!nodeId.ToUpper().Contains("COMUNIDAD") && !nodeId.ToUpper().Contains("ROOT")) fileCount++;
             }
             return fileCount;
         }
@@ -427,23 +436,12 @@ namespace ImmersiveGraph.Visual
         {
             string key = entityName.ToLower();
             if (!globalEntityDatabase.ContainsKey(key)) return;
-
             string[] targetIDs = globalEntityDatabase[key].nodos;
             HashSet<string> targetSet = new HashSet<string>(targetIDs);
-
             foreach (GraphNode node in allSpawnedNodes)
             {
-                if (node == null || node.myData == null) continue;
-                if (node.nodeType == "root") continue;
-
-                if (targetSet.Contains(node.myData.id))
-                {
-                    node.SetVisualState(1);
-                }
-                else
-                {
-                    node.SetVisualState(2);
-                }
+                if (node == null || node.myData == null || node.nodeType == "root") continue;
+                node.SetVisualState(targetSet.Contains(node.myData.id) ? 1 : 2);
             }
         }
 
