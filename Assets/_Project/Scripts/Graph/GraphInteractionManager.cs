@@ -153,8 +153,8 @@ namespace ImmersiveGraph.Interaction
             XRGrabInteractable grab = targetCommunity.GetComponent<XRGrabInteractable>();
             if (grab != null) grab.enabled = false;
 
-            // Encendemos los archivos totalmente interactivos
-            SetCommunityFileState(targetCommunity, true, true);
+            // ASEGURAR QUE ESTÉN APAGADOS DURANTE EL VIAJE
+            SetCommunityFileState(targetCommunity, false, false);
 
             targetCommunity.transform.SetParent(tableFocusAnchor, true);
 
@@ -174,6 +174,9 @@ namespace ImmersiveGraph.Interaction
                 yield return null;
             }
 
+            // --- RECIÉN AL LLEGAR AL FOCO, ENCENDEMOS LOS ARCHIVOS ---
+            SetCommunityFileState(targetCommunity, true, true);
+
             if (grab != null) grab.enabled = true;
             _animatingNodes.Remove(targetCommunity);
         }
@@ -186,8 +189,8 @@ namespace ImmersiveGraph.Interaction
             XRGrabInteractable grab = targetCommunity.GetComponent<XRGrabInteractable>();
             if (grab != null) grab.enabled = false;
 
-            // Se vuelve fantasma (no interactivo, pero visible)
-            SetCommunityFileState(targetCommunity, true, false);
+            // --- APAGAR INMEDIATAMENTE TODOS LOS ARCHIVOS ANTES DE REGRESAR ---
+            SetCommunityFileState(targetCommunity, false, false);
 
             targetCommunity.transform.SetParent(_rootNode, true);
 
@@ -224,9 +227,9 @@ namespace ImmersiveGraph.Interaction
             if (grabOld != null) grabOld.enabled = false;
             if (grabNew != null) grabNew.enabled = false;
 
-            // El viejo se vuelve fantasma, el nuevo se vuelve real
-            SetCommunityFileState(oldFocusNode, true, false);
-            SetCommunityFileState(newFocusNode, true, true);
+            // --- APAGAR LOS ARCHIVOS DEL VIEJO INMEDIATAMENTE Y MANTENER APAGADO AL NUEVO ---
+            SetCommunityFileState(oldFocusNode, false, false);
+            SetCommunityFileState(newFocusNode, false, false);
 
             oldFocusNode.transform.SetParent(_rootNode, true);
             newFocusNode.transform.SetParent(tableFocusAnchor, true);
@@ -252,6 +255,9 @@ namespace ImmersiveGraph.Interaction
 
                 yield return null;
             }
+
+            // --- RECIÉN AL LLEGAR AL FOCO, ENCENDEMOS LOS ARCHIVOS DEL NUEVO ---
+            SetCommunityFileState(newFocusNode, true, true);
 
             if (grabOld != null) grabOld.enabled = true;
             if (grabNew != null) grabNew.enabled = true;
