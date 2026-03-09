@@ -51,6 +51,8 @@ namespace ImmersiveGraph.Visual
             public string relation;
             public RectTransform lineRect;
             public RectTransform labelRect;
+
+            public float parallelOffset;
         }
 
         private Dictionary<string, UINode> _nodes = new Dictionary<string, UINode>();
@@ -192,13 +194,16 @@ namespace ImmersiveGraph.Visual
                         labelRect.localRotation = Quaternion.identity;
                         labelRect.localScale = Vector3.one;
 
+                        float offset = (_edges.Count % 3 - 1) * 10f * _currentScale;
+
                         _edges.Add(new UIEdge
                         {
                             source = sourceNode,
                             target = targetNode,
                             relation = edgeData.relacion,
                             lineRect = lineRect,
-                            labelRect = labelRect
+                            labelRect = labelRect,
+                            parallelOffset = offset
                         });
                     }
                 }
@@ -370,13 +375,17 @@ namespace ImmersiveGraph.Visual
                 float dist = dir.magnitude;
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-                edge.lineRect.anchoredPosition = startPos;
+                Vector2 normal = new Vector2(-dir.y, dir.x).normalized;
+                Vector2 offset = normal * edge.parallelOffset;
+
+                edge.lineRect.anchoredPosition = startPos + offset;
+
                 edge.lineRect.sizeDelta = new Vector2(dist, baseNodeThickness * _currentScale);
                 edge.lineRect.localRotation = Quaternion.Euler(0, 0, angle);
 
                 if (edge.labelRect != null)
                 {
-                    Vector2 midPoint = startPos + (dir / 2f);
+                    Vector2 midPoint = startPos + (dir / 2f) + offset;
                     edge.labelRect.anchoredPosition = midPoint;
                     edge.labelRect.localRotation = Quaternion.identity;
                 }

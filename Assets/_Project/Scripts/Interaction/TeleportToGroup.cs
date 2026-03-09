@@ -22,10 +22,10 @@ namespace ImmersiveGraph.Network
         {
             _audioSource = GetComponent<AudioSource>();
             var interactable = GetComponent<XRSimpleInteractable>();
-            interactable.selectEntered.AddListener(OnButtonPressed);
+            interactable.activated.AddListener(OnButtonPressed);
         }
 
-        public void OnButtonPressed(SelectEnterEventArgs args)
+        public void OnButtonPressed(ActivateEventArgs args)
         {
             // 1. SONIDO
             if (_audioSource != null && teleportSound != null) _audioSource.PlayOneShot(teleportSound);
