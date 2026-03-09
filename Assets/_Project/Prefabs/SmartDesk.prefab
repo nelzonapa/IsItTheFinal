@@ -3966,7 +3966,7 @@ Transform:
   m_GameObject: {fileID: 7811330940087541257}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.414, y: 1.625, z: 1.871}
+  m_LocalPosition: {x: -0.414, y: 1.625, z: 2.24}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4098,9 +4098,9 @@ MonoBehaviour:
   markerScale: {x: 0.5, y: 0.5, z: 0.5}
   communityMiniatureRadius: 3
   communityExpandedRadius: 5
-  fileOrbitRadius: 8
+  fileOrbitRadius: 10
   maxHeightLimit: 6
-  minHeightLimit: -6
+  minHeightLimit: -7
   aplicarFisicaContinua: 1
   radioBaseNodo: 0.15
   radioExpandidoNodo: 0.35
@@ -5111,7 +5111,7 @@ Transform:
   m_GameObject: {fileID: 8951704158506580223}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.446, y: 1.134, z: 1.336}
+  m_LocalPosition: {x: -0.446, y: 1.299, z: 1.504}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

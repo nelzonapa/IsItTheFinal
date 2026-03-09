@@ -57,7 +57,6 @@ namespace ImmersiveGraph.Visual
         public float communityExpandedRadius = 1.2f;
         public float fileOrbitRadius = 0.35f;
 
-        // --- NUEVO: LÍMITES ERGONÓMICOS DE TECHO Y SUELO ---
         [Header("Límites de Ergonomía VR (Techo y Suelo)")]
         [Tooltip("Altura máxima en el eje Y. Evita que el usuario fuerce el cuello hacia arriba.")]
         public float maxHeightLimit = 0.6f;
@@ -153,7 +152,7 @@ namespace ImmersiveGraph.Visual
                     // 1. Mantenerse sobre el radio de la esfera
                     newPos = newPos.normalized * communityMiniatureRadius;
 
-                    // 2. APLICAR EL TECHO Y EL SUELO (Recorte Ergonómico)
+                    // 2. APLICAR EL TECHO Y EL SUELO
                     newPos.y = Mathf.Clamp(newPos.y, minHeightLimit, maxHeightLimit);
 
                     nodeA.transform.localPosition = newPos;
@@ -237,14 +236,12 @@ namespace ImmersiveGraph.Visual
             }
         }
 
-        // --- MÉTODO PARA OBTENER COLOR ÚNICO POR FUENTE ---
         private Color GetColorForSource(string source)
         {
             if (string.IsNullOrEmpty(source)) source = "Desconocido";
 
             if (!sourceColorMap.ContainsKey(source))
             {
-                // Usa la proporción áurea para generar colores bien diferenciados dinámicamente
                 float hue = (sourceColorMap.Count * 0.618033988749895f) % 1f;
                 sourceColorMap[source] = Color.HSVToRGB(hue, 0.7f, 0.9f);
             }
@@ -257,7 +254,7 @@ namespace ImmersiveGraph.Visual
             allSpawnedNodes.Clear();
             spawnedNodesMap.Clear();
             _activeCommunities.Clear();
-            sourceColorMap.Clear(); // Limpiamos el mapa al recargar
+            sourceColorMap.Clear();
 
             RegisterNodeToDatabase(rootData);
 
@@ -274,14 +271,12 @@ namespace ImmersiveGraph.Visual
             {
                 NodeData commData = rootData.children[i];
 
-                // --- CALCULAR FUENTE DOMINANTE PARA COLOREAR LA COMUNIDAD ---
                 string dominantSource = "Desconocido";
                 if (commData.children != null && commData.children.Count > 0)
                 {
                     Dictionary<string, int> sourceCounts = new Dictionary<string, int>();
                     foreach (var file in commData.children)
                     {
-                        // Se asume que NodeData.data.source está mapeado correctamente
                         string src = (file.data != null && !string.IsNullOrEmpty(file.data.source)) ? file.data.source : "Desconocido";
                         if (!sourceCounts.ContainsKey(src)) sourceCounts[src] = 0;
                         sourceCounts[src]++;
@@ -306,13 +301,14 @@ namespace ImmersiveGraph.Visual
                 {
                     int fileCount = commData.children.Count;
                     Vector3 directionOut = commObj.transform.localPosition.normalized;
+
+                    // Llama al NUEVO algoritmo anti-solapamiento
                     Vector3[] filePositions = SimulateOrganicFileCloud(fileCount, fileOrbitRadius, directionOut);
 
                     for (int j = 0; j < fileCount; j++)
                     {
                         NodeData fileData = commData.children[j];
 
-                        // --- COLOREAR ARCHIVO POR SU FUENTE ESPECÍFICA ---
                         string fileSrc = (fileData.data != null && !string.IsNullOrEmpty(fileData.data.source)) ? fileData.data.source : "Desconocido";
                         Color fileColor = GetColorForSource(fileSrc);
 
@@ -377,27 +373,67 @@ namespace ImmersiveGraph.Visual
                     pos[i] += disp[i] * 0.05f;
                     if (pos[i].z < 0.1f) pos[i].z = 0.1f;
 
-                    // --- APLICAR TECHO Y SUELO AL GENERAR LOS NODOS ---
                     pos[i].y = Mathf.Clamp(pos[i].y, minHeightLimit, maxHeightLimit);
                 }
             }
             return pos;
         }
 
+        // --- NUEVO ALGORITMO ANTI-SOLAPAMIENTO PARA ARCHIVOS ---
         private Vector3[] SimulateOrganicFileCloud(int fileCount, float radius, Vector3 communityDirection)
         {
             Vector3[] pos = new Vector3[fileCount];
+            Vector3 centerOffset = communityDirection * (radius * 0.5f);
+
+            // 1. Asignación inicial aleatoria
             for (int i = 0; i < fileCount; i++)
             {
                 Vector3 randomPoint = Random.insideUnitSphere;
                 if (Vector3.Dot(randomPoint, communityDirection) < 0) randomPoint = -randomPoint;
-
-                Vector3 calculatedPos = communityDirection * (radius * 0.5f) + randomPoint * (radius * Random.Range(0.5f, 1.5f));
-
-                // --- APLICAR TECHO Y SUELO TAMBIÉN A LOS ARCHIVOS ---
-                calculatedPos.y = Mathf.Clamp(calculatedPos.y, minHeightLimit, maxHeightLimit);
-                pos[i] = calculatedPos;
+                pos[i] = centerOffset + randomPoint * (radius * Random.Range(0.3f, 1.2f));
             }
+
+            // 2. Relajación por Fuerza Dirigida (se empujan entre sí para dejar espacio)
+            float k = radius * 0.45f; // Radio ideal de separación entre archivos
+            for (int iter = 0; iter < 50; iter++) // 50 iteraciones es suficiente
+            {
+                Vector3[] disp = new Vector3[fileCount];
+
+                // Repulsión mutua
+                for (int i = 0; i < fileCount; i++)
+                {
+                    for (int j = 0; j < fileCount; j++)
+                    {
+                        if (i == j) continue;
+                        Vector3 delta = pos[i] - pos[j];
+                        float dist = delta.magnitude;
+                        if (dist < 0.01f) dist = 0.01f;
+
+                        if (dist < k * 1.5f) // Solo se empujan si están muy cerca
+                        {
+                            float force = (k * k) / dist;
+                            disp[i] += (delta / dist) * force * 0.1f;
+                        }
+                    }
+                }
+
+                // Atracción ligera al centro de la comunidad
+                for (int i = 0; i < fileCount; i++)
+                {
+                    Vector3 delta = pos[i] - centerOffset;
+                    float dist = delta.magnitude;
+                    float force = (dist * dist) / (radius * 2.0f);
+                    disp[i] -= (delta / dist) * force * 0.1f;
+                }
+
+                // Aplicar el movimiento y forzar los límites ergonómicos
+                for (int i = 0; i < fileCount; i++)
+                {
+                    pos[i] += disp[i];
+                    pos[i].y = Mathf.Clamp(pos[i].y, minHeightLimit, maxHeightLimit);
+                }
+            }
+
             return pos;
         }
 
