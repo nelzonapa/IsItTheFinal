@@ -22,10 +22,10 @@ namespace ImmersiveGraph.Network
         {
             _audioSource = GetComponent<AudioSource>();
             var interactable = GetComponent<XRSimpleInteractable>();
-            interactable.activated.AddListener(OnButtonPressed);
+            interactable.selectEntered.AddListener(OnButtonPressed);
         }
 
-        public void OnButtonPressed(ActivateEventArgs args)
+        public void OnButtonPressed(SelectEnterEventArgs args)
         {
             // 1. SONIDO
             if (_audioSource != null && teleportSound != null) _audioSource.PlayOneShot(teleportSound);
@@ -69,6 +69,10 @@ namespace ImmersiveGraph.Network
 
             if (playerToMove != null && targetSpawn != null)
             {
+                // --- SOLUCIÓN: Desactivar CharacterController antes de teletransportar ---
+                CharacterController cc = playerToMove.GetComponent<CharacterController>();
+                if (cc != null) cc.enabled = false;
+
                 // Mover
                 playerToMove.transform.position = targetSpawn.position + new Vector3(0, 0.05f, 0);
 
@@ -78,6 +82,9 @@ namespace ImmersiveGraph.Network
 
                 // Sincronizar Físicas
                 Physics.SyncTransforms();
+
+                // --- SOLUCIÓN: Volver a activar el CharacterController ---
+                if (cc != null) cc.enabled = true;
             }
             else
             {

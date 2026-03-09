@@ -36,7 +36,6 @@ namespace ImmersiveGraph.Network
                 return;
             }
 
-            // --- SOLUCIÓN: Usar la misma función matemática que usamos para spawnearlos ---
             Transform myDesk = GroupTableManager.Instance.GetIndividualDeskForPlayer(_runner.LocalPlayer);
 
             if (myDesk != null)
@@ -65,12 +64,22 @@ namespace ImmersiveGraph.Network
 
             if (playerRig != null)
             {
+                // --- SOLUCIÓN: Desactivar CharacterController antes de teletransportar ---
+                CharacterController cc = playerRig.GetComponent<CharacterController>();
+                if (cc != null) cc.enabled = false;
+
                 // Mover al jugador
                 playerRig.transform.position = target.position;
 
                 // Rotar al jugador (solo eje Y)
                 Vector3 rotacionDestino = new Vector3(0, target.rotation.eulerAngles.y, 0);
                 playerRig.transform.rotation = Quaternion.Euler(rotacionDestino);
+
+                // Sincronizar Físicas
+                Physics.SyncTransforms();
+
+                // --- SOLUCIÓN: Volver a activar el CharacterController ---
+                if (cc != null) cc.enabled = true;
 
                 Debug.Log($"Viaje de retorno completado hacia: {target.name}");
             }
