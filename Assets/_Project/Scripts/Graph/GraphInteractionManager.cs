@@ -21,9 +21,10 @@ namespace ImmersiveGraph.Interaction
         private bool _isExpandedMode = false;
 
         private List<GraphNode> _allCommunities = new List<GraphNode>();
-
-        // Lista para proteger los nodos de la física mientras se están animando
         private List<GraphNode> _animatingNodes = new List<GraphNode>();
+
+        // NUEVO: Propiedad pública para que el botón de UI sepa qué comunidad está abierta
+        public GraphNode CurrentFocusedCommunity => _currentFocusedCommunity;
 
         public void InitializeGraph(Transform rootNode, float minRadius, float expRadius)
         {
@@ -39,7 +40,6 @@ namespace ImmersiveGraph.Interaction
                 if (node != null && node.nodeType == "community")
                 {
                     _allCommunities.Add(node);
-                    // Inicialmente apagamos los archivos por completo
                     SetCommunityFileState(node, false, false);
                 }
             }
@@ -50,8 +50,12 @@ namespace ImmersiveGraph.Interaction
             return _animatingNodes.Contains(node);
         }
 
-        public void OnCommunityHoldActivated(GraphNode selectedNode)
+        // NUEVO NOMBRE: Ahora se llama al hacer clic en el botón de la UI
+        public void ToggleCommunityNode(GraphNode selectedNode)
         {
+            if (selectedNode == null) return;
+
+            // Forzar que el usuario suelte el nodo si lo tiene agarrado para que viaje a la mesa
             XRGrabInteractable grab = selectedNode.GetComponent<XRGrabInteractable>();
             if (grab != null && grab.isSelected)
             {
@@ -92,28 +96,22 @@ namespace ImmersiveGraph.Interaction
                 {
                     if (fileObj == null) continue;
 
-                    // Encendemos o apagamos el objeto contenedor
                     fileObj.SetActive(showFiles);
-
-                    if (!showFiles) continue; // Si está apagado, no calculamos el resto
+                    if (!showFiles) continue;
 
                     Collider col = fileObj.GetComponent<Collider>();
                     if (col != null) col.enabled = isInteractive;
 
                     Canvas[] uis = fileObj.GetComponentsInChildren<Canvas>(true);
-                    foreach (Canvas ui in uis)
-                    {
-                        ui.gameObject.SetActive(isInteractive);
-                    }
+                    foreach (Canvas ui in uis) ui.gameObject.SetActive(isInteractive);
 
-                    // Magia de Transparencia para los "Fantasmas"
                     Renderer[] renderers = fileObj.GetComponentsInChildren<Renderer>();
                     foreach (Renderer ren in renderers)
                     {
                         if (ren.material.HasProperty("_Color"))
                         {
                             Color c = ren.material.color;
-                            c.a = isInteractive ? 1.0f : 0.2f; // Transparente si es ficticio
+                            c.a = isInteractive ? 1.0f : 0.2f;
                             ren.material.color = c;
 
                             if (!isInteractive)
@@ -153,9 +151,7 @@ namespace ImmersiveGraph.Interaction
             XRGrabInteractable grab = targetCommunity.GetComponent<XRGrabInteractable>();
             if (grab != null) grab.enabled = false;
 
-            // ASEGURAR QUE ESTÉN APAGADOS DURANTE EL VIAJE
             SetCommunityFileState(targetCommunity, false, false);
-
             targetCommunity.transform.SetParent(tableFocusAnchor, true);
 
             Vector3 startCommPos = targetCommunity.transform.localPosition;
@@ -166,17 +162,12 @@ namespace ImmersiveGraph.Interaction
             {
                 timer += Time.deltaTime;
                 float t = Mathf.SmoothStep(0, 1, timer / animationDuration);
-
-                // Viaja hacia la mesa
                 targetCommunity.transform.localPosition = Vector3.Lerp(startCommPos, Vector3.zero, t);
                 targetCommunity.transform.localRotation = Quaternion.Lerp(startCommRot, Quaternion.identity, t);
-
                 yield return null;
             }
 
-            // --- RECIÉN AL LLEGAR AL FOCO, ENCENDEMOS LOS ARCHIVOS ---
             SetCommunityFileState(targetCommunity, true, true);
-
             if (grab != null) grab.enabled = true;
             _animatingNodes.Remove(targetCommunity);
         }
@@ -189,9 +180,7 @@ namespace ImmersiveGraph.Interaction
             XRGrabInteractable grab = targetCommunity.GetComponent<XRGrabInteractable>();
             if (grab != null) grab.enabled = false;
 
-            // --- APAGAR INMEDIATAMENTE TODOS LOS ARCHIVOS ANTES DE REGRESAR ---
             SetCommunityFileState(targetCommunity, false, false);
-
             targetCommunity.transform.SetParent(_rootNode, true);
 
             Vector3 startCommPos = targetCommunity.transform.localPosition;
@@ -202,11 +191,8 @@ namespace ImmersiveGraph.Interaction
             {
                 timer += Time.deltaTime;
                 float t = Mathf.SmoothStep(0, 1, timer / animationDuration);
-
-                // Regresa a su sitio original en el root
                 targetCommunity.transform.localPosition = Vector3.Lerp(startCommPos, targetCommunity.originalLocalPosition, t);
                 targetCommunity.transform.localRotation = Quaternion.Lerp(startCommRot, Quaternion.identity, t);
-
                 yield return null;
             }
 
@@ -227,7 +213,6 @@ namespace ImmersiveGraph.Interaction
             if (grabOld != null) grabOld.enabled = false;
             if (grabNew != null) grabNew.enabled = false;
 
-            // --- APAGAR LOS ARCHIVOS DEL VIEJO INMEDIATAMENTE Y MANTENER APAGADO AL NUEVO ---
             SetCommunityFileState(oldFocusNode, false, false);
             SetCommunityFileState(newFocusNode, false, false);
 
@@ -245,20 +230,13 @@ namespace ImmersiveGraph.Interaction
             {
                 timer += Time.deltaTime;
                 float t = Mathf.SmoothStep(0, 1, timer / animationDuration);
-
-                // Viejo regresa a su punto base
                 oldFocusNode.transform.localPosition = Vector3.Lerp(startOldPos, oldFocusNode.originalLocalPosition, t);
-
-                // Nuevo viene a la mesa
                 newFocusNode.transform.localPosition = Vector3.Lerp(startNewPos, Vector3.zero, t);
                 newFocusNode.transform.localRotation = Quaternion.Lerp(startNewRot, Quaternion.identity, t);
-
                 yield return null;
             }
 
-            // --- RECIÉN AL LLEGAR AL FOCO, ENCENDEMOS LOS ARCHIVOS DEL NUEVO ---
             SetCommunityFileState(newFocusNode, true, true);
-
             if (grabOld != null) grabOld.enabled = true;
             if (grabNew != null) grabNew.enabled = true;
             _animatingNodes.Remove(oldFocusNode);

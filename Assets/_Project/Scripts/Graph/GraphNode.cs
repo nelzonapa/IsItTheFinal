@@ -27,7 +27,7 @@ namespace ImmersiveGraph.Interaction
         [Header("Referencias Externas")]
         public Zone3Manager localZone3Manager;
         public GraphInteractionManager interactionManager;
-        public NodeLoaderController loaderUI;
+        public NodeLoaderController loaderUI; // (Puedes borrarlo del Inspector si ya no usas la barrita circular)
 
         [Header("Colaboración")]
         public ImmersiveGraph.Collaboration.MiniWorldManager miniWorldManager;
@@ -41,22 +41,19 @@ namespace ImmersiveGraph.Interaction
         private XRGrabInteractable _interactable;
         private Renderer _renderer;
 
-        // --- SISTEMA DE COLORES Y ESTADOS ---
         private Color _originalColor;
         private Color _hoverColor;
-        private Color _currentColorState; // Guarda el color que DEBERÍA tener según el filtro
-        private int _currentVisualState = 0; // 0=Normal, 1=Glow, 2=Ghost
+        private Color _currentColorState;
+        private int _currentVisualState = 0;
         private bool _isHovered = false;
 
-        // --- SISTEMA DE RESPLANDOR (AURA) LOCAL ---
         private GameObject _glowObject;
         private Renderer _glowRenderer;
-        private static GraphNode _currentSelectedLocalNode; // Memoria global para saber qué nodo está seleccionado
+
+        // ¡NUEVO! Ahora es público para que la UI sepa qué nodo tiene en la mano el usuario
+        public static GraphNode CurrentSelectedLocalNode { get; private set; }
 
         private bool _isGrabbing = false;
-        private float _holdTimer = 0f;
-        private float _activationTime = 4.0f;
-        private bool _hasActivated = false;
         private bool _isExpanded = false;
         private bool _isReviewed = false;
 
@@ -80,7 +77,6 @@ namespace ImmersiveGraph.Interaction
 
             if (_interactable != null) _interactable.movementType = XRBaseInteractable.MovementType.Kinematic;
 
-            // Creamos el halo de resplandor invisible alrededor del nodo
             CreateGlowHalo();
         }
 
@@ -126,26 +122,17 @@ namespace ImmersiveGraph.Interaction
             }
         }
 
-        // CREACIÓN DEL HALO (RESPLANDOR) 
         private void CreateGlowHalo()
         {
             _glowObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             _glowObject.name = "LocalSelectionGlow";
             _glowObject.transform.SetParent(this.transform);
             _glowObject.transform.localPosition = Vector3.zero;
-
-            // Hacemos el aura un 35% más grande que el nodo para que lo rodee
             _glowObject.transform.localScale = Vector3.one * 1.35f;
-
-            // MUY IMPORTANTE: Destruimos el collider del brillo para que no interfiera con el láser
             Destroy(_glowObject.GetComponent<Collider>());
-
             _glowRenderer = _glowObject.GetComponent<Renderer>();
-
             Material glowMat = new Material(Shader.Find("Sprites/Default"));
             _glowRenderer.material = glowMat;
-
-            // Lo apagamos por defecto
             _glowObject.SetActive(false);
         }
 
@@ -158,13 +145,12 @@ namespace ImmersiveGraph.Interaction
                 if (isSelected && HardwareRigSync.Local != null)
                 {
                     Color myColor = UserColorPalette.GetColor(HardwareRigSync.Local.Object.StateAuthority.PlayerId);
-                    myColor.a = 0.45f; // 45% de opacidad
+                    myColor.a = 0.45f;
                     _glowRenderer.material.color = myColor;
                 }
             }
         }
 
-        // CONTROL VISUAL DEL NODO
         public void SetVisualState(int stateIndex)
         {
             if (_renderer == null) return;
@@ -172,35 +158,22 @@ namespace ImmersiveGraph.Interaction
 
             switch (stateIndex)
             {
-                case 0: // NORMAL
-                    _currentColorState = _originalColor;
-                    break;
-                case 1: // GLOW (KG Resaltado)
-                    _currentColorState = Color.cyan;
-                    break;
-                case 2: // GHOST (KG Fantasma)
-                    _currentColorState = new Color(0.2f, 0.2f, 0.2f, 0.15f);
-                    break;
+                case 0: _currentColorState = _originalColor; break;
+                case 1: _currentColorState = Color.cyan; break;
+                case 2: _currentColorState = new Color(0.2f, 0.2f, 0.2f, 0.15f); break;
             }
 
-            if (!_isHovered)
-            {
-                _renderer.material.color = _currentColorState;
-            }
+            if (!_isHovered) _renderer.material.color = _currentColorState;
         }
 
         void OnHoverEnter(HoverEnterEventArgs args)
         {
             _isHovered = true;
-
             if (_renderer != null)
             {
-                if (_currentVisualState == 2)
-                    _renderer.material.color = new Color(0.4f, 0.4f, 0.4f, 0.5f);
-                else if (_currentVisualState == 1)
-                    _renderer.material.color = Color.white;
-                else
-                    _renderer.material.color = _hoverColor;
+                if (_currentVisualState == 2) _renderer.material.color = new Color(0.4f, 0.4f, 0.4f, 0.5f);
+                else if (_currentVisualState == 1) _renderer.material.color = Color.white;
+                else _renderer.material.color = _hoverColor;
             }
 
             if (ExperimentDataLogger.Instance != null && Time.time - _lastHoverLogTime > _logCooldown)
@@ -213,11 +186,7 @@ namespace ImmersiveGraph.Interaction
         void OnHoverExit(HoverExitEventArgs args)
         {
             _isHovered = false;
-
-            if (_renderer != null)
-            {
-                _renderer.material.color = _currentColorState;
-            }
+            if (_renderer != null) _renderer.material.color = _currentColorState;
         }
 
         void Update()
@@ -227,32 +196,17 @@ namespace ImmersiveGraph.Interaction
                 incomingLine.SetPosition(0, parentNodeTransform.position);
                 incomingLine.SetPosition(1, transform.position);
             }
-
-            // --- SOLO LOS NODOS COMUNIDAD TIENEN LA BARRA DE CARGA Y EL VIAJE DE 4 SEGUNDOS ---
-            if (nodeType == "community")
-            {
-                if (_isGrabbing && !_hasActivated)
-                {
-                    _holdTimer += Time.deltaTime;
-                    float progress = _holdTimer / _activationTime;
-
-                    if (loaderUI != null) loaderUI.SetProgress(progress);
-
-                    if (_holdTimer >= _activationTime) ExecuteHoldAction();
-                }
-            }
+            // ¡ELIMINADO EL TIMER DE 4 SEGUNDOS DE AQUÍ!
         }
 
         void OnSelectStart(SelectEnterEventArgs args)
         {
             _isGrabbing = true;
-            _holdTimer = 0f;
-            _hasActivated = false;
 
-            // Muestra inmediatamente la información en el panel Detail (Zone 3)
+            // Envía info instantánea
             SendToZone3();
 
-            // --- MARCA EL NODO COMO VISTO INSTANTÁNEAMENTE AL SUJETARLO ---
+            // Marca instantáneamente como visto
             if (!_isReviewed && reviewedMarkerPrefab != null)
             {
                 GameObject marker = Instantiate(reviewedMarkerPrefab, transform);
@@ -262,53 +216,29 @@ namespace ImmersiveGraph.Interaction
                 _isReviewed = true;
             }
 
-            // --- APLICACIÓN DEL RESPLANDOR LOCAL ---
-            if (_currentSelectedLocalNode != null && _currentSelectedLocalNode != this)
+            // Gestiona el brillo
+            if (CurrentSelectedLocalNode != null && CurrentSelectedLocalNode != this)
             {
-                _currentSelectedLocalNode.SetLocalSelectedGlow(false);
+                CurrentSelectedLocalNode.SetLocalSelectedGlow(false);
             }
 
-            _currentSelectedLocalNode = this;
+            CurrentSelectedLocalNode = this;
             SetLocalSelectedGlow(true);
-            // ----------------------------------------
 
             if (nodeType == "community" || nodeType == "root")
             {
-                if (HardwareRigSync.Local != null)
-                {
-                    HardwareRigSync.Local.SetSelectedNode(myData.id);
-                }
-                else if (miniWorldManager != null)
-                {
-                    miniWorldManager.HighlightNodeLocalFallback(myData.id, Color.white);
-                }
+                if (HardwareRigSync.Local != null) HardwareRigSync.Local.SetSelectedNode(myData.id);
+                else if (miniWorldManager != null) miniWorldManager.HighlightNodeLocalFallback(myData.id, Color.white);
             }
             else if (nodeType == "file")
             {
-                if (HardwareRigSync.Local != null)
-                {
-                    HardwareRigSync.Local.SetSelectedNode(myData.id);
-                }
+                if (HardwareRigSync.Local != null) HardwareRigSync.Local.SetSelectedNode(myData.id);
             }
         }
 
         void OnSelectEnd(SelectExitEventArgs args)
         {
             _isGrabbing = false;
-            _holdTimer = 0f;
-            if (loaderUI != null) loaderUI.SetProgress(0);
-        }
-
-        void ExecuteHoldAction()
-        {
-            _hasActivated = true;
-            if (loaderUI != null) loaderUI.SetProgress(1f);
-
-            if (nodeType == "community")
-            {
-                if (interactionManager != null) interactionManager.OnCommunityHoldActivated(this);
-                else ForceExpand(!_isExpanded);
-            }
         }
 
         public void ForceExpand(bool state)
