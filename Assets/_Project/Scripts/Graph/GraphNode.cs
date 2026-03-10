@@ -48,7 +48,7 @@ namespace ImmersiveGraph.Interaction
         private int _currentVisualState = 0; // 0=Normal, 1=Glow, 2=Ghost
         private bool _isHovered = false;
 
-        // --- NUEVO: SISTEMA DE RESPLANDOR (AURA) LOCAL ---
+        // --- SISTEMA DE RESPLANDOR (AURA) LOCAL ---
         private GameObject _glowObject;
         private Renderer _glowRenderer;
         private static GraphNode _currentSelectedLocalNode; // Memoria global para saber qué nodo está seleccionado
@@ -142,7 +142,6 @@ namespace ImmersiveGraph.Interaction
 
             _glowRenderer = _glowObject.GetComponent<Renderer>();
 
-            // Usamos un shader nativo de Unity (Sprites/Default) que es excelente para brillos transparentes sin configuraciones extra
             Material glowMat = new Material(Shader.Find("Sprites/Default"));
             _glowRenderer.material = glowMat;
 
@@ -158,7 +157,6 @@ namespace ImmersiveGraph.Interaction
 
                 if (isSelected && HardwareRigSync.Local != null)
                 {
-                    // Obtenemos tu color y le bajamos la opacidad (Alpha) para que parezca un resplandor semitransparente
                     Color myColor = UserColorPalette.GetColor(HardwareRigSync.Local.Object.StateAuthority.PlayerId);
                     myColor.a = 0.45f; // 45% de opacidad
                     _glowRenderer.material.color = myColor;
@@ -166,7 +164,7 @@ namespace ImmersiveGraph.Interaction
             }
         }
 
-        // CONTROL VISUAL DEL NODO (INTACTO)
+        // CONTROL VISUAL DEL NODO
         public void SetVisualState(int stateIndex)
         {
             if (_renderer == null) return;
@@ -230,14 +228,18 @@ namespace ImmersiveGraph.Interaction
                 incomingLine.SetPosition(1, transform.position);
             }
 
-            if (_isGrabbing && !_hasActivated)
+            // --- SOLO LOS NODOS COMUNIDAD TIENEN LA BARRA DE CARGA Y EL VIAJE DE 4 SEGUNDOS ---
+            if (nodeType == "community")
             {
-                _holdTimer += Time.deltaTime;
-                float progress = _holdTimer / _activationTime;
+                if (_isGrabbing && !_hasActivated)
+                {
+                    _holdTimer += Time.deltaTime;
+                    float progress = _holdTimer / _activationTime;
 
-                if (loaderUI != null) loaderUI.SetProgress(progress);
+                    if (loaderUI != null) loaderUI.SetProgress(progress);
 
-                if (_holdTimer >= _activationTime) ExecuteHoldAction();
+                    if (_holdTimer >= _activationTime) ExecuteHoldAction();
+                }
             }
         }
 
@@ -247,16 +249,25 @@ namespace ImmersiveGraph.Interaction
             _holdTimer = 0f;
             _hasActivated = false;
 
+            // Muestra inmediatamente la información en el panel Detail (Zone 3)
             SendToZone3();
 
+            // --- MARCA EL NODO COMO VISTO INSTANTÁNEAMENTE AL SUJETARLO ---
+            if (!_isReviewed && reviewedMarkerPrefab != null)
+            {
+                GameObject marker = Instantiate(reviewedMarkerPrefab, transform);
+                marker.transform.localPosition = markerLocalOffset;
+                marker.transform.localScale = markerLocalScale;
+                marker.transform.localRotation = Quaternion.identity;
+                _isReviewed = true;
+            }
+
             // --- APLICACIÓN DEL RESPLANDOR LOCAL ---
-            // 1. Apagamos el resplandor del nodo que teníamos seleccionado antes (si existe)
             if (_currentSelectedLocalNode != null && _currentSelectedLocalNode != this)
             {
                 _currentSelectedLocalNode.SetLocalSelectedGlow(false);
             }
 
-            // 2. Encendemos el resplandor de ESTE nuevo nodo
             _currentSelectedLocalNode = this;
             SetLocalSelectedGlow(true);
             // ----------------------------------------
@@ -272,7 +283,6 @@ namespace ImmersiveGraph.Interaction
                     miniWorldManager.HighlightNodeLocalFallback(myData.id, Color.white);
                 }
             }
-            // Si es un archivo, también le avisamos a la red para que el minimundo y el otro gestor lo sepan
             else if (nodeType == "file")
             {
                 if (HardwareRigSync.Local != null)
@@ -293,15 +303,6 @@ namespace ImmersiveGraph.Interaction
         {
             _hasActivated = true;
             if (loaderUI != null) loaderUI.SetProgress(1f);
-
-            if (!_isReviewed && reviewedMarkerPrefab != null)
-            {
-                GameObject marker = Instantiate(reviewedMarkerPrefab, transform);
-                marker.transform.localPosition = markerLocalOffset;
-                marker.transform.localScale = markerLocalScale;
-                marker.transform.localRotation = Quaternion.identity;
-                _isReviewed = true;
-            }
 
             if (nodeType == "community")
             {
