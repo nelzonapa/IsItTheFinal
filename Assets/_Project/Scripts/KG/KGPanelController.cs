@@ -11,6 +11,10 @@ namespace ImmersiveGraph.Visual
 {
     public class KGPanelController : MonoBehaviour
     {
+        [Header("Referencia Local (¡Importante!)")]
+        [Tooltip("Referencia al grafo de ESTE escritorio. Evita usar el Instance global.")]
+        public H3GraphSpawner localGraphSpawner;
+
         [Header("Referencias Visuales")]
         public RectTransform graphContainer;
         public GameObject nodePrefab;
@@ -60,12 +64,16 @@ namespace ImmersiveGraph.Visual
         private float _currentRepulsion;
         private float _currentSpringLength;
         private Coroutine _warningCoroutine;
+        private Coroutine _layoutCoroutine;
 
         private string _currentActiveFilter = "";
 
         void Awake()
         {
             if (graphContainer == null) graphContainer = GetComponent<RectTransform>();
+
+            // Auto-búsqueda del Spawner local en caso de que no se haya asignado en el Inspector
+            if (localGraphSpawner == null) localGraphSpawner = GetComponentInParent<H3GraphSpawner>();
 
             if (clearFiltersButton != null)
             {
@@ -81,13 +89,16 @@ namespace ImmersiveGraph.Visual
         {
             _currentActiveFilter = "";
 
-            if (H3GraphSpawner.Instance != null) H3GraphSpawner.Instance.ClearAllHighlights();
+            if (localGraphSpawner != null) localGraphSpawner.ClearAllHighlights();
+
             if (clearFiltersButton != null) clearFiltersButton.gameObject.SetActive(false);
             if (activeFilterText != null) activeFilterText.gameObject.SetActive(false);
         }
 
         public void ClearGraph()
         {
+            if (_layoutCoroutine != null) StopCoroutine(_layoutCoroutine);
+
             foreach (Transform child in graphContainer)
             {
                 if (clearFiltersButton != null && child == clearFiltersButton.transform) continue;
@@ -156,7 +167,7 @@ namespace ImmersiveGraph.Visual
                 float angle = i * angleStep;
                 Vector2 startPos = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * spawnRadius;
 
-                int fileCount = H3GraphSpawner.Instance != null ? H3GraphSpawner.Instance.GetFileCountForEntity(entityName) : 0;
+                int fileCount = localGraphSpawner != null ? localGraphSpawner.GetFileCountForEntity(entityName) : 0;
                 CreateNode(entityName, startPos, fileCount);
                 i++;
             }
@@ -201,8 +212,8 @@ namespace ImmersiveGraph.Visual
                 }
             }
 
-            CalculateLayoutInstantly();
-            UpdateVisuals();
+            // Distribuimos el costo físico en el tiempo
+            _layoutCoroutine = StartCoroutine(AnimateLayoutRoutine());
         }
 
         private void CreateNode(string entityName, Vector2 startPosition, int fileCount)
@@ -258,7 +269,8 @@ namespace ImmersiveGraph.Visual
                 if (isGlobalEntity)
                 {
                     _currentActiveFilter = entityName;
-                    if (H3GraphSpawner.Instance != null) H3GraphSpawner.Instance.HighlightNodesByEntity(entityName);
+
+                    if (localGraphSpawner != null) localGraphSpawner.HighlightNodesByEntity(entityName);
 
                     if (clearFiltersButton != null)
                     {
@@ -279,7 +291,6 @@ namespace ImmersiveGraph.Visual
                 }
             };
 
-            // INICIALIZACIÓN DEL NODO
             UIDraggableNode smartNodeHandler = nodeObj.AddComponent<UIDraggableNode>();
             float safePadding = 50f * _currentScale;
             float widthLimit = (graphContainer.rect.width / 2f) - safePadding;
@@ -331,10 +342,6 @@ namespace ImmersiveGraph.Visual
                 if (_warningCoroutine != null) StopCoroutine(_warningCoroutine);
                 _warningCoroutine = StartCoroutine(AnimateWarning(msg));
             }
-            else
-            {
-                Debug.LogWarning("[KG Info] " + msg);
-            }
         }
 
         private IEnumerator AnimateWarning(string msg)
@@ -357,7 +364,10 @@ namespace ImmersiveGraph.Visual
             warningText.gameObject.SetActive(false);
         }
 
-        private void CalculateLayoutInstantly()
+        // =========================================================================
+        // REEMPLAZO DE CalculateLayoutInstantly POR CORRUTINA PARA EVITAR CONGELAMIENTO
+        // =========================================================================
+        private IEnumerator AnimateLayoutRoutine()
         {
             float safePadding = 50f * _currentScale;
             float widthLimit = (graphContainer.rect.width / 2f) - safePadding;
@@ -365,9 +375,10 @@ namespace ImmersiveGraph.Visual
             float maxSpeed = 40f * _currentScale;
             float minSafeDistance = 20f * _currentScale;
 
+            List<UINode> nodeList = new List<UINode>(_nodes.Values);
+
             for (int step = 0; step < 200; step++)
             {
-                List<UINode> nodeList = new List<UINode>(_nodes.Values);
                 for (int i = 0; i < nodeList.Count; i++)
                 {
                     for (int j = i + 1; j < nodeList.Count; j++)
@@ -400,7 +411,17 @@ namespace ImmersiveGraph.Visual
                     node.position.x = Mathf.Clamp(node.position.x, -widthLimit, widthLimit);
                     node.position.y = Mathf.Clamp(node.position.y, -heightLimit, heightLimit);
                 }
+
+                // Liberar el hilo principal de Unity para procesar gráficos, inputs, etc. cada 5 iteraciones
+                if (step % 5 == 0)
+                {
+                    UpdateVisuals();
+                    yield return null;
+                }
             }
+
+            UpdateVisuals();
+            _layoutCoroutine = null;
         }
 
         private void UpdateVisuals()
@@ -456,7 +477,6 @@ namespace ImmersiveGraph.Visual
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            // Ignoramos el clic derecho para el arrastre general
             if (eventData.button == PointerEventData.InputButton.Right) return;
             _wasDragged = false;
         }
