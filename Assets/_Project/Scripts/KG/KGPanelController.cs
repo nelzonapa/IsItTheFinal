@@ -225,19 +225,34 @@ namespace ImmersiveGraph.Visual
                 else bgImage.color = new Color(0.3f, 0.3f, 0.3f, 1f);
             }
 
-            // --- LÓGICA DE GATILLO (UI 2D CLIC / ARRASTRE) ---
-            UIDraggableNode smartNodeHandler = nodeObj.AddComponent<UIDraggableNode>();
-
-            float safePadding = 50f * _currentScale;
-            float widthLimit = (graphContainer.rect.width / 2f) - safePadding;
-            float heightLimit = (graphContainer.rect.height / 2f) - safePadding;
-
-            System.Action<Vector2> onDragUpdate = (newPosition) =>
+            // --- ACCIÓN: EXTRAER TOKEN FÍSICO ---
+            System.Action spawnTokenAction = () =>
             {
-                _nodes[entityName].position = newPosition;
-                UpdateVisuals();
+                if (token3DPrefab != null)
+                {
+                    Vector3 spawnPos = nodeObj.transform.position - (nodeObj.transform.forward * 0.15f);
+                    GameObject newToken = Instantiate(token3DPrefab, spawnPos, nodeObj.transform.rotation);
+                    newToken.name = "Token3D_" + entityName;
+
+                    var renderer = newToken.GetComponentInChildren<Renderer>();
+                    if (renderer != null)
+                    {
+                        renderer.material.color = UserColorPalette.GetLocalPlayerColor();
+                    }
+
+                    TMP_Text[] textComponents = newToken.GetComponentsInChildren<TMP_Text>();
+                    foreach (var txt in textComponents)
+                    {
+                        txt.text = entityName;
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("[KGPanel] No se asignó el token3DPrefab en el inspector.");
+                }
             };
 
+            // --- ACCIÓN: FILTRAR ---
             System.Action onClickAction = () =>
             {
                 if (isGlobalEntity)
@@ -264,49 +279,47 @@ namespace ImmersiveGraph.Visual
                 }
             };
 
-            smartNodeHandler.Initialize(rect, graphContainer, widthLimit, heightLimit, onDragUpdate, onClickAction);
+            // INICIALIZACIÓN DEL NODO
+            UIDraggableNode smartNodeHandler = nodeObj.AddComponent<UIDraggableNode>();
+            float safePadding = 50f * _currentScale;
+            float widthLimit = (graphContainer.rect.width / 2f) - safePadding;
+            float heightLimit = (graphContainer.rect.height / 2f) - safePadding;
 
-            // =========================================================
-            // --- NUEVO: LÓGICA DE AGARRE GRIP (SPAWN TOKEN 3D) ---
-            // =========================================================
-
-            // 1. Añadimos un cuerpo físico invisible para que el XR Interactor lo vea
-            BoxCollider col3D = nodeObj.AddComponent<BoxCollider>();
-            // Le damos el tamaño del nodo UI y un grosor para que el rayo no lo atraviese de largo
-            col3D.size = new Vector3(rect.rect.width, rect.rect.height, 10f);
-
-            // 2. Le añadimos el componente XR Simple Interactable
-            var xrInteractable = nodeObj.AddComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable>();
-
-            // 3. Cuando el botón de agarre (Grip/Select) accione este collider:
-            xrInteractable.selectEntered.AddListener((args) =>
+            System.Action<Vector2> onDragUpdate = (newPosition) =>
             {
-                if (token3DPrefab != null)
-                {
-                    // Lo instanciamos ligeramente enfrente del panel 2D (hacia el usuario)
-                    Vector3 spawnPos = nodeObj.transform.position - (nodeObj.transform.forward * 0.15f);
-                    GameObject newToken = Instantiate(token3DPrefab, spawnPos, nodeObj.transform.rotation);
-                    newToken.name = "Token3D_" + entityName;
+                _nodes[entityName].position = newPosition;
+                UpdateVisuals();
+            };
 
-                    // --- PINTAR EL TOKEN --- (Idéntico a SelectableText)
-                    var renderer = newToken.GetComponentInChildren<Renderer>();
-                    if (renderer != null)
-                    {
-                        renderer.material.color = UserColorPalette.GetLocalPlayerColor();
-                    }
+            smartNodeHandler.Initialize(rect, graphContainer, widthLimit, heightLimit, onDragUpdate, onClickAction, spawnTokenAction);
 
-                    // --- INYECTAR TEXTO ---
-                    TMP_Text[] textComponents = newToken.GetComponentsInChildren<TMP_Text>();
-                    foreach (var txt in textComponents)
-                    {
-                        txt.text = entityName;
-                    }
-                }
-                else
+            // =========================================================
+            // AISLAMIENTO DE INTERACTABLES VR
+            // =========================================================
+            bool isVRActive = true;
+            if (PlatformManager.Instance != null && PlatformManager.Instance.pcRig != null)
+            {
+                if (PlatformManager.Instance.ActiveRig == PlatformManager.Instance.pcRig)
                 {
-                    Debug.LogWarning("[KGPanel] No se asignó el token3DPrefab en el inspector.");
+                    isVRActive = false;
                 }
-            });
+            }
+            else
+            {
+                var xrSettings = UnityEngine.XR.Management.XRGeneralSettings.Instance;
+                isVRActive = xrSettings != null && xrSettings.Manager != null && xrSettings.Manager.isInitializationComplete;
+            }
+
+            if (isVRActive)
+            {
+                BoxCollider col3D = nodeObj.AddComponent<BoxCollider>();
+                col3D.size = new Vector3(rect.rect.width, rect.rect.height, 10f);
+                var xrInteractable = nodeObj.AddComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable>();
+                xrInteractable.selectEntered.AddListener((args) =>
+                {
+                    spawnTokenAction();
+                });
+            }
 
             _nodes.Add(entityName, new UINode { id = entityName, rect = rect, position = startPosition, velocity = Vector2.zero });
         }
@@ -424,13 +437,13 @@ namespace ImmersiveGraph.Visual
         private RectTransform _canvasRect;
         private System.Action<Vector2> _onDragUpdate;
         private System.Action _onClickAction;
+        private System.Action _onRightClickAction;
 
         private float _limitX;
         private float _limitY;
-
         private bool _wasDragged = false;
 
-        public void Initialize(RectTransform nodeRect, RectTransform canvasRect, float limitX, float limitY, System.Action<Vector2> onDragUpdate, System.Action onClickAction)
+        public void Initialize(RectTransform nodeRect, RectTransform canvasRect, float limitX, float limitY, System.Action<Vector2> onDragUpdate, System.Action onClickAction, System.Action onRightClickAction)
         {
             _nodeRect = nodeRect;
             _canvasRect = canvasRect;
@@ -438,21 +451,27 @@ namespace ImmersiveGraph.Visual
             _limitY = limitY;
             _onDragUpdate = onDragUpdate;
             _onClickAction = onClickAction;
+            _onRightClickAction = onRightClickAction;
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            // Ignoramos el clic derecho para el arrastre general
+            if (eventData.button == PointerEventData.InputButton.Right) return;
             _wasDragged = false;
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (eventData.button == PointerEventData.InputButton.Right) return;
             _wasDragged = true;
             transform.SetAsLastSibling();
         }
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (eventData.button == PointerEventData.InputButton.Right) return;
+
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRect, eventData.position, eventData.pressEventCamera, out Vector2 localPointerPosition))
             {
                 localPointerPosition.x = Mathf.Clamp(localPointerPosition.x, -_limitX, _limitX);
@@ -469,9 +488,16 @@ namespace ImmersiveGraph.Visual
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (!_wasDragged)
+            if (eventData.button == PointerEventData.InputButton.Right)
             {
-                _onClickAction?.Invoke();
+                _onRightClickAction?.Invoke();
+            }
+            else
+            {
+                if (!_wasDragged)
+                {
+                    _onClickAction?.Invoke();
+                }
             }
         }
     }
