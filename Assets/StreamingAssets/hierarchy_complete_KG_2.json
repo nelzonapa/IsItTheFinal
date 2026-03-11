@@ -1,0 +1,1868 @@
+{
+    "id": "ROOT_CASE_AREQUIPA",
+    "type": "root",
+    "title": "Crisis Ambiental y Regulatoria en Arequipa",
+    "summary": "Arequipa enfrenta una crisis ambiental compleja, con desafíos desde la contaminación del aire y el agua hasta conflictos socioeconómicos. La región está bajo presión por sanciones y demandas legales, mientras se enfrenta a problemas de deforestación y pérdida de biodiversidad.",
+    "details": {
+        "focos": [
+            "Contaminación del Aire",
+            "Conflictos Socioeconómicos"
+        ],
+        "conclusion": "La situación ambiental en Arequipa es crítica, con múltiples desafíos que requieren atención urgente para mitigar su impacto global y proteger la salud pública y la biodiversidad regional."
+    },
+    "children": [
+        {
+            "id": "COMUNIDAD_-1",
+            "type": "community",
+            "title": "Problemas Ambientales Críticos Identificados en Arequipa",
+            "summary": "Arequipa enfrenta múltiples problemas ambientales, desde emisiones descontroladas hasta conflictos socioeconómicos, con un alto nivel de amenaza global.",
+            "keywords": "año, parque, mitigación, industrial, cromo, curtiembres, empresarios",
+            "details": {
+                "entidades_frecuentes": [
+                    "Gobierno Regional de Arequipa",
+                    "Empresarios de curtiembre",
+                    "OEFA (Oficina Ejecutora de Fiscalización Ambiental)",
+                    "Municipalidad Distrital de Arequipa"
+                ],
+                "fechas": "2018-2024",
+                "amenaza": "Alto"
+            },
+            "children": [
+                {
+                    "id": "doc_08",
+                    "type": "file",
+                    "title": "Supervisión Ambiental en Parque Industrial de Río Seco",
+                    "summary": "Supervisiones de emisiones y vertidos en parque industrial de Arequipa enfrentan resistencia; fuerza pública intervino para restablecer autoridad.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Desconocidos",
+                        "OEFA (Oficina Ejecutora de Fomento Ambiental)",
+                        "Fuerza Pública",
+                        "Parque Industrial de Río Seco",
+                        "Arequipa",
+                        "Emisiones",
+                        "Vertidos",
+                        "Leyes ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "Arequipa: OEFA realiza acciones de supervisión en el parque industrial de Río Seco. Ante la negativa de algunos pocos administrados, las supervisiones de emisiones y vertimientos se vienen realizando con el apoyo de la fuerza pública a fin de reestablecer el principio de autoridad, ante los eventos suscitados en mayo pasado, en que las supervisiones fueron objeto de interferencia física.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_17",
+                    "type": "file",
+                    "title": "Problemas Ambientales Críticos Identificados en Arequipa",
+                    "summary": "El Gobierno Regional identificó 26 problemas ambientales en Arequipa, incluyendo la emisión descontrolada de CO y fuentes industriales.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Gobierno Regional",
+                        "Periferia norte de Arequipa",
+                        "Monóxido de carbono",
+                        "Fuentes fijas industriales",
+                        "Material biológico volatilizado"
+                    ],
+                    "data": {
+                        "texto_full": "El Gobierno Regional identificó 26 problemas ambientales críticos en Arequipa mediante un trabajo diagnóstico conjunto. Destacan la emisión descontrolada de monóxido de carbono por un parque automotor colapsado y la presencia permanente de fuentes fijas industriales emitiendo material biológico volatilizado en la periferia norte de la ciudad blanca.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_26",
+                    "type": "file",
+                    "title": "Contaminación de Tóxicos en la Quebrada Añashuayco",
+                    "summary": "Empresarios de curtiembre acusan el Gobierno Regional de Arequipa por la evaporación de tóxicos debido a la desviación del canal de vertimiento original a la quebrada Añashuayco.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Representante del sector de curtiembre",
+                        "Empresas de curtiembre",
+                        "Gobierno Regional de Arequipa (GRA)",
+                        "Quebrada Añashuayco",
+                        "Parque Industrial de Río Seco",
+                        "Lagunas de oxidación clausuradas",
+                        "Químicos tóxicos",
+                        "Canal de vertimiento",
+                        "Leyes ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "Los empresarios de curtiembres en el parque industrial de Río Seco responsabilizan directamente al Gobierno Regional de Arequipa (GRA) por la evaporación de tóxicos en la quebrada Añashuayco. El representante del sector afirma que fue el propio Estado el que desvió a cielo abierto el canal de vertimiento originalmente destinado a las lagunas de oxidación clausuradas, empeorando la volatilización de químicos.",
+                        "images": [],
+                        "source": "Diario Correo",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_28",
+                    "type": "file",
+                    "title": "Conflictos Socioambientales en Parque Industrial de Arequipa",
+                    "summary": "Empresarios denuncian excesivas fiscalizaciones y multas injustificadas por parte de OEFA, afectando la estabilidad económica de 30 mil familias. Falta cofinanciamiento del Estado.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Empresarios del Parque Industrial",
+                        "OEFA (Oficina Ejecutora de Fiscalización Ambiental)",
+                        "Microempresas",
+                        "Parque Industrial de Arequipa",
+                        "Gases",
+                        "Multas",
+                        "Cofinanciamiento"
+                    ],
+                    "data": {
+                        "texto_full": "Empresarios del cuero del Parque Industrial denuncian excesiva fiscalización e implacable rigor por parte de OEFA, imponiendo multas que superan las capacidades de las microempresas, afectando la estabilidad económica de más de 30 mil familias que dependen indirectamente de esta cadena, sin que el Estado ofrezca un cofinanciamiento para mitigación de gases.",
+                        "images": [],
+                        "source": "El Búho",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "fiscaliza",
+                            "objeto": "Empresarios"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "imponen multas",
+                            "objeto": "microempresas"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "afecta",
+                            "objeto": "estabilidad económica"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "no ofrece",
+                            "objeto": "cofinanciamiento"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "impone multas que superan",
+                            "objeto": "capacidades de las microempresas"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "afecta",
+                            "objeto": "gases"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "denuncia",
+                            "objeto": "excesiva fiscalización"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "denuncia",
+                            "objeto": "implacable rigor"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "denuncia",
+                            "objeto": "multas que superan capacidades"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "denuncia",
+                            "objeto": "fiscalización excesiva"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "denuncia",
+                            "objeto": "rigor implacable"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "denuncia",
+                            "objeto": "multas que superan capacidades"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "denuncia",
+                            "objeto": "excesiva fiscalización e implacable rigor"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "denuncia",
+                            "objeto": "multas que superan capacidades"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_38",
+                    "type": "file",
+                    "title": "Adecuación de Extractores Industriales y Protección Ambiental",
+                    "summary": "Se ha realizado una inversión de 2 millones de soles para adaptar extractores industriales. Los empresarios prometen implementar guías ambientales, pero la protección contra invasiones y emisiones es necesaria.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Desconocidas",
+                        "Desconocidas",
+                        "Arequipa, distritos industriales",
+                        "Humo, emisiones sulfurosas, guías de buenas prácticas ambientales, inversiones"
+                    ],
+                    "data": {
+                        "texto_full": "Nosotros hemos hecho una fuerte inversión de 2 millones de soles para adecuar extractores. Queremos que nos aseguren esa inversión declarando el área intangible para el sector industrial, alejando las invasiones que luego se quejan del humo. Por lo pronto, los empresarios se han comprometido a implementar guías de buenas prácticas ambientales para empezar con la mitigación de emisiones sulfurosas, pero no será suficiente sin la obra pública.",
+                        "images": [],
+                        "source": "El Búho",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Empresarios",
+                            "relacion": "se comprometen",
+                            "objeto": "implementar guías de buenas prácticas ambientales"
+                        },
+                        {
+                            "sujeto": "Empresarios",
+                            "relacion": "no serán suficientes",
+                            "objeto": "mitigación de emisiones sulfurosas"
+                        },
+                        {
+                            "sujeto": "Gobierno",
+                            "relacion": "ha hecho una inversión",
+                            "objeto": "2 millones de soles"
+                        },
+                        {
+                            "sujeto": "Gobierno",
+                            "relacion": "ha hecho una inversión",
+                            "objeto": "en adecuación de extractores"
+                        },
+                        {
+                            "sujeto": "Gobierno",
+                            "relacion": "ha hecho una inversión",
+                            "objeto": "para proteger áreas intangibles"
+                        },
+                        {
+                            "sujeto": "Gobierno",
+                            "relacion": "ha hecho una inversión",
+                            "objeto": "para evitar invasiones"
+                        },
+                        {
+                            "sujeto": "Gobierno",
+                            "relacion": "ha hecho una inversión",
+                            "objeto": "para mitigar emisiones sulfurosas"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_41",
+                    "type": "file",
+                    "title": "Contaminación Ambiental y Salud Pública en Arequipa",
+                    "summary": "Enfermedades respiratorias causadas por emisiones industriales contaminan la salud de trabajadores en Arequipa. La conciencia sobre el problema es alta, pero la necesidad de trabajo en las fuentes de contaminación es crítica.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Pobladores de Arequipa",
+                        "Empresas extractivas y curtiembres",
+                        "Zonas industriales de Arequipa",
+                        "Óxidos de nitrógeno, azufre, partículas respirables",
+                        "Inhalación tóxica",
+                        "Leyes ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "Diversas enfermedades respiratorias entre pobladores están relacionadas estrechamente con emisiones de óxidos de Nitrógeno, Azufre y partículas de fracciones respirables emitidas por la zona de curtiembres. Sin embargo, en encuestas a la ciudadanía, aunque son conscientes del aumento de afecciones asmáticas por la inhalación tóxica, enfrentan un dilema crítico: su sustento diario proviene de trabajar en las mismas industrias extractivas y curtiembres que contaminan sus pulmones.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Emisiones contaminantes",
+                            "relacion": "causan",
+                            "objeto": "Enfermedades respiratorias"
+                        },
+                        {
+                            "sujeto": "Pobladores",
+                            "relacion": "están conscientes de",
+                            "objeto": "la contaminación pero no pueden evitarla"
+                        },
+                        {
+                            "sujeto": "Emisiones contaminantes",
+                            "relacion": "provienen de",
+                            "objeto": "curtiembres y industrias extractivas"
+                        },
+                        {
+                            "sujeto": "Pobladores",
+                            "relacion": "dependen económicamente de",
+                            "objeto": "las industrias contaminantes"
+                        },
+                        {
+                            "sujeto": "Emisiones contaminantes",
+                            "relacion": "están relacionadas con",
+                            "objeto": "óxidos de nitrógeno, azufre y partículas de fracciones respirables"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_44",
+                    "type": "file",
+                    "title": "Evaluación del Quitosano como Adsorbente Efluvios",
+                    "summary": "El quitosano local demostró alta eficacia en la desacetalización y remoción de contaminantes en efluentes de Arequipa.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "Fuente Desconocida",
+                        "Arequipa, distritos industriales",
+                        "Quitosano",
+                        "Cromo pesado",
+                        "Agua de efluentes",
+                        "Sulfato de Aluminio"
+                    ],
+                    "data": {
+                        "texto_full": "Se evaluó el quitosano, biopolímero extraído de camarones locales, como adsorbente en efluentes de Arequipa. Presentó un grado de desacetilación del 83.68%. En el proceso de coagulación-floculación, el quitosano local fue sumamente efectivo, logrando una remoción de cromo y partículas en suspensión del 72.83%, superando al agresivo sulfato de aluminio (40-70%). Encapsula el cromo pesado y anula su volatilidad eólica.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Quitosano",
+                            "relacion": "extraído de",
+                            "objeto": "Camarones locales"
+                        },
+                        {
+                            "sujeto": "Quitosano",
+                            "relacion": "es adsorbente",
+                            "objeto": "Efluentes de Arequipa"
+                        },
+                        {
+                            "sujeto": "Quitosano",
+                            "relacion": "tiene desacetilación del 83.68%",
+                            "objeto": ""
+                        },
+                        {
+                            "sujeto": "Quitosano",
+                            "relacion": "supera",
+                            "objeto": "Sulfato de aluminio en remoción de contaminantes"
+                        },
+                        {
+                            "sujeto": "Quitosano",
+                            "relacion": "remueve",
+                            "objeto": "Cromo y partículas en suspensión"
+                        },
+                        {
+                            "sujeto": "Quitosano",
+                            "relacion": "grado de desacetilación del 83.68%",
+                            "objeto": ""
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_47",
+                    "type": "file",
+                    "title": "Mitigación del Foco Ecológico",
+                    "summary": "La municipalidad distrital implementa un operativo para eliminar y descontaminar áreas contaminadas, reduciendo riesgos a la salud pública y la calidad del aire.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "Municipalidad Distrital",
+                        "Arequipa, distritos cercanos",
+                        "Yuyales",
+                        "Lodos deshidratados",
+                        "Membranas sintéticas",
+                        "Leyes ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "Operativo de mitigación 'Cielo Limpio'. Un escuadrón de excavadoras de la municipalidad distrital ha comenzado a demoler, raspar y remover los yuyales y lodos deshidratados saturados de sulfuros presentes en el cauce seco contiguo al PIRS. Todo el material residual está siendo cubierto con membranas sintéticas y retirado a depósitos finales, eliminando el foco de resuspensión eólica que generaba hedores y cefaleas en las urbanizaciones aledañas.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_49",
+                    "type": "file",
+                    "title": "Disminución Sostenida de Contaminantes Atmosféricos en Arequipa",
+                    "summary": "Las estaciones de monitoreo y centros de salud reportan una disminución significativa de contaminantes atmosféricos en Arequipa, con niveles de SO2 y PM2.5 dentro de los estándares internacionales.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "CA-SOC-01",
+                        "Red Cerro Colorado",
+                        "Centros de Salud Periféricos de Zamácola",
+                        "Zona de Arequipa",
+                        "Dióxido de Azufre (SO2)",
+                        "Partículas Menos de 2.5 Micrómetros (PM2.5)",
+                        "Bronquitis Aguda e Asma en Infancia"
+                    ],
+                    "data": {
+                        "texto_full": "Por cuarto mes consecutivo, las estaciones de monitoreo CA-SOC-01 y las unidades de la red Cerro Colorado registran una caída del 80% en los niveles de Dióxido de Azufre (SO2), estabilizándose en 14 ug/m3 (dentro del estándar internacional de 20 ug/m3). Los picos de PM2.5 han descendido a la categoría 'Buena'. Los centros de salud periféricos de Zamácola reportan un descenso del 65% en admisiones por bronquitis aguda y asma en población infantil.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_0",
+            "type": "community",
+            "title": "Problemas Ambientales en Arequipa: Denegociables e Impactantes",
+            "summary": "La comunidad de Arequipa enfrenta múltiples desafíos ambientales, desde la contaminación del aire y el agua hasta la deforestación y la pérdida de biodiversidad, con implicaciones globales y urgentes.",
+            "keywords": "aire, particular, calidad, arequipa, no, pm2, es",
+            "details": {
+                "entidades_frecuentes": [
+                    "Municipalidad de Arequipa",
+                    "OEFA",
+                    "GRA",
+                    "Colca Solar S.A.C.",
+                    "Vecinos",
+                    "Alcaldes"
+                ],
+                "fechas": "2018-2024",
+                "amenaza": "Alto"
+            },
+            "children": [
+                {
+                    "id": "doc_03",
+                    "type": "file",
+                    "title": "Operativos Ambientales Interrumpidos por Falta de Equipamiento",
+                    "summary": "La Municipalidad de Arequipa suspendió sus operativos de control de contaminación desde 2020 debido a falta de equipo y recursos. Los buses superan el 5% de emisión de humo negro, indicando riesgos ambientales.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Municipalidad Provincial de Arequipa",
+                        "Arequipa, distritos",
+                        "Sustancias químicas (humo negro), tecnologías (opacímetros, analizadores de gas), leyes ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "La Municipalidad Provincial de Arequipa dejó de hacer operativos desde el 2020 a raíz de la pandemia, además porque no cuenta con los equipos y accesorios adecuados. El inconveniente es que no hay equipos como opacímetros y analizadores de gas. Se requiere un aproximado de 90 mil soles de inversión. En la escala de 0 a 10, los buses superaban el 5% de emisión de humo negro pese a tener revisiones técnicas.",
+                        "images": [],
+                        "source": "Diario Correo",
+                        "date": "2020-01-01"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Municipalidad Provincial de Arequipa",
+                            "relacion": "dejó de hacer",
+                            "objeto": "operativos"
+                        },
+                        {
+                            "sujeto": "Municipalidad Provincial de Arequipa",
+                            "relacion": "no cuenta con",
+                            "objeto": "equipos y accesorios adecuados"
+                        },
+                        {
+                            "sujeto": "Municipalidad Provincial de Arequipa",
+                            "relacion": "requiere",
+                            "objeto": "inversión de 90 mil soles"
+                        },
+                        {
+                            "sujeto": "buses",
+                            "relacion": "superan",
+                            "objeto": "5% de emisión de humo negro"
+                        },
+                        {
+                            "sujeto": "buses",
+                            "relacion": "pese a tener",
+                            "objeto": "revisiones técnicas"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_05",
+                    "type": "file",
+                    "title": "Denuncias por Contaminación Ambiental en Arequipa 2018",
+                    "summary": "En 2018, 68 denuncias por contaminación fueron presentadas a OEFA. Se confirmaron sanciones contra varias empresas por alteración de la calidad ambiental, incluyendo emisiones al aire.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Yura",
+                        "Napiel IRL",
+                        "Curtiembre del Muelle y Vestimenta SAC",
+                        "Arequipa, distritos industriales",
+                        "Sustancias químicas, emisiones al aire"
+                    ],
+                    "data": {
+                        "texto_full": "OEFA recibió 68 denuncias por presunta contaminación ambiental en Arequipa. En el transcurso del año 2018, se confirmaron sanciones contra Yura, Napiel IRL y Curtiembre del Muelle y Vestimenta SAC. El sector industria recibió 8 acusaciones directas por alteración de la calidad ambiental, incluyendo emisiones al aire.",
+                        "images": [],
+                        "source": "Grupo Propuesta Ciudadana",
+                        "date": "2018-01-01"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "recibió",
+                            "objeto": "denuncias"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "recibió",
+                            "objeto": "sanciones"
+                        },
+                        {
+                            "sujeto": "Yura",
+                            "relacion": "sancionada por",
+                            "objeto": "OEFA"
+                        },
+                        {
+                            "sujeto": "Napiel IRL",
+                            "relacion": "sancionada por",
+                            "objeto": "OEFA"
+                        },
+                        {
+                            "sujeto": "Curtiembre del Muelle y Vestimenta SAC",
+                            "relacion": "sancionada por",
+                            "objeto": "OEFA"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "recibió",
+                            "objeto": "acusaciones"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "recibió",
+                            "objeto": "sanciones"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "recibió",
+                            "objeto": "denuncias"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "recibió",
+                            "objeto": "sanciones"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "recibió",
+                            "objeto": "denuncias"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "recibió",
+                            "objeto": "sanciones"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "recibió",
+                            "objeto": "denuncias"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "recibió",
+                            "objeto": "sanciones"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "recibió",
+                            "objeto": "denuncias"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "recibió",
+                            "objeto": "sanciones"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_10",
+                    "type": "file",
+                    "title": "Pretratamiento In Situ para Contaminación Industrial",
+                    "summary": "El gerente regional del GRA anunció medidas para eliminar contaminantes en el Parque Industrial de Río Seco mediante un pretratamiento in situ.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Fernando Mejía, gerente regional Ambiental del GRA",
+                        "GRA, empresas industriales",
+                        "Parque Industrial de Río Seco, Arequipa",
+                        "Sólidos suspendidos, metales pesados (cromo), pretratamiento in situ, vertedero, material particular tóxico"
+                    ],
+                    "data": {
+                        "texto_full": "Frente a la persistente contaminación en el Parque Industrial de Río Seco, el gerente regional Ambiental del GRA, Fernando Mejía, informó que como medida inmediata, los empresarios deberán implementar un pretratamiento in situ. El pretratamiento permitirá eliminar sólidos suspendidos y extraer metales pesados (cromo) antes de que las aguas sean vertidas a la intemperie y generen material particular tóxico al deshidratarse.",
+                        "images": [],
+                        "source": "Diario Los Andes",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_12",
+                    "type": "file",
+                    "title": "Colca Solar S.A.C. y Monitoreo de Calidad del Aire",
+                    "summary": "Colca Solar S.A.C. fue sancionada por incumplir normas de monitoreo de calidad del aire y ruido en Arequipa.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Colca Solar S.A.C.",
+                        "Arequipa",
+                        "PM10",
+                        "PM2.5",
+                        "ruido",
+                        "Normas ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "Resolución N° 078-2025-OEFA/TFA-SE. Se confirma la Resolución Directoral N° 02081-2024-OEFA/DFAI, en el extremo que determinó la responsabilidad administrativa de Colca Solar S.A.C., por la comisión de conductas infractoras referidas al incumplimiento del monitoreo de calidad de aire (PM10, PM2.5) y ruido durante el segundo semestre de la etapa de operación en la región Arequipa.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "confirma",
+                            "objeto": "Resolución Directoral N° 02081-2024-OEFA/DFAI"
+                        },
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "determina",
+                            "objeto": "responsabilidad administrativa de Colca Solar S.A.C."
+                        },
+                        {
+                            "sujeto": "Colca Solar S.A.C.",
+                            "relacion": "es sancionada por",
+                            "objeto": "incumplimiento de monitoreo de calidad de aire e insonorización"
+                        },
+                        {
+                            "sujeto": "Colca Solar S.A.C.",
+                            "relacion": "cumple con",
+                            "objeto": "operación en la región Arequipa"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_13",
+                    "type": "file",
+                    "title": "Calidad del Aire en Arequipa: Evaluación Temporal",
+                    "summary": "La ciudad de Arequipa registra una calidad de aire moderada, superando los estándares ECA nacional pero excediendo el límite internacional de SO2. Diariamente, la concentración de SO2 alcanza 30 ug/m³.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "PUCP",
+                        "ONG QAIRA",
+                        "Municipalidad Provincial de Arequipa",
+                        "Arequipa, distritos industriales",
+                        "PM10",
+                        "SO2",
+                        "estándares ECA nacional e internacional"
+                    ],
+                    "data": {
+                        "texto_full": "La red de monitoreo temporal implementada por la Municipalidad Provincial de Arequipa con apoyo de la PUCP y la ONG QAIRA indica calidad de aire moderada. 'Es cierto que no superamos los estándares ECA nacional de 50 ug/m3 de PM10, sin embargo, el factor que está sobrepasando en el ECA internacional es el dióxido de azufre (SO2) cuyo límite es 20 ug/m3. La ciudad está con 30 ug/m3 de forma diaria'",
+                        "images": [],
+                        "source": "El Búho / Subgerencia de Gestión Ambiental",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_14",
+                    "type": "file",
+                    "title": "Monitoreo Atmosférico en Cuenca de Arequipa",
+                    "summary": "La instalación de monitores PM10 y PM2.5 en Socabaya y Uchumayo permite el seguimiento preciso de la calidad del aire en Arequipa.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "Sensores Lastem",
+                        "Monitor automático GRIMM EDM 180",
+                        "Cuenca de Arequipa",
+                        "Estación Socabaya",
+                        "Estación Uchumayo",
+                        "PM10",
+                        "PM2.5",
+                        "Velocidad de viento",
+                        "Humedad relativa",
+                        "Leyes ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "Se está implementando una red combinada. La Estación Socabaya (CA-SOC-01) utiliza un Monitor automático de partículas GRIMM EDM 180 para material menor a 10 micras (PM10) y 2.5 micras (PM2.5). La Estación Uchumayo (CA-UCH-01) registra velocidad de viento y humedad relativa mediante Sensores Lastem (DNB105.2 y DMA975), vitales para modelar la cuenca atmosférica de Arequipa.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Estación Socabaya (CA-SOC-01)",
+                            "relacion": "utiliza",
+                            "objeto": "Monitor automático de partículas GRIMM EDM 180"
+                        },
+                        {
+                            "sujeto": "Estación Uchumayo (CA-UCH-01)",
+                            "relacion": "registra",
+                            "objeto": "velocidad de viento y humedad relativa"
+                        },
+                        {
+                            "sujeto": "Estación Uchumayo (CA-UCH-01)",
+                            "relacion": "utiliza",
+                            "objeto": "Sensores Lastem (DNB105.2 y DMA975)"
+                        },
+                        {
+                            "sujeto": "Estación Uchumayo (CA-UCH-01)",
+                            "relacion": "son",
+                            "objeto": "vitales para modelar la cuenca atmosférica de Arequipa"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_15",
+                    "type": "file",
+                    "title": "Alerta de Contaminación Atmosférica en Socabaya, Arequipa",
+                    "summary": "OEFA registra alta concentración de material particular en Socabaya, Arequipa, causada por vientos arrastradores de contaminantes industriales y áridos.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Senamhi",
+                        "OEFA",
+                        "Socabaya, Arequipa",
+                        "zonas industriales y áridas circundantes",
+                        "material particular",
+                        "vientos arrastradores",
+                        "contaminantes industriales y áridos",
+                        "Senamhi",
+                        "OEFA"
+                    ],
+                    "data": {
+                        "texto_full": "OEFA detecta alta concentración de material particular en el aire en Socabaya, Arequipa, representando un riesgo severo para personas con enfermedades respiratorias. Este incremento atípico de contaminantes sólidos coincide con el Aviso N. ° 261 del Senamhi, que pronostica alerta naranja por ráfagas de fuertes vientos que generan arrastre de material particular de las zonas industriales y áridas circundantes.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "OEFA",
+                            "relacion": "detecta",
+                            "objeto": "alta concentración de material particular"
+                        },
+                        {
+                            "sujeto": "material particular",
+                            "relacion": "representa riesgo",
+                            "objeto": "personas con enfermedades respiratorias"
+                        },
+                        {
+                            "sujeto": "Senamhi",
+                            "relacion": "pronostica",
+                            "objeto": "alerta naranja"
+                        },
+                        {
+                            "sujeto": "Ráfagas de fuertes vientos",
+                            "relacion": "generan",
+                            "objeto": "arrastre de material particular"
+                        },
+                        {
+                            "sujeto": "zona industrial y árida",
+                            "relacion": "provienen de",
+                            "objeto": "material particular"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_16",
+                    "type": "file",
+                    "title": "Concentraciones de Partículas en Tingo Grande y Costa Verde",
+                    "summary": "Las PM10 en Tingo Grande cumplen con los estándares, pero PM2.5 en Costa Verde y Tingo Grande superan el ECA.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Costa Verde",
+                        "Tingo Grande",
+                        "Arequipa",
+                        "PM10",
+                        "PM2.5",
+                        "Estandar de Calidad Ambiental",
+                        "Decreto Supremo N° 003-2008-MINAM"
+                    ],
+                    "data": {
+                        "texto_full": "Evalúa las concentraciones en Jacobo Hunter. Las concentraciones de material particular menor a 10 micras (PM10) obtenidas en Tingo Grande no exceden el ECA de 150 ug/m3. Sin embargo, las concentraciones de material particular menor a 2,5 micras (PM2.5) obtenidas en las localidades de Costa Verde y Tingo Grande, exceden sistemáticamente el Estándar de Calidad Ambiental de 25 ug/m3 establecido en el Decreto Supremo N° 003-2008-MINAM.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_18",
+                    "type": "file",
+                    "title": "Pronóstico de Calidad del Aire en Arequipa Metropolitana",
+                    "summary": "El pronóstico indica una calidad moderada del aire en Arequipa Metropolitana. Se recomienda reducción de actividad para personas sensibles y atención a síntomas de irritación pulmonar.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "Personas excepcionalmente sensibles",
+                        "Senamhi (Servicio Nacional de Medio Ambiente y Humedal)",
+                        "Arequipa Metropolitana",
+                        "Ozono troposférico",
+                        "Material Particula PM2.5"
+                    ],
+                    "data": {
+                        "texto_full": "Boletín vigilancia de calidad del Aire. Pronóstico para Arequipa Metropolitana: MODERADA. Recomendaciones: Personas excepcionalmente sensibles deben contemplar reducir las actividades que requieren esfuerzo prolongado al aire libre y prestar atención a síntomas de irritación pulmonar asociados a ozono troposférico y material particular PM2.5.",
+                        "images": [],
+                        "source": "Senamhi",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Boletín vigilancia de calidad del Aire",
+                            "relacion": "recomienda",
+                            "objeto": "Persona excepcionalmente sensible"
+                        },
+                        {
+                            "sujeto": "Boletín vigilancia de calidad del Aire",
+                            "relacion": "recomienda",
+                            "objeto": "Reducir actividades"
+                        },
+                        {
+                            "sujeto": "Boletín vigilancia de calidad del Aire",
+                            "relacion": "recomienda",
+                            "objeto": "Prepararse"
+                        },
+                        {
+                            "sujeto": "Boletín vigilancia de calidad del Aire",
+                            "relacion": "recomienda",
+                            "objeto": "Atención a síntomas"
+                        },
+                        {
+                            "sujeto": "Boletín vigilancia de calidad del Aire",
+                            "relacion": "recomienda",
+                            "objeto": "Material particular PM2.5"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_20",
+                    "type": "file",
+                    "title": "Seguimiento de Calidad del Aire en Cerro Verde, Socabaya",
+                    "summary": "El estudio muestra que las concentraciones de PM10 y PM2.5 en la estación CA-SOC-01 no superaron los estándares ambientales en diciembre de 2021.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "Empresa de Producción Cerro Verde, Socabaya",
+                        "Estación CA-SOC-01, Zona de Influencia",
+                        "PM10",
+                        "PM2.5",
+                        "Estándar de Calidad Ambiental"
+                    ],
+                    "data": {
+                        "texto_full": "Evaluación ambiental de seguimiento de la calidad del aire en la unidad de producción Cerro Verde, Socabaya. Concluye que las concentraciones de 24 horas de PM10 y PM2.5 registradas en la estación CA-SOC-01 durante diciembre de 2021, no excedieron el valor del Estándar de Calidad Ambiental para aire en su zona de influencia.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "2021-12-01"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Evaluación ambiental",
+                            "relacion": "realiza",
+                            "objeto": "seguimiento de la calidad del aire"
+                        },
+                        {
+                            "sujeto": "Concentraciones de PM10 y PM2.5",
+                            "relacion": "no exceden",
+                            "objeto": "el estándar de calidad ambiental"
+                        },
+                        {
+                            "sujeto": "Estación CA-SOC-01",
+                            "relacion": "registra",
+                            "objeto": "datos de PM10 y PM2.5"
+                        },
+                        {
+                            "sujeto": "PM10 y PM2.5",
+                            "relacion": "registran",
+                            "objeto": "estación CA-SOC-01"
+                        },
+                        {
+                            "sujeto": "Diciembre de 2021",
+                            "relacion": "es",
+                            "objeto": "mes de evaluación"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_21",
+                    "type": "file",
+                    "title": "Evaluación Geomorfológica y Peligro Geológico por Lahares en Cerro Colorado",
+                    "summary": "El informe evalúa el peligro geológico causado por lahares en Cerro Colorado. La acumulación de efluentes sin tratamiento aumenta riesgos durante sequías estacionales.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Distrito de Cerro Colorado",
+                        "Quebrada de Añashuayco",
+                        "Efluentes no tratados",
+                        "Lahares",
+                        "Sequías estacionales"
+                    ],
+                    "data": {
+                        "texto_full": "Informe Técnico N°A7343: Evaluación del peligro geológico por lahares (huaycos) en el distrito de Cerro Colorado. La geomorfología de la quebrada de Añashuayco presenta depósitos aluviónicos e ignimbritas. La acumulación de efluentes no tratados de curtiembres en el cauce seco incrementa drásticamente la carga de sólidos tóxicos susceptibles a aerosolización eólica durante los periodos de sequía estacional.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_23",
+                    "type": "file",
+                    "title": "Aumento Acelerado del Ozono Troposférico en Arequipa",
+                    "summary": "La radiación solar extremadamente alta en Arequipa provoca un incremento rápido del ozono troposférico, dañando la salud de estudiantes y universitarios.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Estudiantes, Universitarios",
+                        "No menciona organizaciones específicas",
+                        "Zonas de Arequipa",
+                        "Gases azufrales y nitrogenados (NO2)",
+                        "Radiación solar",
+                        "Ozono troposférico",
+                        "Salud pulmonar"
+                    ],
+                    "data": {
+                        "texto_full": "El otro problema grave es la presencia de gases azufrados y nitrogenados (NO2) que, expuestos a la extrema radiación solar de la altitud arequipeña, generan un incremento acelerado del ozono troposférico. Este es un gas altamente irritante al sistema pulmonar que afecta críticamente zonas donde existen colegios y universidades operando a puertas abiertas.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Gases azufrales y nitrogenados (NO2)",
+                            "relacion": "se generan por",
+                            "objeto": "radiación solar extremadamente alta"
+                        },
+                        {
+                            "sujeto": "Gases azufrales y nitrogenados (NO2)",
+                            "relacion": "generan",
+                            "objeto": "ozono troposférico aumentando rápidamente"
+                        },
+                        {
+                            "sujeto": "ozono troposférico",
+                            "relacion": "es",
+                            "objeto": "gas altamente irritante para el sistema pulmonar"
+                        },
+                        {
+                            "sujeto": "ozono troposférico",
+                            "relacion": "afecta",
+                            "objeto": "zonas con colegios y universidades operando a puertas abiertas"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_24",
+                    "type": "file",
+                    "title": "Avance Ambiental en Arequipa: Reducción de Contaminantes",
+                    "summary": "La clausura de ductos clandestinos y la implementación de medidas preventivas redujeron significativamente el nivel de contaminación en Arequipa.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "Ministerio del Ambiente",
+                        "Industria curtiembrera",
+                        "Municipios de Arequipa",
+                        "Arequipa, distritos industriales",
+                        "SO2, PM2.5",
+                        "Pre-filtros biopoliméricos",
+                        "Opacímetros municipales",
+                        "Leyes ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "Tras la clausura de ductos clandestinos, la obligatoriedad de pre-filtros biopoliméricos en la industria curtiembrera, y la renovación de opacímetros municipales, los registros de la estación GRIMM EDM 180 (CA-SOC-01) en Arequipa muestran, por primera vez en una década, descensos consolidados de SO2 por debajo del umbral internacional de 20 ug/m3, y la estabilización del PM2.5 dentro de los ECA nacionales.",
+                        "images": [],
+                        "source": "Ministerio del Ambiente",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_25",
+                    "type": "file",
+                    "title": "Aumento Exponencial de Vehículos en Arequipa Impacta la Calidad del Aire",
+                    "summary": "El número de vehículos en Arequipa creció de 84,000 en 2000 a 365,000 en 2020, causando una drástica contaminación con monóxido de carbono y plomo.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Arequipa, zonas urbanas, parques industriales",
+                        "Monóxido de carbono, plomo, vehículos, normativas ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "En el año 2000 había aproximadamente 84,000 vehículos en Arequipa, pero luego de dos décadas la cifra aumentó de manera insostenible hasta 365,000 unidades, cuatro veces más. Este cuello de botella estructural contribuye dramáticamente a la contaminación ambiental constante con monóxido de carbono y plomo particular.",
+                        "images": [],
+                        "source": "Diario Correo",
+                        "date": "2000-01-01"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_29",
+                    "type": "file",
+                    "title": "Contaminación Atmosférica por Desechos Industriales",
+                    "summary": "Vecinos denuncian condiciones insalubres causadas por desechos de curtiembre en zonas residenciales de Arequipa. Olores nauseabundos y azufre perjudican el medio ambiente.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Desconocido",
+                        "Zonas residenciales de Arequipa",
+                        "Desechos de curtiembre",
+                        "Azufre",
+                        "Leyes ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "Si vos entras ahí, la maleza te tapa y a 5 metros ya no ves nada, todo el desecho fundamentalmente que ha quedado de la curtiembre que funcionaba a pocos metros de las urbanizaciones. Son olores nauseabundos, un verdadero problema para el medio ambiente atmosférico. Los vecinos han hecho la denuncia porque son condiciones completamente insalubres, respirando azufre día y noche.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_30",
+                    "type": "file",
+                    "title": "Contaminación por Gases Tóxicos en Asentamiento Humanitario",
+                    "summary": "Vecinos del Asentamiento Humanitario 'Sol de los Andes' denuncian emanación de gases tóxicos desde drenajes saturados de residuos de curtiembre. Necesitan solución urgente.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Vecinos del Asentamiento Humanitario 'Sol de los Andes'",
+                        "Asentamiento Humanitario 'Sol de los Andes'",
+                        "Arequipa",
+                        "Gases tóxicos",
+                        "Drenajes saturados de residuos de curtiembre",
+                        "Vecinos"
+                    ],
+                    "data": {
+                        "texto_full": "Vecinos del asentamiento humano 'Sol de los Andes' exigen una solución a la emanación de gases tóxicos provenientes de los drenajes saturados de residuos de curtiembre. 'Tenemos que cerrar herméticamente las ventanas y puertas de nuestras casas simplemente para poder almorzar sin sentir arcadas', señaló un afectado al noticiero.",
+                        "images": [],
+                        "source": "Radio Exitosa Arequipa",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Vecinos del asentamiento humano 'Sol de los Andes'",
+                            "relacion": "exigen solución",
+                            "objeto": "emanación de gases tóxicos"
+                        },
+                        {
+                            "sujeto": "emanación de gases tóxicos",
+                            "relacion": "provienen de",
+                            "objeto": "drenajes saturados de residuos de curtiembre"
+                        },
+                        {
+                            "sujeto": "Vecinos del asentamiento humano 'Sol de los Andes'",
+                            "relacion": "están afectados por",
+                            "objeto": "emanación de gases tóxicos"
+                        },
+                        {
+                            "sujeto": "Vecinos del asentamiento humano 'Sol de los Andes'",
+                            "relacion": "usan medidas preventivas",
+                            "objeto": "cerrar ventanas y puertas"
+                        },
+                        {
+                            "sujeto": "emanación de gases tóxicos",
+                            "relacion": "provoca",
+                            "objeto": "malestar gastrointestinal"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_33",
+                    "type": "file",
+                    "title": "Malos Olores y Exposición a Vientos Sulfurados",
+                    "summary": "Problema de malos olores en asentamientos cerca de Quebrada Honda sin solución. Propuesta de mesa técnica entre Arequipa e Yura para evaluar impacto biológico.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "No se mencionan nombres específicos",
+                        "Comunas de Arequipa e Ica",
+                        "Quebrada Honda, zonas de alta exposición a vientos sulfurados",
+                        "Vientos sulfurados",
+                        "Contaminación por metales pesados",
+                        "Leyes ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "Problema de malos olores en asentamientos cercanos a Quebrada Honda sigue sin solución. Ante un posible retiro de los asentamientos humanos ubicados en zonas de alta exposición a los vientos sulfurados, se indicó que deberá hacerse una mesa técnica entre las comunas de Arequipa y Yura para cuantificar clínicamente si los olores generados ya han dejado secuelas biológicas significativas en la población.",
+                        "images": [],
+                        "source": "Diario Correo",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_34",
+                    "type": "file",
+                    "title": "Contaminación del Aire en Cerro Colorado, Arequipa",
+                    "summary": "Vecinos de Cerro Colorado, Arequipa denuncian grave contaminación del aire causada por criaderos clandestinos de cerdos. Gases de putrefacción e insuficiente agua generan metano y olores.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Vecinos de Cerro Colorado",
+                        "Desconocidas",
+                        "Cerro Colorado, Arequipa",
+                        "Gases de putrefacción",
+                        "Metano",
+                        "Insuficiente agua",
+                        "Criaderos clandestinos de cerdos"
+                    ],
+                    "data": {
+                        "texto_full": "Arequipa: Se quejan de grave contaminación del aire por criaderos clandestinos de cerdos en el distrito de Cerro Colorado. Los vecinos indicaron que los gases derivados de la putrefacción de desechos animales, combinados con la falta de agua en la zona seca, generan nubes de metano y olores pestilentes que se suman al ya saturado aire del sector industrial.",
+                        "images": [],
+                        "source": "Diario Correo",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Vecinos",
+                            "relacion": "se quejan de",
+                            "objeto": "contaminación grave"
+                        },
+                        {
+                            "sujeto": "Contaminación",
+                            "relacion": "es",
+                            "objeto": "grave"
+                        },
+                        {
+                            "sujeto": "Origen",
+                            "relacion": "de",
+                            "objeto": "criaderos clandestinos de cerdos"
+                        },
+                        {
+                            "sujeto": "Gases",
+                            "relacion": "derivados de",
+                            "objeto": "putrefacción de desechos animales"
+                        },
+                        {
+                            "sujeto": "Proceso",
+                            "relacion": "genera",
+                            "objeto": "nubes de metano y olores pestilentes"
+                        },
+                        {
+                            "sujeto": "Sector",
+                            "relacion": "se suman a",
+                            "objeto": "aire del sector industrial"
+                        },
+                        {
+                            "sujeto": "Sector",
+                            "relacion": "en",
+                            "objeto": "zona industrial"
+                        },
+                        {
+                            "sujeto": "Sector",
+                            "relacion": "en",
+                            "objeto": "distrito de Cerro Colorado"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_36",
+                    "type": "file",
+                    "title": "Incendios Ilegales de Basura y Contaminación del Aire en Arequipa",
+                    "summary": "Los alcaldes de Paucarpata, Mariano Melgar y Cerro Colorado deben retirar la basura incinerada ilegalmente para prevenir alertas de partículas tóxicas y enfermedades respiratorias en niños.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Alcaldes de Paucarpata, Mariano Melgar y Cerro Colorado",
+                        "Defensoría del Pueblo Perú",
+                        "Paucarpata, Mariano Melgar y Cerro Colorado, Arequipa",
+                        "Partículas tóxicas, afecciones respiratorias agudas, incendios ilegales de basura, Ley contra la contaminación del aire"
+                    ],
+                    "data": {
+                        "texto_full": "Exigimos a los alcaldes de Paucarpata, Mariano Melgar y Cerro Colorado el pronto recojo de basura acumulada en las calles y vías públicas, dado que la población ha optado por la incineración ilegal de estos residuos, disparando alertas de partículas tóxicas en el aire e incrementando la probabilidad de afecciones respiratorias agudas en la infancia.",
+                        "images": [],
+                        "source": "Defensoría del Pueblo Perú",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Alcaldes de Paucarpata, Mariano Melgar y Cerro Colorado",
+                            "relacion": "sancionan a",
+                            "objeto": "Población"
+                        },
+                        {
+                            "sujeto": "Incumplimiento de las normas de manejo de residuos",
+                            "relacion": "causa",
+                            "objeto": "Alertas de partículas tóxicas"
+                        },
+                        {
+                            "sujeto": "Alertas de partículas tóxicas",
+                            "relacion": "puede causar",
+                            "objeto": "Afecciones respiratorias en niños"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_42",
+                    "type": "file",
+                    "title": "Remediación Ambiental en Pacheco de Río Seco",
+                    "summary": "Un sistema de tratamiento mixto combinado con fitorremediación y microorganismos redujo significativamente la carga de DBO5 y el contenido de cromo en lodos, disminuyendo la emanación de gases sulfurosos.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "Pacheco de Río Seco, Arequipa",
+                        "DBO5",
+                        "cromo",
+                        "fitorremediación",
+                        "microorganismos",
+                        "leyes ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "Ensayo en la curtiembre Pacheco de Río Seco. El sistema de tratamiento mixto (M5) empleando fitorremediación (Eichhornia crassipes) y microorganismos eficaces (EMa al 5%) mostró una remoción de DBO5 del 58.50% a los 60 días, reduciendo severamente la emanación de gases sulfurosos. El cromo total se redujo en 34.58%, mitigando la carga pesada de los lodos.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Sistema de tratamiento mixto",
+                            "relacion": "emplea",
+                            "objeto": "Eichhornia crassipes y microorganismos eficaces"
+                        },
+                        {
+                            "sujeto": "Sistema de tratamiento mixto",
+                            "relacion": "muestra",
+                            "objeto": "Remoción de DBO5 del 58.50% a los 60 días"
+                        },
+                        {
+                            "sujeto": "Sistema de tratamiento mixto",
+                            "relacion": "reduce",
+                            "objeto": "Emanación de gases sulfurosos"
+                        },
+                        {
+                            "sujeto": "Total de cromo",
+                            "relacion": "reducción",
+                            "objeto": "34.58%"
+                        },
+                        {
+                            "sujeto": "Lodos",
+                            "relacion": "carga pesada mitigada",
+                            "objeto": "por reducción de cromo total"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_43",
+                    "type": "file",
+                    "title": "Sin Título",
+                    "summary": "La fotorremedación aeróbica para el Cromo (VI) fue afectada por la oxigenación inducida, elevando su concentración hasta 46.76 veces su valor inicial, lo que requiere reevaluación del tratamiento para prevenir emisión de polvos tóxicos.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Cromo (VI)",
+                        "oxigenación",
+                        "fotorremedación aeróbica",
+                        "leyes ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "Limitante de la fitorremediación aeróbica: Respecto al Cromo (VI) altamente volátil y tóxico, se observó un incremento adverso en los tratamientos debido a la oxigenación inducida, alcanzando 46.76 veces su valor inicial (de 髭. Aunque el cromo total descendió, la conversión a su variante hexavalente obliga a replantear el tratamiento para evitar que al desecarse emita polvos letales.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_48",
+                    "type": "file",
+                    "title": "Instalación de Monitores de PM10 y PM2.5 en Arequipa",
+                    "summary": "Se instalaron monitores de dispersión láser en el epicentro de Cerro Colorado y Zamácola para monitorizar PM10 y PM2.5, complementando datos de velocidad de viento.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "QAIRA",
+                        "DNB105",
+                        "Cerro Colorado",
+                        "Zamácola",
+                        "Uchumayo",
+                        "PM10",
+                        "PM2.5",
+                        "Velocidad de viento",
+                        "Dispersión atmosférica",
+                        "DNB105",
+                        "Láser GRIMM EDM 180"
+                    ],
+                    "data": {
+                        "texto_full": "La red de monitoreo temporal QAIRA pasa a condición de red permanente avalada por el Estado. Se instalan monitores de esparcimiento láser GRIMM EDM 180 adicionales en el epicentro de Cerro Colorado y Zamácola, los cuales transmitirán telemetría en tiempo real de PM10 y PM2.5, cruzando datos de dispersión atmosférica con los sensores DNB105 de velocidad de viento instalados previamente en Uchumayo.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                }
+            ]
+        },
+        {
+            "id": "COMUNIDAD_1",
+            "type": "community",
+            "title": "Problemas Ambientales en Arequipa",
+            "summary": "Arequipa enfrenta múltiples desafíos ambientales, desde sanciones por exceso de emisiones hasta invasiones de terrenos que contaminan el aire y la salud pública.",
+            "keywords": "río, seco, agua, parque, denuncias, sus, ambiental",
+            "details": {
+                "entidades_frecuentes": [
+                    "OEFA",
+                    "Sedapar",
+                    "GRA",
+                    "Gobernador Roel Sánchez",
+                    "Municipalidad de Cerro Colorado",
+                    "Concejo Municipal",
+                    "Asociaciones de curtiembres"
+                ],
+                "fechas": "2013-2024",
+                "amenaza": "Alto"
+            },
+            "children": [
+                {
+                    "id": "doc_01",
+                    "type": "file",
+                    "title": "Transición de Funciones Ambientales",
+                    "summary": "El OEFA asumió funciones ambientales en el rubro curtiembre industrial desde el 09/08/2013.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "Organismo de Evaluación y Fiscalización Ambiental (OEFA)",
+                        "Produce (Ministerio de la Producción)"
+                    ],
+                    "data": {
+                        "texto_full": "Determinar que a partir del 09 de agosto de 2013 el Organismo de Evaluación y Fiscalización Ambiental - OEFA asume las funciones de seguimiento, supervisión, fiscalización, control y sanción en materia ambiental del Rubro Curtiembre de la Industria Manufacturera del Subsector Industria del Ministerio de la Producción - PRODUCE.",
+                        "images": [],
+                        "source": "SINIA",
+                        "date": "2013-08-09"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_04",
+                    "type": "file",
+                    "title": "Sanción por Exceso de Emisiones Atmosféricas",
+                    "summary": "Curtiembre San Pedro S.R.L fue sancionada por exceso de emisiones reportadas por vecinos, sin poder cuantificarlas rigurosamente.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "Curtiembre San Pedro S.R.LTDA.",
+                        "Desconocida",
+                        "Desconocida",
+                        "Emisiones atmosféricas",
+                        "Vecinos",
+                        "Leyes ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "Declarar el archivo del procedimiento administrativo sancionador iniciado contra Curtiembre San Pedro S.R.LTDA., por los fundamentos expuestos en la parte considerativa de la presente resolución, al no haberse podido cuantificar rigurosamente el excedente de las emisiones atmosféricas reportadas por los vecinos.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_07",
+                    "type": "file",
+                    "title": "Atención de Emanaciones Sulfurosas en Río Seco",
+                    "summary": "El Gobierno Regional de Arequipa implementa medidas para reducir las emisiones de gases sulfurosos del Parque Industrial de Río Seco, mediante la construcción de una planta de tratamiento.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "Gobierno Regional de Arequipa",
+                        "Gerencia Regional de Promoción de la Inversión Privada",
+                        "Parque Industrial de Río Seco",
+                        "Arequipa",
+                        "Gases sulfurosos",
+                        "Planta de tratamiento",
+                        "Ley Ambiental"
+                    ],
+                    "data": {
+                        "texto_full": "Gobierno regional toma acciones para atender problemática del Parque Industrial de Río Seco. Todo ello se realiza con el objetivo de construir la planta de tratamiento solicitada para atender la problemática ambiental registrada, la cual ya se encuentra encaminada a través de la Gerencia Regional de Promoción de la Inversión Privada mediante la modalidad de proyectos en activos, deteniendo las emanaciones de gases sulfurosos a la atmósfera.",
+                        "images": [],
+                        "source": "Gobierno Regional de Arequipa (GRA)",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_09",
+                    "type": "file",
+                    "title": "Cancelación Progresiva de DCH en Río Seco",
+                    "summary": "Autoridad Nacional del Agua redujo drásticamente derechos hídricos en Río Seco, limitando operatividad de empresas e industrializando suelo potable.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Autoridad Nacional del Agua",
+                        "Empresas que generaban efluentes",
+                        "Río Seco, quebradas de Arequipa",
+                        "Agua, efluentes, derechos hídricos, tecnología de tratamiento"
+                    ],
+                    "data": {
+                        "texto_full": "La Autoridad Nacional del Agua ejecutó la cancelación progresiva de derechos hídricos en Río Seco. 'De lo que ellos tenían autorizado 50 litros de agua, ya solo quedan dos derechos, uno por 10 litros y el otro por 1 litro', acotó la autoridad, asfixiando la capacidad operativa de las empresas que generaban los efluentes que posteriormente se aerosolizaban en la quebrada.",
+                        "images": [],
+                        "source": "Diario Correo",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Autoridad Nacional del Agua",
+                            "relacion": "ejecuta",
+                            "objeto": "cancelación progresiva de derechos hídricos"
+                        },
+                        {
+                            "sujeto": "Autoridad Nacional del Agua",
+                            "relacion": "informa",
+                            "objeto": "de la reducción de derechos hídricos"
+                        },
+                        {
+                            "sujeto": "Autoridad Nacional del Agua",
+                            "relacion": "informa",
+                            "objeto": "de la reducción de efluentes"
+                        },
+                        {
+                            "sujeto": "Autoridad Nacional del Agua",
+                            "relacion": "informa",
+                            "objeto": "de la reducción de aerosoles"
+                        },
+                        {
+                            "sujeto": "Autoridad Nacional del Agua",
+                            "relacion": "informa",
+                            "objeto": "de la reducción de capacidad operativa de las empresas"
+                        },
+                        {
+                            "sujeto": "Río Seco",
+                            "relacion": "recibe",
+                            "objeto": "la cancelación progresiva de derechos hídricos"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_11",
+                    "type": "file",
+                    "title": "Intervención por Hurto de Agua en Parque Industrial Río Seco",
+                    "summary": "Personal de Sedapar intervino en el Parque Industrial Río Seco para detener el hurto de agua causado por conexiones clandestinas usadas en procesos de lavado de cueros.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "Personal de Sedapar",
+                        "Personal de la empresa se constituyó en la Asociación Parque Industrial Río Seco",
+                        "Sedapar",
+                        "Asociación Parque Industrial Río Seco",
+                        "Empresa",
+                        "Parque Industrial Río Seco",
+                        "Arequipa",
+                        "Agua",
+                        "Conexiones clandestinas",
+                        "Procesos de lavado de cueros",
+                        "Leyes de protección al medio ambiente"
+                    ],
+                    "data": {
+                        "texto_full": "Sedapar pone en conocimiento de la ciudadanía que, en horas de la madrugada, personal de la empresa se constituyó en la Asociación Parque Industrial Río Seco, para realizar una intervención por hurto de agua mediante conexiones clandestinas utilizadas para procesos de lavado de cueros.",
+                        "images": [],
+                        "source": "SEDAPAR EPS",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Sedapar",
+                            "relacion": "pone en conocimiento de",
+                            "objeto": "la ciudadanía"
+                        },
+                        {
+                            "sujeto": "personal de la empresa",
+                            "relacion": "se constituyó en",
+                            "objeto": "Asociación Parque Industrial Río Seco"
+                        },
+                        {
+                            "sujeto": "personal de la empresa",
+                            "relacion": "realizarán intervención por",
+                            "objeto": "hurto de agua"
+                        },
+                        {
+                            "sujeto": "personal de la empresa",
+                            "relacion": "usaron conexiones clandestinas",
+                            "objeto": "para procesos de lavado de cueros"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_22",
+                    "type": "file",
+                    "title": "Identificación de Puntos Críticos de Contaminación Aérea en Arequipa",
+                    "summary": "Se han identificado puntos críticos de contaminación en Arequipa causados por gases de combustión en áreas de alta congestión vehicular.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Dirección de Salud Ambiental",
+                        "Av. Goyeneche",
+                        "Av. Independencia",
+                        "Av. Salaverry",
+                        "Av. Ejército",
+                        "Puente Grau",
+                        "Calle Jerusalén",
+                        "Gases de combustión",
+                        "Material Particualar",
+                        "Congestión Vehicular",
+                        "Estructuras Patrimoniales",
+                        "Salud Pública"
+                    ],
+                    "data": {
+                        "texto_full": "A través del plan de Calidad de Aire, en trabajo con la Dirección de Salud Ambiental, se han identificado los puntos críticos de contaminación que atrapan los gases de combustión: la Av. Goyeneche, Av. Independencia, Av. Salaverry, Av. Ejército, Puente Grau y la calle Jerusalén. En estas vías de alta congestión el material particular se estanca dañando estructuras patrimoniales y pulmones ciudadanos.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Plan de Calidad de Aire",
+                            "relacion": "identifica",
+                            "objeto": "Puntos Críticos de Contaminación"
+                        },
+                        {
+                            "sujeto": "Plan de Calidad de Aire",
+                            "relacion": "trabaja con",
+                            "objeto": "Dirección de Salud Ambiental"
+                        },
+                        {
+                            "sujeto": "Puntos Críticos de Contaminación",
+                            "relacion": "se identifican en",
+                            "objeto": "Vías de Alta Congestión"
+                        },
+                        {
+                            "sujeto": "Material Particular",
+                            "relacion": "estancándose en",
+                            "objeto": "Vías de Alta Congestión"
+                        },
+                        {
+                            "sujeto": "Material Particular",
+                            "relacion": "dañando",
+                            "objeto": "Estructuras Patrimoniales"
+                        },
+                        {
+                            "sujeto": "Material Particular",
+                            "relacion": "dañando",
+                            "objeto": "Pulmones Ciudadanos"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_27",
+                    "type": "file",
+                    "title": "Contaminación Atmosférica y Retención de Inversiones",
+                    "summary": "La falta de mantenimiento de la planta de tratamiento de efluentes por parte del GRA ha causado un aumento de olores y contaminación en Arequipa, afectando inversiones de empresas en cuero.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Félix Chili, presidente de Apymeco",
+                        "Apymeco, GRA, empresas en cuero",
+                        "Arequipa, distritos industriales",
+                        "Efluentes, contaminación atmosférica, inversión retenida"
+                    ],
+                    "data": {
+                        "texto_full": "Félix Chili, presidente de Apymeco, precisó que la situación de olores y contaminación atmosférica se ha agravado porque hace más de dos décadas no se ejecuta la planta de tratamiento de efluentes por desidia del GRA, lo cual expone al escarnio público a los empresarios que tienen una inversión retenida de más de 70 millones de soles en el sector cuero.",
+                        "images": [],
+                        "source": "El Búho",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "GRA",
+                            "relacion": "no ejecuta",
+                            "objeto": "planta de tratamiento de efluentes"
+                        },
+                        {
+                            "sujeto": "GRA",
+                            "relacion": "desidia",
+                            "objeto": null
+                        },
+                        {
+                            "sujeto": "GRA",
+                            "relacion": "exposición a",
+                            "objeto": "escarnio público"
+                        },
+                        {
+                            "sujeto": "GRA",
+                            "relacion": "expone a",
+                            "objeto": "empresarios que tienen una inversión retenida de más de 70 millones de soles"
+                        },
+                        {
+                            "sujeto": "GRA",
+                            "relacion": "sector",
+                            "objeto": "cuero"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_31",
+                    "type": "file",
+                    "title": "Condena Previsible para Gobernador por Contaminación Ambiental",
+                    "summary": "El gobernador Roel Sánchez enfrenta una condena de un año y cuatro meses por omisión de funciones relacionadas con la contaminación de aguas orgánicas emitidas a una quebrada icónica de Arequipa.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Roel Sánchez",
+                        "Carolina Cáceres",
+                        "Fiscalía de Medio Ambiente",
+                        "Arequipa, quebradas icónicas",
+                        "Agua con alta carga orgánica",
+                        "Gases",
+                        "Contaminación penal"
+                    ],
+                    "data": {
+                        "texto_full": "La condena pasada fue de un año y 4 meses de prisión. Ese parece ser el futuro del actual gobernador regional Roel Sánchez si continúa la omisión de funciones. La fiscal de medio ambiente, Carolina Cáceres, advierte que aguas con alta carga orgánica discurren emitiendo gases hacia una quebrada icónica de la ciudad blanca, y si la Municipalidad sigue de brazos cruzados, la infracción se tipificará como delito penal de contaminación.",
+                        "images": [],
+                        "source": "Exitosa Noticias",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_32",
+                    "type": "file",
+                    "title": "Invasión y Contaminación en Parques Industriales de Arequipa",
+                    "summary": "Mafias de terrenos invaden zonas de parques industriales en Arequipa, exponiendo a niños a polvo tóxico. La situación amenaza con deteriorar la calidad del aire y salud pública.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Mafias de terrenos",
+                        "Desconocidas",
+                        "Parques industriales de Arequipa",
+                        "Polvo tóxico",
+                        "Infancia expuesta",
+                        "Contaminación atmosférica",
+                        "Lagunas secas"
+                    ],
+                    "data": {
+                        "texto_full": "Se suponía que en los terrenos aledaños se construiría otra planta para descontaminar o se utilizaría como barrera forestal mitigadora de vientos. Peor aún, en la tercera etapa del parque, donde se debía arborizar, mafias de terrenos han lotizado e ingresado a vivir frente a las lagunas secas. Con cada nueva bandera de invasión colocada, aumenta el número de pulmones infantiles expuestos directamente al polvo tóxico.",
+                        "images": [],
+                        "source": "El Búho TV",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_35",
+                    "type": "file",
+                    "title": "Denuncias Ambientales en Cerro Colorado 2024",
+                    "summary": "La Municipalidad de Cerro Colorado reportó 78% de denuncias vecinales relacionadas con contaminación del aire y olores ofensivos, principalmente en zonas cercanas a las curtiembres de Río Seco.",
+                    "risk_level": "Medio",
+                    "entidades": [
+                        "Desconocido",
+                        "Municipalidad de Cerro Colorado",
+                        "Curtiembres de Río Seco, Distrito de Cerro Colorado",
+                        "Contaminación del aire, Olores ofensivos, Curtiembres de Río Seco, Ley N° 1055"
+                    ],
+                    "data": {
+                        "texto_full": "En cumplimiento del Decreto Legislativo N° 1055, la Municipalidad de Cerro Colorado envía el listado de denuncias ambientales atendidas en 2024. El 78% de las denuncias vecinales en el clasificador temático corresponden a 'Contaminación del Aire y Olores Ofensivos' focalizados en el cuadrante colindante a las curtiembres de Río Seco.",
+                        "images": [],
+                        "source": "MINAM / SINIA (Entidades Locales)",
+                        "date": "2024-01-01"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Municipalidad de Cerro Colorado",
+                            "relacion": "sanciona a",
+                            "objeto": "Empresas"
+                        },
+                        {
+                            "sujeto": "Contaminación del Aire y Olores Ofensivos",
+                            "relacion": "tema principal",
+                            "objeto": "denuncias vecinales"
+                        },
+                        {
+                            "sujeto": "Río Seco",
+                            "relacion": "ubicado en",
+                            "objeto": "cuadrante colindante a las curtiembres"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_37",
+                    "type": "file",
+                    "title": "Contaminación por Cromo en Zonas de Arequipa",
+                    "summary": "Se clausuró un terreno donde se almacenaban lodos contaminados. Se inicia una demanda contra el dueño por daños medioambientales y falta de cumplimiento de leyes ambientales.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Nombre del Dueño del Terreno",
+                        "Empresa de Curtiembre",
+                        "Zonas de Arequipa",
+                        "Cromo",
+                        "Lodos",
+                        "Curtiembre",
+                        "Leyes Ambientales"
+                    ],
+                    "data": {
+                        "texto_full": "El cromo es contaminante del agua y de la tierra que se seca y vuela. Hicimos una clausura parcial de los terrenos que recibían estos secados ilegales. El negocio de este señor era cobrar a las curtiembres para llevarse los lodos pero los dejaba a la intemperie. Ya está en marcha una demanda civil al dueño del terreno para embargar sus bienes y reparar el brutal daño atmosférico de la zona.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "Dueño del terreno",
+                            "relacion": "sanciona a",
+                            "objeto": "Demandante civil"
+                        },
+                        {
+                            "sujeto": "Demandante civil",
+                            "relacion": "demanda a",
+                            "objeto": "Dueño del terreno"
+                        },
+                        {
+                            "sujeto": "Daño atmosférico",
+                            "relacion": "causa",
+                            "objeto": "Zona"
+                        },
+                        {
+                            "sujeto": "Curtidores",
+                            "relacion": "cobran a",
+                            "objeto": "Dueño del terreno"
+                        },
+                        {
+                            "sujeto": "Dueño del terreno",
+                            "relacion": "deja a la intemperie",
+                            "objeto": "Lodos"
+                        },
+                        {
+                            "sujeto": "Secado ilegal",
+                            "relacion": "realizado por",
+                            "objeto": "Curtidores"
+                        },
+                        {
+                            "sujeto": "Secado ilegal",
+                            "relacion": "realizado en",
+                            "objeto": "Terrenos"
+                        },
+                        {
+                            "sujeto": "Secado ilegal",
+                            "relacion": "producido por",
+                            "objeto": "Curtidores"
+                        },
+                        {
+                            "sujeto": "Curtidores",
+                            "relacion": "dejan a la intemperie",
+                            "objeto": "Lodos"
+                        },
+                        {
+                            "sujeto": "Lodos",
+                            "relacion": "dejados por",
+                            "objeto": "Curtidores"
+                        },
+                        {
+                            "sujeto": "Curtidores",
+                            "relacion": "dejan a la intemperie",
+                            "objeto": "Lodos"
+                        },
+                        {
+                            "sujeto": "Lodos",
+                            "relacion": "dejados por",
+                            "objeto": "Curtidores"
+                        },
+                        {
+                            "sujeto": "Curtidores",
+                            "relacion": "dejan a la intemperie",
+                            "objeto": "Lodos"
+                        },
+                        {
+                            "sujeto": "Lodos",
+                            "relacion": "dejados por",
+                            "objeto": "Curtidores"
+                        }
+                    ]
+                },
+                {
+                    "id": "doc_40",
+                    "type": "file",
+                    "title": "Contaminación Industrial y Salud Pública en Río Seco",
+                    "summary": "Industrias contaminantes causan enfermedades respiratorias en pobladores cercanos al Parque Industrial Río Seco, con exposición a cromo evaporado.",
+                    "risk_level": "Alto",
+                    "entidades": [
+                        "Pobladores cercanos al Parque Industrial Río Seco",
+                        "Empresas industriales desconectadas",
+                        "Parque Industrial Río Seco, Zona Central de Arequipa",
+                        "Cromo evaporado",
+                        "Exposición por inhalación",
+                        "Enfermedades respiratorias",
+                        "Hospitalizaciones infantiles"
+                    ],
+                    "data": {
+                        "texto_full": "Industrias contaminantes que afectan el Parque Industrial Río Seco. La principal causa de afección es la exposición por inhalación al cromo evaporado en el aire. Las partículas desecadas desechadas por las empresas logran pasar de manera directa al sistema respiratorio de los pobladores colindantes, desencadenando hospitalizaciones infantiles por bronquitis aguda, estrés oxidativo pulmonar y aumento en el riesgo de carcinoma nasal crónico.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_45",
+                    "type": "file",
+                    "title": "Sin Título",
+                    "summary": "130 asociaciones de curtiembres prometen implementar floculación biopolimérica para reducir el crómio en origen y evitar formación de costras tóxicas.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "130 asociaciones de curtiembres de Río Seco",
+                        "Río Seco, Arequipa",
+                        "Cromo",
+                        "floculación biopolimérica",
+                        "remoción del crómio",
+                        "multas eximidas por la OEFA"
+                    ],
+                    "data": {
+                        "texto_full": "Se consolida el Acta de Cumplimiento. Las 130 asociaciones de curtiembres de Río Seco se comprometen a instalar y operar módulos compactos de floculación con quitosano (biopolímero) en sus desagües perimetrales. El OEFA valida esta tecnología como 'Pretratamiento Oficial' eximiendo de multas a las unidades que demuestren una remoción superior al 70% del Cromo en origen, evitando la formación de costras tóxicas expuestas al viento.",
+                        "images": [],
+                        "source": "Fuente_Desconocida",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": []
+                },
+                {
+                    "id": "doc_46",
+                    "type": "file",
+                    "title": "Aprovechamiento de Fondos Emergentes para Control de Emisiones",
+                    "summary": "El Concejo Municipal aprobó fondos para reactivar operativos de control de emisiones parálisisado durante la pandemia. Se adquirirán nuevos equipos para detectar gases y realizar operativos con la Policía de Trânsito.",
+                    "risk_level": "Bajo",
+                    "entidades": [
+                        "Concejo Municipal de Arequipa",
+                        "Policía de Tránsito",
+                        "Distritos de Arequipa",
+                        "Análizadores de gas, Opacímetros, Operativos de control de emisiones"
+                    ],
+                    "data": {
+                        "texto_full": "El concejo municipal aprobó el requerimiento presupuestal de emergencia por 150 mil soles para la Subgerencia de Gestión Ambiental. Estos fondos aseguran la compra inmediata de analizadores de gas y cuatro opacímetros calibrados de última generación, reactivando con la Policía de Tránsito los operativos de control de emisiones que estuvieron paralizados desde la pandemia del 2020.",
+                        "images": [],
+                        "source": "Diario Correo",
+                        "date": "Desconocida"
+                    },
+                    "children": [],
+                    "knowledge_graph": [
+                        {
+                            "sujeto": "concejo municipal",
+                            "relacion": "aprobo",
+                            "objeto": "requerimiento presupuestal"
+                        },
+                        {
+                            "sujeto": "requerimiento presupuestal",
+                            "relacion": "por",
+                            "objeto": "150 mil soles"
+                        },
+                        {
+                            "sujeto": "requerimiento presupuestal",
+                            "relacion": "aseguran",
+                            "objeto": "compra inmediata de analizadores de gas y opacímetros"
+                        },
+                        {
+                            "sujeto": "requerimiento presupuestal",
+                            "relacion": "aseguran",
+                            "objeto": "operativos de control de emisiones"
+                        },
+                        {
+                            "sujeto": "requerimiento presupuestal",
+                            "relacion": "reactivan",
+                            "objeto": "policía de tránsito"
+                        },
+                        {
+                            "sujeto": "requerimiento presupuestal",
+                            "relacion": "reactivan",
+                            "objeto": "emisiones"
+                        },
+                        {
+                            "sujeto": "requerimiento presupuestal",
+                            "relacion": "reactivan",
+                            "objeto": "pandemia del 2020"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

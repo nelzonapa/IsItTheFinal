@@ -1,0 +1,248 @@
+{
+    "gobierno regional de arequipa": {
+        "nombre_original": "Gobierno Regional de Arequipa",
+        "nodos": [
+            "doc_07",
+            "COMUNIDAD_-1"
+        ]
+    },
+    "oefa (oficina ejecutora de fiscalización ambiental)": {
+        "nombre_original": "OEFA (Oficina Ejecutora de Fiscalización Ambiental)",
+        "nodos": [
+            "doc_28",
+            "COMUNIDAD_-1"
+        ]
+    },
+    "parque industrial de río seco": {
+        "nombre_original": "Parque Industrial de Río Seco",
+        "nodos": [
+            "doc_26",
+            "doc_07",
+            "doc_08"
+        ]
+    },
+    "arequipa": {
+        "nombre_original": "Arequipa",
+        "nodos": [
+            "doc_07",
+            "doc_11",
+            "doc_16",
+            "doc_30",
+            "doc_12",
+            "doc_08"
+        ]
+    },
+    "emisiones": {
+        "nombre_original": "Emisiones",
+        "nodos": [
+            "doc_08",
+            "doc_46"
+        ]
+    },
+    "leyes ambientales": {
+        "nombre_original": "Leyes ambientales",
+        "nodos": [
+            "doc_37",
+            "doc_14",
+            "doc_29",
+            "doc_33",
+            "doc_24",
+            "doc_42",
+            "doc_04",
+            "doc_41",
+            "doc_47",
+            "doc_43",
+            "doc_26",
+            "doc_08"
+        ]
+    },
+    "gases": {
+        "nombre_original": "Gases",
+        "nodos": [
+            "doc_31",
+            "doc_34",
+            "doc_28"
+        ]
+    },
+    "oefa": {
+        "nombre_original": "OEFA",
+        "nodos": [
+            "COMUNIDAD_1",
+            "doc_05",
+            "COMUNIDAD_0",
+            "doc_12",
+            "doc_28",
+            "doc_15"
+        ]
+    },
+    "empresarios": {
+        "nombre_original": "Empresarios",
+        "nodos": [
+            "doc_38",
+            "doc_28"
+        ]
+    },
+    "desconocidas": {
+        "nombre_original": "Desconocidas",
+        "nodos": [
+            "doc_38",
+            "doc_34",
+            "doc_32"
+        ]
+    },
+    "arequipa, distritos industriales": {
+        "nombre_original": "Arequipa, distritos industriales",
+        "nodos": [
+            "doc_13",
+            "doc_05",
+            "doc_24",
+            "doc_44",
+            "doc_27",
+            "doc_38"
+        ]
+    },
+    "enfermedades respiratorias": {
+        "nombre_original": "Enfermedades respiratorias",
+        "nodos": [
+            "doc_41",
+            "doc_40"
+        ]
+    },
+    "gra": {
+        "nombre_original": "GRA",
+        "nodos": [
+            "doc_27",
+            "COMUNIDAD_0",
+            "COMUNIDAD_1"
+        ]
+    },
+    "colca solar s.a.c.": {
+        "nombre_original": "Colca Solar S.A.C.",
+        "nodos": [
+            "COMUNIDAD_0",
+            "doc_12"
+        ]
+    },
+    "vecinos": {
+        "nombre_original": "Vecinos",
+        "nodos": [
+            "COMUNIDAD_0",
+            "doc_34",
+            "doc_04",
+            "doc_30"
+        ]
+    },
+    "municipalidad provincial de arequipa": {
+        "nombre_original": "Municipalidad Provincial de Arequipa",
+        "nodos": [
+            "doc_03",
+            "doc_13"
+        ]
+    },
+    "pm10": {
+        "nombre_original": "PM10",
+        "nodos": [
+            "doc_13",
+            "doc_14",
+            "doc_16",
+            "doc_48",
+            "doc_20",
+            "doc_12"
+        ]
+    },
+    "pm2.5": {
+        "nombre_original": "PM2.5",
+        "nodos": [
+            "doc_14",
+            "doc_16",
+            "doc_48",
+            "doc_20",
+            "doc_12"
+        ]
+    },
+    "velocidad de viento": {
+        "nombre_original": "Velocidad de viento",
+        "nodos": [
+            "doc_48",
+            "doc_14"
+        ]
+    },
+    "material particular": {
+        "nombre_original": "material particular",
+        "nodos": [
+            "doc_22",
+            "doc_15"
+        ]
+    },
+    "ozono troposférico": {
+        "nombre_original": "Ozono troposférico",
+        "nodos": [
+            "doc_23",
+            "doc_18"
+        ]
+    },
+    "distrito de cerro colorado": {
+        "nombre_original": "Distrito de Cerro Colorado",
+        "nodos": [
+            "doc_21",
+            "doc_34"
+        ]
+    },
+    "zonas de arequipa": {
+        "nombre_original": "Zonas de Arequipa",
+        "nodos": [
+            "doc_37",
+            "doc_23"
+        ]
+    },
+    "desconocido": {
+        "nombre_original": "Desconocido",
+        "nodos": [
+            "doc_35",
+            "doc_29"
+        ]
+    },
+    "cromo": {
+        "nombre_original": "cromo",
+        "nodos": [
+            "doc_42",
+            "doc_37",
+            "doc_45"
+        ]
+    },
+    "lodos": {
+        "nombre_original": "Lodos",
+        "nodos": [
+            "doc_42",
+            "doc_37"
+        ]
+    },
+    "sedapar": {
+        "nombre_original": "Sedapar",
+        "nodos": [
+            "COMUNIDAD_1",
+            "doc_11"
+        ]
+    },
+    "municipalidad de cerro colorado": {
+        "nombre_original": "Municipalidad de Cerro Colorado",
+        "nodos": [
+            "COMUNIDAD_1",
+            "doc_35"
+        ]
+    },
+    "concejo municipal": {
+        "nombre_original": "Concejo Municipal",
+        "nodos": [
+            "COMUNIDAD_1",
+            "doc_46"
+        ]
+    },
+    "río seco": {
+        "nombre_original": "Río Seco",
+        "nodos": [
+            "doc_09",
+            "doc_35"
+        ]
+    }
+}
