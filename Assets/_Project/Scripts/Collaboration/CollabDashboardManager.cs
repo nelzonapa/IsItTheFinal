@@ -47,7 +47,6 @@ namespace ImmersiveGraph.Collaboration
         private float _canvasWidth;
         private float _canvasHeight;
 
-        // --- NUEVAS VARIABLES PARA CONTROL DE ALARMA ---
         private bool _lastOccupiedState = false;
         private string _lastOccupantName = "";
 
@@ -69,11 +68,9 @@ namespace ImmersiveGraph.Collaboration
             {
                 Render2DMap();
 
-                // --- LÓGICA DE ALERTA FASE 4 ---
                 bool currentOccupied = SharedWorkspaceTracker.Instance.IsOccupied;
                 string currentName = SharedWorkspaceTracker.Instance.OccupantsNames;
 
-                // Optimización: Solo enviamos la orden a la UI si el estado cambió
                 if (currentOccupied != _lastOccupiedState || currentName != _lastOccupantName)
                 {
                     SetCollabAlertState(currentOccupied, currentName);
@@ -123,11 +120,10 @@ namespace ImmersiveGraph.Collaboration
             var nodes = tracker.ActiveNodes;
 
             // ==========================================
-            // NUEVO: FASE DE CÁLCULO DE POSICIONES Y RELAJACIÓN
+            // CÁLCULO DE POSICIONES Y RELAJACIÓN
             // ==========================================
             Dictionary<string, Vector2> targetPositions = new Dictionary<string, Vector2>();
 
-            // Mapeo inicial
             foreach (var node in nodes)
             {
                 float relX = node.position.x - tracker.BoundingBoxCenter.x;
@@ -135,7 +131,6 @@ namespace ImmersiveGraph.Collaboration
                 targetPositions[node.id] = new Vector2(relX * uniformScale, relZ * uniformScale);
             }
 
-            // Algoritmo de Repulsión (Anti-Overlap)
             if (enableAntiOverlap && nodes.Count > 1)
             {
                 float minDistance = dynamicNodeSize + repulsionPadding;
@@ -157,7 +152,6 @@ namespace ImmersiveGraph.Collaboration
 
                             if (dist < minDistance)
                             {
-                                // Evitar división por cero si están exactamente en el mismo pixel
                                 if (dist == 0)
                                 {
                                     diff = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
@@ -175,7 +169,6 @@ namespace ImmersiveGraph.Collaboration
                 }
             }
 
-            // Límites de la pantalla para que no se salgan al ser empujados
             float limitX = (_canvasWidth / 2f) - (dynamicNodeSize / 2f);
             float limitY = (_canvasHeight / 2f) - (dynamicNodeSize / 2f);
 
@@ -217,7 +210,6 @@ namespace ImmersiveGraph.Collaboration
                 uiElement.Setup(node.id, node.color, node.textContent, node.originDocumentId);
                 uiElement.rectTransform.sizeDelta = new Vector2(dynamicNodeSize, dynamicNodeSize);
 
-                // Obtener la posición calculada y relajarla dentro de los bordes
                 Vector2 finalPos = targetPositions[node.id];
                 finalPos.x = Mathf.Clamp(finalPos.x, -limitX, limitX);
                 finalPos.y = Mathf.Clamp(finalPos.y, -limitY, limitY);
@@ -241,8 +233,6 @@ namespace ImmersiveGraph.Collaboration
             }
             foreach (var key in lineKeysToRemove) _activeUILines.Remove(key);
 
-            foreach (var kvp in _activeUILines) kvp.Value.rectTransform.SetAsFirstSibling();
-
             foreach (var line in lines)
             {
                 if (!_activeUINodes.ContainsKey(line.startNodeId) || !_activeUINodes.ContainsKey(line.endNodeId)) continue;
@@ -254,13 +244,21 @@ namespace ImmersiveGraph.Collaboration
                     uiLine = newUI.GetComponent<UIDashboardElement>();
                     uiLine.Setup(line.id, Color.white);
 
+                    // SOLUCIÓN CLAVE: Alinear Anchors y, crucialmente, el Pivot a la izquierda (0, 0.5)
+                    uiLine.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+                    uiLine.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+                    uiLine.rectTransform.pivot = new Vector2(0f, 0.5f);
+
                     uiLine.rectTransform.anchoredPosition3D = Vector3.zero;
                     uiLine.rectTransform.localScale = Vector3.one;
+
+                    // Nos aseguramos de que las líneas se dibujen detrás de los nodos
+                    uiLine.rectTransform.SetAsFirstSibling();
 
                     _activeUILines.Add(line.id, uiLine);
                 }
 
-                // Las líneas usan las posiciones finales reales de la UI
+                // Las líneas ahora seguirán a los nodos dinámicamente
                 Vector2 startPos = _activeUINodes[line.startNodeId].rectTransform.anchoredPosition;
                 Vector2 endPos = _activeUINodes[line.endNodeId].rectTransform.anchoredPosition;
 
