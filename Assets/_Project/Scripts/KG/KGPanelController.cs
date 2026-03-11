@@ -72,8 +72,17 @@ namespace ImmersiveGraph.Visual
         {
             if (graphContainer == null) graphContainer = GetComponent<RectTransform>();
 
-            // Auto-búsqueda del Spawner local en caso de que no se haya asignado en el Inspector
-            if (localGraphSpawner == null) localGraphSpawner = GetComponentInParent<H3GraphSpawner>();
+            // 1. Buscar hacia arriba en la jerarquía
+            if (localGraphSpawner == null)
+                localGraphSpawner = GetComponentInParent<H3GraphSpawner>();
+
+            // 2. Si son hermanos, buscar desde la raíz del espacio de trabajo hacia abajo
+            if (localGraphSpawner == null && transform.root != null)
+                localGraphSpawner = transform.root.GetComponentInChildren<H3GraphSpawner>();
+
+            // 3. Advertencia de seguridad en consola
+            if (localGraphSpawner == null)
+                Debug.LogError("[KGPanelController] No se encontró el H3GraphSpawner local. Las entidades no se pintarán de azul. Asígnalo manualmente en el Inspector.");
 
             if (clearFiltersButton != null)
             {
@@ -212,7 +221,6 @@ namespace ImmersiveGraph.Visual
                 }
             }
 
-            // Distribuimos el costo físico en el tiempo
             _layoutCoroutine = StartCoroutine(AnimateLayoutRoutine());
         }
 
@@ -236,7 +244,6 @@ namespace ImmersiveGraph.Visual
                 else bgImage.color = new Color(0.3f, 0.3f, 0.3f, 1f);
             }
 
-            // --- ACCIÓN: EXTRAER TOKEN FÍSICO ---
             System.Action spawnTokenAction = () =>
             {
                 if (token3DPrefab != null)
@@ -263,7 +270,6 @@ namespace ImmersiveGraph.Visual
                 }
             };
 
-            // --- ACCIÓN: FILTRAR ---
             System.Action onClickAction = () =>
             {
                 if (isGlobalEntity)
@@ -304,9 +310,6 @@ namespace ImmersiveGraph.Visual
 
             smartNodeHandler.Initialize(rect, graphContainer, widthLimit, heightLimit, onDragUpdate, onClickAction, spawnTokenAction);
 
-            // =========================================================
-            // AISLAMIENTO DE INTERACTABLES VR
-            // =========================================================
             bool isVRActive = true;
             if (PlatformManager.Instance != null && PlatformManager.Instance.pcRig != null)
             {
@@ -364,9 +367,6 @@ namespace ImmersiveGraph.Visual
             warningText.gameObject.SetActive(false);
         }
 
-        // =========================================================================
-        // REEMPLAZO DE CalculateLayoutInstantly POR CORRUTINA PARA EVITAR CONGELAMIENTO
-        // =========================================================================
         private IEnumerator AnimateLayoutRoutine()
         {
             float safePadding = 50f * _currentScale;
@@ -412,7 +412,6 @@ namespace ImmersiveGraph.Visual
                     node.position.y = Mathf.Clamp(node.position.y, -heightLimit, heightLimit);
                 }
 
-                // Liberar el hilo principal de Unity para procesar gráficos, inputs, etc. cada 5 iteraciones
                 if (step % 5 == 0)
                 {
                     UpdateVisuals();
@@ -449,9 +448,6 @@ namespace ImmersiveGraph.Visual
         }
     }
 
-    // ==========================================
-    // --- LÓGICA INTELIGENTE (ARRASTRE VS CLIC) ---
-    // ==========================================
     public class UIDraggableNode : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerDownHandler, IPointerClickHandler
     {
         private RectTransform _nodeRect;

@@ -3766,6 +3766,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d92214e0a555bb48998ff7a65a65c6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Visual.KGPanelController
+  localGraphSpawner: {fileID: 0}
   graphContainer: {fileID: 0}
   nodePrefab: {fileID: 7606018330044113167, guid: fb1dc226bbea66d4bb5e123012c48919, type: 3}
   linePrefab: {fileID: 7948218715770260542, guid: 7c2485c5608cabd4ea16589c85a63180, type: 3}
@@ -4220,8 +4221,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Visual.H3GraphSpawner
   interactionManager: {fileID: 2203637493933622396}
   miniWorldManager: {fileID: 3377572980140155397}
-  jsonFileName: hierarchy_complete_KG_2.json
-  entityIndexFileName: global_entity_index_2.json
+  jsonFileName: hierarchy_complete_KG.json
+  entityIndexFileName: global_entity_index.json
   rootPrefab: {fileID: 4340233853336565958, guid: a6eb265f994fc2e428e52d294d2e9528, type: 3}
   communityPrefab: {fileID: 4340233853336565958, guid: 131ad21c6029d2548b59065db8d67796, type: 3}
   filePrefab: {fileID: 4340233853336565958, guid: 6548196bcea887b48aefd735914a91ed, type: 3}
