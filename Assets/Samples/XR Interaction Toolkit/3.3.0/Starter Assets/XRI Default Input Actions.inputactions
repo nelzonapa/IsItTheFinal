@@ -3442,6 +3442,54 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "Tablet Controls",
+            "id": "89a4c0ef-6278-4cbb-bb2e-d0b0528b7066",
+            "actions": [
+                {
+                    "name": "Toggle Left Tablet",
+                    "type": "Button",
+                    "id": "5b4670d5-1484-40e2-a07c-b47edfaf56fb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Toggle Right Tablet",
+                    "type": "Button",
+                    "id": "510f452e-5bd5-40b1-89ed-0b6f51af7306",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d0f1696b-f60e-4fa3-8462-5a0583df5065",
+                    "path": "<XRController>{LeftHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Left Tablet",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7837895e-b556-464f-8966-05f8dac03785",
+                    "path": "<XRController>{RightHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Right Tablet",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

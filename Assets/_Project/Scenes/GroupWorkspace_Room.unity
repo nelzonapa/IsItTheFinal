@@ -560,8 +560,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1550292423}
+  m_Children: []
   m_Father: {fileID: 1215772259}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &136970458
@@ -783,6 +782,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1374228309}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1717954561962503725, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 280106988}
     - targetCorrespondingSourceObject: {fileID: 1767192433, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 280106984}
@@ -865,6 +867,24 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1717954561962503725, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
   m_PrefabInstance: {fileID: 280106982}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &280106988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 280106987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6668a3ffb4cc6fd428008a7cb9832f7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WristTabletController
+  tabletCanvas: {fileID: 1550292422}
+  leftSocket: {fileID: 134517222}
+  rightSocket: {fileID: 1374228309}
+  leftMenuButton: {fileID: 906079580}
+  rightMenuButton: {fileID: 1707184555}
+  followSpeed: 12
 --- !u!1 &282419083
 GameObject:
   m_ObjectHideFlags: 0
@@ -1316,7 +1336,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 820629064285437188, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.041259766
+      value: 0.040863037
       objectReference: {fileID: 0}
     - target: {fileID: 1117198061108358910, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2014,6 +2034,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 546681294}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &906079580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
+  m_Name: Tablet Controls/Toggle Left Tablet
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
+  m_Asset: {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  m_ActionId: 5b4670d5-1484-40e2-a07c-b47edfaf56fb
 --- !u!1 &915559288
 GameObject:
   m_ObjectHideFlags: 0
@@ -3978,17 +4012,17 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1550292422}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.3623047}
   m_LocalScale: {x: 0.0005, y: 0.0005, z: 0.0005}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1778799107}
   - {fileID: 579675794}
-  m_Father: {fileID: 134517222}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 200000, y: 2722.88}
   m_SizeDelta: {x: 400, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1550292424
@@ -4392,7 +4426,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 820629064285437188, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.041259766
+      value: 0.040863037
       objectReference: {fileID: 0}
     - target: {fileID: 1117198061108358910, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
       propertyPath: m_AnchorMax.x
@@ -4496,6 +4530,20 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9013347094446411954, guid: 7393e56784276604abf60f0ecdc7ea2d, type: 3}
   m_PrefabInstance: {fileID: 1688524790}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1707184555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
+  m_Name: Tablet Controls/Toggle Right Tablet
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
+  m_Asset: {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  m_ActionId: 510f452e-5bd5-40b1-89ed-0b6f51af7306
 --- !u!1 &1778799106
 GameObject:
   m_ObjectHideFlags: 0
@@ -5336,3 +5384,4 @@ SceneRoots:
   - {fileID: 1237952466}
   - {fileID: 569682617}
   - {fileID: 915559289}
+  - {fileID: 1550292423}
