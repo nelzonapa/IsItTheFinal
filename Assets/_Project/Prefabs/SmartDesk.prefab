@@ -4221,8 +4221,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ImmersiveGraph.Visual.H3GraphSpawner
   interactionManager: {fileID: 2203637493933622396}
   miniWorldManager: {fileID: 3377572980140155397}
-  jsonFileName: hierarchy_complete_KG.json
-  entityIndexFileName: global_entity_index.json
+  jsonFileName: hierarchy_complete_KG_2.json
+  entityIndexFileName: global_entity_index_2.json
   rootPrefab: {fileID: 4340233853336565958, guid: a6eb265f994fc2e428e52d294d2e9528, type: 3}
   communityPrefab: {fileID: 4340233853336565958, guid: 131ad21c6029d2548b59065db8d67796, type: 3}
   filePrefab: {fileID: 4340233853336565958, guid: 6548196bcea887b48aefd735914a91ed, type: 3}
